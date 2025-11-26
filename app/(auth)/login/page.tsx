@@ -12,11 +12,21 @@ import {
   PasswordInput,
   Button,
   Stack,
-  Alert,
   Anchor,
+  Box,
+  ThemeIcon,
+  Divider,
 } from "@mantine/core";
 import {notifications} from "@mantine/notifications";
-import {IconAlertCircle, IconCheck} from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconAlertCircle,
+  IconLock,
+  IconMail,
+  IconLogin,
+} from "@tabler/icons-react";
+import {Header} from "@/components/header";
+import {Footer} from "@/components/footer";
 
 export default function LoginPage() {
   const [loginState, loginAction, loginPending] = useActionState<
@@ -45,57 +55,132 @@ export default function LoginPage() {
   }, [loginState]);
 
   return (
-    <Container size={420} my={40}>
-      <Stack gap="md">
-        <Title ta="center" fw={700} size="2rem">
-          Welcome Back
-        </Title>
-        <Text c="dimmed" size="sm" ta="center">
-          Enter your credentials to sign in to your account
-        </Text>
-
-        <Paper withBorder shadow="md" p={30} radius="md">
-          <form action={loginAction}>
-            <Stack gap="md">
-              <TextInput
-                label="Email"
-                placeholder="you@example.com"
-                name="email"
-                type="email"
-                required
-                disabled={loginPending}
-                size="md"
-              />
-
-              <PasswordInput
-                label="Password"
-                placeholder="••••••••"
-                name="password"
-                required
-                disabled={loginPending}
-                size="md"
-              />
-
-              <Button
-                type="submit"
-                fullWidth
-                size="md"
-                loading={loginPending}
-                disabled={loginPending}
+    <Box
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Header />
+      <Box
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "2rem 1rem",
+        }}
+      >
+        <Container size={480}>
+          <Stack gap="xl">
+            <Stack gap="xs" align="center" ta="center">
+              <ThemeIcon
+                size={64}
+                radius="xl"
+                variant="light"
+                color="blue"
+                style={{marginBottom: "0.5rem"}}
               >
-                {loginPending ? "Signing in..." : "Sign In"}
-              </Button>
+                <IconLogin size={32} />
+              </ThemeIcon>
+              <Title order={1} fw={800} size="2.5rem">
+                Welcome Back
+              </Title>
+              <Text c="dimmed" size="lg" maw={400}>
+                Sign in to your account to access your digital mailroom
+              </Text>
             </Stack>
-          </form>
 
-          <Text c="dimmed" size="sm" ta="center" mt="md">
-            Don&apos;t have an account?{" "}
-            <Anchor component={Link} href="/signup" size="sm">
-              Sign up
-            </Anchor>
-          </Text>
-        </Paper>
-      </Stack>
-    </Container>
+            <Paper
+              withBorder
+              shadow="xl"
+              p="xl"
+              radius="lg"
+              style={{
+                backgroundColor: "var(--mantine-color-white)",
+              }}
+            >
+              <form action={loginAction}>
+                <Stack gap="lg">
+                  <TextInput
+                    label="Email Address"
+                    placeholder="you@example.com"
+                    name="email"
+                    type="email"
+                    required
+                    disabled={loginPending}
+                    size="md"
+                    leftSection={<IconMail size={18} />}
+                    styles={{
+                      label: {fontWeight: 600, marginBottom: "0.5rem"},
+                    }}
+                  />
+
+                  <PasswordInput
+                    label="Password"
+                    placeholder="Enter your password"
+                    name="password"
+                    required
+                    disabled={loginPending}
+                    size="md"
+                    leftSection={<IconLock size={18} />}
+                    styles={{
+                      label: {fontWeight: 600, marginBottom: "0.5rem"},
+                    }}
+                  />
+
+                  <Box>
+                    <Anchor
+                      component={Link}
+                      href="/forgot-password"
+                      size="sm"
+                      style={{float: "right"}}
+                    >
+                      Forgot password?
+                    </Anchor>
+                  </Box>
+
+                  <Button
+                    type="submit"
+                    fullWidth
+                    size="lg"
+                    loading={loginPending}
+                    disabled={loginPending}
+                    leftSection={!loginPending && <IconLogin size={18} />}
+                    style={{
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    {loginPending ? "Signing in..." : "Sign In"}
+                  </Button>
+                </Stack>
+              </form>
+
+              <Divider my="lg" label="OR" labelPosition="center" />
+
+              <Text c="dimmed" size="sm" ta="center">
+                Don&apos;t have an account?{" "}
+                <Anchor component={Link} href="/signup" size="sm" fw={600}>
+                  Sign up
+                </Anchor>
+              </Text>
+            </Paper>
+
+            <Text c="dimmed" size="xs" ta="center">
+              By signing in, you agree to our{" "}
+              <Anchor href="#" size="xs" fw={500}>
+                Terms of Service
+              </Anchor>{" "}
+              and{" "}
+              <Anchor href="#" size="xs" fw={500}>
+                Privacy Policy
+              </Anchor>
+            </Text>
+          </Stack>
+        </Container>
+      </Box>
+      <Footer />
+    </Box>
   );
 }

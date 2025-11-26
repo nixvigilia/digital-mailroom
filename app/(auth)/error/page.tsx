@@ -1,12 +1,22 @@
 "use client";
 
-import { Container, Paper, Title, Text, Button, Stack } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons-react";
+import {
+  Container,
+  Paper,
+  Title,
+  Text,
+  Button,
+  Stack,
+  Alert,
+} from "@mantine/core";
+import {IconAlertCircle} from "@tabler/icons-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 
 export default function ErrorPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const message = searchParams.get("message");
 
   return (
     <Container size={420} my={40}>
@@ -20,6 +30,11 @@ export default function ErrorPage() {
             Sorry, we encountered an error while processing your request. Please
             try again.
           </Text>
+          {message && (
+            <Alert color="red" variant="light" style={{width: "100%"}}>
+              {message}
+            </Alert>
+          )}
           <Stack gap="xs" mt="md">
             <Button component={Link} href="/login" fullWidth>
               Go to Login
