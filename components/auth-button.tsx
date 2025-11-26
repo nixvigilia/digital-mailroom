@@ -1,11 +1,11 @@
 "use client";
 
-import { Button, Group } from "@mantine/core";
-import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {Button, Group} from "@mantine/core";
+import {createClient} from "@/utils/supabase/client";
+import {useRouter} from "next/navigation";
+import {useEffect, useState} from "react";
 import Link from "next/link";
-import { signOut } from "@/app/actions/auth";
+import {signOut} from "@/app/actions/auth";
 
 export function AuthButton() {
   const [user, setUser] = useState<any>(null);
@@ -16,7 +16,7 @@ export function AuthButton() {
   useEffect(() => {
     const getUser = async () => {
       const {
-        data: { user },
+        data: {user},
       } = await supabase.auth.getUser();
       setUser(user);
       setLoading(false);
@@ -25,7 +25,7 @@ export function AuthButton() {
     getUser();
 
     const {
-      data: { subscription },
+      data: {subscription},
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
@@ -40,7 +40,7 @@ export function AuthButton() {
   if (user) {
     return (
       <Group gap="sm">
-        <Button component={Link} href="/dashboard" variant="subtle">
+        <Button component={Link} href="/dashboard/inbox" variant="subtle">
           Dashboard
         </Button>
         <form action={signOut}>
@@ -63,4 +63,3 @@ export function AuthButton() {
     </Group>
   );
 }
-

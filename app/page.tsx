@@ -23,12 +23,10 @@ import {
   IconBuilding,
   IconCheck,
   IconArrowRight,
-  IconMapPin,
-  IconPhone,
-  IconMail as IconEmail,
 } from "@tabler/icons-react";
 import Link from "next/link";
-import { AuthButton } from "@/components/auth-button";
+import {Header} from "@/components/header";
+import {Footer} from "@/components/footer";
 
 export default function HomePage() {
   const whyDigitize = [
@@ -59,7 +57,8 @@ export default function HomePage() {
     {
       step: "1",
       title: "Get Your Address",
-      description: "Sign up and receive your unique Digital Mailroom mailing address",
+      description:
+        "Sign up and receive your unique Digital Mailroom mailing address",
     },
     {
       step: "2",
@@ -132,39 +131,16 @@ export default function HomePage() {
 
   return (
     <Box>
-      {/* Navigation */}
-      <Box
-        style={{
-          borderBottom: "1px solid var(--mantine-color-gray-3)",
-          padding: "1rem 0",
-        }}
-      >
-        <Container size="lg">
-          <Group justify="space-between" align="center">
-            <Title order={2} size="h3" fw={700}>
-              Digital Mailroom
-            </Title>
-            <Group gap="lg">
-              <Anchor href="#pricing" c="dark" fw={500}>
-                Pricing
-              </Anchor>
-              <Anchor href="#contact" c="dark" fw={500}>
-                Contact Us
-              </Anchor>
-              <AuthButton />
-            </Group>
-          </Group>
-        </Container>
-      </Box>
+      <Header />
 
       {/* Hero Section */}
       <Container size="lg" py={100}>
-        <Stack gap="xl" align="center" style={{ textAlign: "center" }}>
+        <Stack gap="xl" align="center" style={{textAlign: "center"}}>
           <Title
             order={1}
             size="3.5rem"
             fw={800}
-            style={{ lineHeight: 1.2, maxWidth: "800px" }}
+            style={{lineHeight: 1.2, maxWidth: "800px"}}
           >
             Your Mail, Always Within Reach.
           </Title>
@@ -203,13 +179,23 @@ export default function HomePage() {
           </Stack>
           <Grid>
             {whyDigitize.map((item, index) => (
-              <Grid.Col key={index} span={{ base: 12, md: 4 }}>
+              <Grid.Col key={index} span={{base: 12, md: 4}}>
                 <Card shadow="sm" padding="xl" radius="md" withBorder h="100%">
                   <Stack gap="md">
-                    <Badge color="blue" variant="light" size="lg" w="fit-content">
+                    <Badge
+                      color="blue"
+                      variant="light"
+                      size="lg"
+                      w="fit-content"
+                    >
                       {item.label}
                     </Badge>
-                    <ThemeIcon size={60} radius="md" variant="light" color="blue">
+                    <ThemeIcon
+                      size={60}
+                      radius="md"
+                      variant="light"
+                      color="blue"
+                    >
                       <item.icon size={30} />
                     </ThemeIcon>
                     <Title order={3} size="h4" fw={600}>
@@ -235,14 +221,14 @@ export default function HomePage() {
         </Stack>
         <Grid>
           {howItWorks.map((step, index) => (
-            <Grid.Col key={index} span={{ base: 12, md: 4 }}>
+            <Grid.Col key={index} span={{base: 12, md: 4}}>
               <Stack gap="md" align="center" ta="center">
                 <ThemeIcon
                   size={80}
                   radius="xl"
                   variant="filled"
                   color="blue"
-                  style={{ fontSize: "2rem", fontWeight: 700 }}
+                  style={{fontSize: "2rem", fontWeight: 700}}
                 >
                   {step.step}
                 </ThemeIcon>
@@ -271,7 +257,7 @@ export default function HomePage() {
           </Stack>
           <Grid>
             {pricingPlans.map((plan, index) => (
-              <Grid.Col key={index} span={{ base: 12, md: 4 }}>
+              <Grid.Col key={index} span={{base: 12, md: 4}}>
                 <Paper
                   shadow="sm"
                   p="xl"
@@ -356,7 +342,7 @@ export default function HomePage() {
       {/* Waitlist Section */}
       <Container size="lg" py={80}>
         <Paper shadow="sm" p="xl" radius="md" withBorder>
-          <Stack gap="xl" align="center" style={{ textAlign: "center" }}>
+          <Stack gap="xl" align="center" style={{textAlign: "center"}}>
             <Title order={2} size="2.5rem" fw={700}>
               Join Our Waitlist
             </Title>
@@ -364,10 +350,10 @@ export default function HomePage() {
               Be the first to know when we officially launch. Show your interest
               today!
             </Text>
-            <Group gap="md" style={{ width: "100%", maxWidth: 500 }}>
+            <Group gap="md" style={{width: "100%", maxWidth: 500}}>
               <TextInput
                 placeholder="Email Address"
-                style={{ flex: 1 }}
+                style={{flex: 1}}
                 size="md"
               />
               <Button size="md" variant="filled" color="blue">
@@ -381,63 +367,7 @@ export default function HomePage() {
         </Paper>
       </Container>
 
-      {/* Footer */}
-      <Box
-        bg="gray.9"
-        style={{ color: "white" }}
-        py={60}
-        id="contact"
-      >
-        <Container size="lg">
-          <Grid>
-            <Grid.Col span={{ base: 12, md: 6 }}>
-              <Stack gap="md">
-                <Title order={4} size="h4" fw={600} c="white">
-                  Our Location
-                </Title>
-                <Group gap="sm" c="gray.4">
-                  <IconMapPin size={20} />
-                  <Text c="gray.4">
-                    Digital Mailroom Service
-                    <br />
-                    Secure Mail Processing Facility
-                  </Text>
-                </Group>
-              </Stack>
-            </Grid.Col>
-            <Grid.Col span={{ base: 12, md: 6 }}>
-              <Stack gap="md">
-                <Title order={4} size="h4" fw={600} c="white">
-                  Contact Us
-                </Title>
-                <Group gap="sm" c="gray.4">
-                  <IconEmail size={20} />
-                  <Anchor href="mailto:admin@digitalmailroom.com" c="gray.4">
-                    admin@digitalmailroom.com
-                  </Anchor>
-                </Group>
-                <Group gap="sm" c="gray.4">
-                  <IconPhone size={20} />
-                  <Anchor href="tel:+1234567890" c="gray.4">
-                    +1 (234) 567-890
-                  </Anchor>
-                </Group>
-              </Stack>
-            </Grid.Col>
-          </Grid>
-          <Divider my="xl" color="gray.7" />
-          <Group justify="space-between" align="center">
-            <Text size="sm" c="gray.5">
-              © 2025 Digital Mailroom Service. All rights reserved.
-            </Text>
-            <Group gap="md">
-              <Anchor href="#" c="gray.5" size="sm">
-                Terms of Use
-              </Anchor>
-            </Group>
-          </Group>
-        </Container>
-      </Box>
+      <Footer />
     </Box>
   );
 }
