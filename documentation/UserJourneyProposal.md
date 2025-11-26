@@ -1,7 +1,4 @@
-Below is a **clear, structured User Journey Proposal** based on your project overview.
-It includes **all user types**, what they can do, and **end-to-end journeys** for each.
 
----
 
 # **User Journey Proposal — Digital Mailroom Service**
 
