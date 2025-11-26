@@ -27,6 +27,8 @@ import {
   IconPhone,
   IconMail as IconEmail,
 } from "@tabler/icons-react";
+import Link from "next/link";
+import { AuthButton } from "@/components/auth-button";
 
 export default function HomePage() {
   const whyDigitize = [
@@ -149,9 +151,7 @@ export default function HomePage() {
               <Anchor href="#contact" c="dark" fw={500}>
                 Contact Us
               </Anchor>
-              <Button variant="filled" color="blue">
-                Join the Waitlist
-              </Button>
+              <AuthButton />
             </Group>
           </Group>
         </Container>
@@ -173,7 +173,14 @@ export default function HomePage() {
             anywhere. No more worrying about missing important documents—view
             them all online.
           </Text>
-          <Button size="lg" variant="filled" color="blue" rightSection={<IconArrowRight size={20} />}>
+          <Button
+            component={Link}
+            href="/signup"
+            size="lg"
+            variant="filled"
+            color="blue"
+            rightSection={<IconArrowRight size={20} />}
+          >
             Join the Waitlist
           </Button>
           <Text size="sm" c="dimmed" mt="md">

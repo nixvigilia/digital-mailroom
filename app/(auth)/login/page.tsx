@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect } from "react";
 import Link from "next/link";
-import { login, type ActionResult } from "@/app/actions/auth";
+import { login, type ActionResult } from "../../actions/auth";
 import {
   Container,
   Paper,

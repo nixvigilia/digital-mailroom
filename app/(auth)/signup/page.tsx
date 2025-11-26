@@ -1,8 +1,8 @@
 "use client";
 
-import { useActionState, useEffect, useState, startTransition } from "react";
+import {useActionState, useEffect, useState, startTransition} from "react";
 import Link from "next/link";
-import { signup, type ActionResult } from "@/app/actions/auth";
+import {signup, type ActionResult} from "@/app/actions/auth";
 import {
   Container,
   Paper,
@@ -17,11 +17,11 @@ import {
   Anchor,
   List,
 } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
-import { checkPasswordStrength } from "@/lib/password-strength";
+import {notifications} from "@mantine/notifications";
+import {IconAlertCircle, IconCheck, IconX} from "@tabler/icons-react";
+import {checkPasswordStrength} from "@/lib/password-strength";
 
-function PasswordStrengthIndicator({ password }: { password: string }) {
+function PasswordStrengthIndicator({password}: {password: string}) {
   if (!password) return null;
 
   const strength = checkPasswordStrength(password);
