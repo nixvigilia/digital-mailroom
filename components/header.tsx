@@ -1,7 +1,8 @@
 "use client";
 
-import { Box, Container, Group, Title, Anchor } from "@mantine/core";
-import { AuthButton } from "./auth-button";
+import {Box, Container, Group, Title, Anchor} from "@mantine/core";
+import Link from "next/link";
+import {AuthButton} from "./auth-button";
 
 export function Header() {
   return (
@@ -13,9 +14,11 @@ export function Header() {
     >
       <Container size="lg">
         <Group justify="space-between" align="center">
-          <Title order={2} size="h3" fw={700} component="a" href="/" style={{ textDecoration: "none", color: "inherit" }}>
-            Digital Mailroom
-          </Title>
+          <Link href="/" style={{textDecoration: "none", color: "inherit"}}>
+            <Title order={2} size="h3" fw={700}>
+              Digital Mailroom
+            </Title>
+          </Link>
           <Group gap="lg">
             <Anchor href="/#pricing" c="dark" fw={500}>
               Pricing
@@ -30,4 +33,3 @@ export function Header() {
     </Box>
   );
 }
-
