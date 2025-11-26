@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Profile {
+  id             String   @id @default(uuid()) @db.Uuid
+  full_name      String?
+  avatar_url     String?
+  email          String   @unique
+  secret_message String?
+  updated_at     DateTime @updatedAt
+  created_at     DateTime @default(now())
+
+  @@map("profile")
+}
