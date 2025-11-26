@@ -1,8 +1,8 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import {useActionState, useEffect} from "react";
 import Link from "next/link";
-import { login, type ActionResult } from "../../actions/auth";
+import {login, type ActionResult} from "../../actions/auth";
 import {
   Container,
   Paper,
@@ -15,8 +15,8 @@ import {
   Alert,
   Anchor,
 } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
+import {notifications} from "@mantine/notifications";
+import {IconAlertCircle, IconCheck} from "@tabler/icons-react";
 
 export default function LoginPage() {
   const [loginState, loginAction, loginPending] = useActionState<
@@ -53,16 +53,6 @@ export default function LoginPage() {
         <Text c="dimmed" size="sm" ta="center">
           Enter your credentials to sign in to your account
         </Text>
-
-        <Alert
-          icon={<IconAlertCircle size={16} />}
-          title="Shared Database"
-          color="blue"
-          variant="light"
-        >
-          This app shares its database with Secret Page App, so you can reuse
-          your existing account.
-        </Alert>
 
         <Paper withBorder shadow="md" p={30} radius="md">
           <form action={loginAction}>
