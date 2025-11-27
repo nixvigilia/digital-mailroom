@@ -1,5 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client"
+  output     = "../app/generated/prisma"
+  engineType = "client"
 }
 
 datasource db {
@@ -7,13 +9,253 @@ datasource db {
 }
 
 model Profile {
-  id             String   @id @default(uuid()) @db.Uuid
-  full_name      String?
-  avatar_url     String?
-  email          String   @unique
-  secret_message String?
-  updated_at     DateTime @updatedAt
-  created_at     DateTime @default(now())
+  id                   String              @id @default(uuid()) @db.Uuid
+  full_name            String?
+  avatar_url           String?
+  email                String              @unique
+  updated_at           DateTime            @updatedAt
+  created_at           DateTime            @default(now())
+  user_type            UserType            @default(INDIVIDUAL)
+  role                 UserRole            @default(USER)
+  business_account     BusinessAccount?
+  kyc_verification     KYCVerification?
+  mail_action_requests MailActionRequest[]
+  mail_items           MailItem[]
+  subscriptions        Subscription[]
+  team_memberships     TeamMember[]
 
   @@map("profile")
+}
+
+model KYCVerification {
+  id                       String    @id @default(uuid()) @db.Uuid
+  profile_id               String    @unique @db.Uuid
+  first_name               String
+  last_name                String
+  date_of_birth            DateTime  @db.Date
+  phone_number             String
+  address                  String
+  city                     String
+  province                 String
+  postal_code              String
+  country                  String    @default("Philippines")
+  id_type                  String
+  id_file_front_url        String?
+  id_file_back_url         String?
+  consent_mail_opening     Boolean   @default(false)
+  consent_data_processing  Boolean   @default(false)
+  consent_terms_of_service Boolean   @default(false)
+  consent_privacy_policy   Boolean   @default(false)
+  status                   KYCStatus @default(NOT_STARTED)
+  submitted_at             DateTime?
+  reviewed_at              DateTime?
+  reviewed_by              String?   @db.Uuid
+  rejection_reason         String?
+  created_at               DateTime  @default(now())
+  updated_at               DateTime  @updatedAt
+  profile                  Profile   @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+
+  @@map("kyc_verification")
+}
+
+model BusinessAccount {
+  id                             String       @id @default(uuid()) @db.Uuid
+  profile_id                     String       @unique @db.Uuid
+  business_name                  String
+  business_type                  String?
+  registration_number            String?
+  tax_id                         String?
+  business_address               String
+  city                           String
+  province                       String
+  postal_code                    String
+  country                        String       @default("Philippines")
+  kyb_status                     KYBStatus    @default(NOT_STARTED)
+  kyb_submitted_at               DateTime?
+  kyb_reviewed_at                DateTime?
+  kyb_reviewed_by                String?      @db.Uuid
+  kyb_rejection_reason           String?
+  business_registration_file_url String?
+  tax_certificate_file_url       String?
+  created_at                     DateTime     @default(now())
+  updated_at                     DateTime     @updatedAt
+  profile                        Profile      @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+  mail_items                     MailItem[]
+  team_members                   TeamMember[]
+
+  @@map("business_account")
+}
+
+model TeamMember {
+  id                  String           @id @default(uuid()) @db.Uuid
+  profile_id          String           @db.Uuid
+  business_account_id String           @db.Uuid
+  role                String           @default("member")
+  department          String?
+  invitation_token    String?          @unique
+  invitation_status   InvitationStatus @default(PENDING)
+  invited_at          DateTime?
+  joined_at           DateTime?
+  created_at          DateTime         @default(now())
+  updated_at          DateTime         @updatedAt
+  business_account    BusinessAccount  @relation(fields: [business_account_id], references: [id], onDelete: Cascade)
+  profile             Profile          @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+
+  @@unique([profile_id, business_account_id])
+  @@map("team_member")
+}
+
+model Subscription {
+  id                String             @id @default(uuid()) @db.Uuid
+  profile_id        String             @db.Uuid
+  plan_type         PlanType
+  status            SubscriptionStatus @default(ACTIVE)
+  billing_cycle     BillingCycle       @default(MONTHLY)
+  payment_method_id String?
+  next_billing_date DateTime?
+  last_payment_date DateTime?
+  started_at        DateTime           @default(now())
+  expires_at        DateTime?
+  cancelled_at      DateTime?
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+  profile           Profile            @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+
+  @@map("subscription")
+}
+
+model MailItem {
+  id                    String              @id @default(uuid()) @db.Uuid
+  profile_id            String?             @db.Uuid
+  business_account_id   String?             @db.Uuid
+  sender                String
+  subject               String?
+  received_at           DateTime
+  status                MailStatus          @default(RECEIVED)
+  envelope_scan_url     String?
+  full_scan_url         String?
+  has_full_scan         Boolean             @default(false)
+  tags                  String[]
+  category              String?
+  notes                 String?
+  is_archived           Boolean             @default(false)
+  assigned_to           String?             @db.Uuid
+  department            String?
+  requires_kyc_approval Boolean             @default(true)
+  kyc_approved_at       DateTime?
+  kyc_approved_by       String?             @db.Uuid
+  created_at            DateTime            @default(now())
+  updated_at            DateTime            @updatedAt
+  action_requests       MailActionRequest[]
+  business_account      BusinessAccount?    @relation(fields: [business_account_id], references: [id], onDelete: Cascade)
+  profile               Profile?            @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+
+  @@map("mail_item")
+}
+
+model MailActionRequest {
+  id                      String       @id @default(uuid()) @db.Uuid
+  mail_item_id            String       @db.Uuid
+  profile_id              String       @db.Uuid
+  action_type             ActionType
+  status                  ActionStatus @default(PENDING)
+  forward_address         String?
+  forward_tracking_number String?
+  notes                   String?
+  requires_approval       Boolean      @default(true)
+  approved_at             DateTime?
+  approved_by             String?      @db.Uuid
+  processed_at            DateTime?
+  processed_by            String?      @db.Uuid
+  completed_at            DateTime?
+  created_at              DateTime     @default(now())
+  updated_at              DateTime     @updatedAt
+  mail_item               MailItem     @relation(fields: [mail_item_id], references: [id], onDelete: Cascade)
+  profile                 Profile      @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+
+  @@map("mail_action_request")
+}
+
+enum UserType {
+  INDIVIDUAL
+  BUSINESS
+  OPERATOR
+  ADMIN
+}
+
+enum UserRole {
+  USER
+  BUSINESS_ADMIN
+  TEAM_MEMBER
+  OPERATOR
+  KYC_APPROVER
+  SYSTEM_ADMIN
+}
+
+enum KYCStatus {
+  NOT_STARTED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum KYBStatus {
+  NOT_STARTED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum PlanType {
+  BASIC
+  PREMIUM
+  BUSINESS
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  SUSPENDED
+}
+
+enum BillingCycle {
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum MailStatus {
+  RECEIVED
+  SCANNED
+  PROCESSED
+  ARCHIVED
+  FORWARDED
+  SHREDDED
+  HELD
+}
+
+enum ActionType {
+  OPEN_AND_SCAN
+  FORWARD
+  SHRED
+  HOLD
+  ARCHIVE
+}
+
+enum ActionStatus {
+  PENDING
+  APPROVED
+  IN_PROGRESS
+  COMPLETED
+  REJECTED
+  CANCELLED
 }
