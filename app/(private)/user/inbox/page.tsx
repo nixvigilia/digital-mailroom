@@ -228,19 +228,19 @@ export default async function InboxPage({searchParams}: InboxPageProps) {
   // Check KYC status
   const kycStatus = await getKYCStatus(userId);
 
-  // // Redirect to KYC page if PENDING or REJECTED
-  // if (kycStatus === "PENDING" || kycStatus === "REJECTED") {
-  //   redirect("/user/kyc");
-  // }
+  // Redirect to KYC page if PENDING or REJECTED
+  if (kycStatus === "PENDING" || kycStatus === "REJECTED") {
+    redirect("/user/kyc");
+  }
 
-  // // Show welcome content if KYC not started
-  // if (kycStatus === "NOT_STARTED") {
-  //   return (
-  //     <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
-  //       <WelcomeContent />
-  //     </Stack>
-  //   );
-  // }
+  // Show welcome content if KYC not started
+  if (kycStatus === "NOT_STARTED") {
+    return (
+      <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
+        <WelcomeContent />
+      </Stack>
+    );
+  }
 
   // Get filters from URL search params
   const searchQuery = searchParams.search || "";
