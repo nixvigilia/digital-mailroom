@@ -16,7 +16,7 @@ export function Header() {
         <Group justify="space-between" align="center">
           <Link href="/" style={{textDecoration: "none", color: "inherit"}}>
             <Title order={2} size="h3" fw={700}>
-              Digital Mailroom
+              Keep PH - Digital Mailbox
             </Title>
           </Link>
           <Group gap="lg">

@@ -770,8 +770,8 @@ function Step3Consent({
           <Divider label="Required Consents" labelPosition="center" />
 
           <Checkbox
-            label="I consent to Digital Mailroom opening and scanning my mail"
-            description="I authorize Digital Mailroom to open, scan, and digitize physical mail items addressed to me."
+            label="I consent to Keep PH - Digital Mailbox opening and scanning my mail"
+            description="I authorize Keep PH - Digital Mailbox to open, scan, and digitize physical mail items addressed to me."
             checked={formData.consentMailOpening}
             onChange={(e) =>
               updateFormData("consentMailOpening", e.currentTarget.checked)
@@ -783,7 +783,7 @@ function Step3Consent({
             label="I consent to data processing and storage"
             description={
               <>
-                I agree to Digital Mailroom processing and storing my personal
+                I agree to Keep PH - Digital Mailbox processing and storing my personal
                 data and mail content in accordance with the{" "}
                 <Anchor
                   href="/terms/privacy-policy"
@@ -819,7 +819,7 @@ function Step3Consent({
                 </Anchor>
               </>
             }
-            description="I have read and agree to the Terms of Service governing the use of Digital Mailroom services."
+            description="I have read and agree to the Terms of Service governing the use of Keep PH - Digital Mailbox services."
             checked={formData.consentTermsOfService}
             onChange={(e) =>
               updateFormData("consentTermsOfService", e.currentTarget.checked)

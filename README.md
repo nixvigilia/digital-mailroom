@@ -1,6 +1,6 @@
-# Digital Mailroom Service
+# Keep PH - Digital Mailbox
 
-A modern Digital Mailroom platform designed to **digitize incoming physical mail and make it accessible online**. This project provides an easy way to receive, view, and manage mail digitally without relying solely on traditional paper processes.
+A modern Digital Mailbox platform designed to **digitize incoming physical mail and make it accessible online**. This project provides an easy way to receive, view, and manage mail digitally without relying solely on traditional paper processes.
 
 ## Overview
 

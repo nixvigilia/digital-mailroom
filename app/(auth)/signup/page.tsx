@@ -234,7 +234,8 @@ export default function SignupPage() {
                 Create Your Account
               </Title>
               <Text c="dimmed" size="lg" maw={400}>
-                Join Digital Mailroom and start managing your mail online
+                Join Keep PH - Digital Mailbox and start managing your mail
+                online
               </Text>
             </Stack>
 

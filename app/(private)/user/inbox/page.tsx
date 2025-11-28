@@ -194,13 +194,13 @@ const mockMailItems: MailItem[] = [
 ];
 
 interface InboxPageProps {
-  searchParams: {
+  searchParams: Promise<{
     search?: string;
     status?: string;
     tag?: string;
     view?: string;
     page?: string;
-  };
+  }>;
 }
 
 async function getMailItems(userId: string): Promise<MailItem[]> {
@@ -229,25 +229,28 @@ export default async function InboxPage({searchParams}: InboxPageProps) {
   const kycStatus = await getKYCStatus(userId);
 
   // Redirect to KYC page if PENDING or REJECTED
-  if (kycStatus === "PENDING" || kycStatus === "REJECTED") {
-    redirect("/user/kyc");
-  }
+  // if (kycStatus === "PENDING" || kycStatus === "REJECTED") {
+  //   redirect("/user/kyc");
+  // }
 
   // Show welcome content if KYC not started
-  if (kycStatus === "NOT_STARTED") {
-    return (
-      <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
-        <WelcomeContent />
-      </Stack>
-    );
-  }
+  // if (kycStatus === "NOT_STARTED") {
+  //   return (
+  //     <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
+  //       <WelcomeContent />
+  //     </Stack>
+  //   );
+  // }
+
+  // Await searchParams if it's a Promise (Next.js 15)
+  const params = await searchParams;
 
   // Get filters from URL search params
-  const searchQuery = searchParams.search || "";
-  const statusFilter = searchParams.status || "all";
-  const tagFilter = searchParams.tag || "";
-  const viewMode = (searchParams.view as "inbox" | "archived") || "inbox";
-  const currentPage = parseInt(searchParams.page || "1", 10);
+  const searchQuery = params.search || "";
+  const statusFilter = params.status || "all";
+  const tagFilter = params.tag || "";
+  const viewMode = (params.view as "inbox" | "archived") || "inbox";
+  const currentPage = parseInt(params.page || "1", 10);
   const itemsPerPage = 12;
 
   // Fetch mail items

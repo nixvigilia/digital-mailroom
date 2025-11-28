@@ -30,7 +30,7 @@ export function Footer() {
               <Group gap="sm" c="gray.4">
                 <IconMapPin size={20} />
                 <Text c="gray.4">
-                  Digital Mailroom Service
+                  Keep PH - Digital Mailbox
                   <br />
                   Secure Mail Processing Facility
                 </Text>
@@ -60,7 +60,7 @@ export function Footer() {
         <Divider my="xl" color="gray.7" />
         <Group justify="space-between" align="center">
           <Text size="sm" c="gray.5">
-            © 2025 Digital Mailroom Service. All rights reserved.
+            © 2025 Keep PH - Digital Mailbox. All rights reserved.
           </Text>
           <Group gap="md">
             <Anchor href="#" c="gray.5" size="sm">

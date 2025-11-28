@@ -66,7 +66,7 @@ export function WelcomeContent() {
             <IconMail size={40} color="var(--mantine-color-blue-6)" />
           </Box>
           <Title order={1} fw={700} size="clamp(2rem, 5vw, 3rem)">
-            Welcome to Digital Mailroom
+            Welcome to Keep PH - Digital Mailbox
           </Title>
           <Text size="lg" c="dimmed" maw={600}>
             Your secure digital mail management solution. Receive, organize, and
