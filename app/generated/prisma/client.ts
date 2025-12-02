@@ -60,6 +60,11 @@ export type BusinessAccount = Prisma.BusinessAccountModel
  */
 export type TeamMember = Prisma.TeamMemberModel
 /**
+ * Model Package
+ * 
+ */
+export type Package = Prisma.PackageModel
+/**
  * Model Subscription
  * 
  */
@@ -74,3 +79,8 @@ export type MailItem = Prisma.MailItemModel
  * 
  */
 export type MailActionRequest = Prisma.MailActionRequestModel
+/**
+ * Model Referral
+ * 
+ */
+export type Referral = Prisma.ReferralModel

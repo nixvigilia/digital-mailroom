@@ -5,8 +5,12 @@ import {MailItemCard, MailItem} from "@/components/mail/MailItemCard";
 import {InboxFilters} from "@/components/inbox/InboxFilters";
 import {InboxViewToggle} from "@/components/inbox/InboxViewToggle";
 import {InboxPagination} from "@/components/inbox/InboxPagination";
-import {WelcomeContent} from "@/components/user/WelcomeContent";
-import {getCurrentUser, getKYCStatus} from "@/utils/supabase/dal";
+import {WelcomeContent} from "@/components/app/WelcomeContent";
+import {
+  getCurrentUser,
+  getKYCStatus,
+  getCurrentUserPlanType,
+} from "@/utils/supabase/dal";
 import {redirect} from "next/navigation";
 
 // Mock data - will be replaced with backend integration
@@ -214,11 +218,9 @@ async function getMailItems(userId: string): Promise<MailItem[]> {
 }
 
 export default async function InboxPage({searchParams}: InboxPageProps) {
-  // Middleware already handles authentication, so we can use getCurrentUser
-  // which doesn't redirect (middleware already protects this route)
   const currentUser = await getCurrentUser();
 
-  // This should never be null since middleware protects /user routes
+  // This should never be null since middleware protects /app routes
   if (!currentUser) {
     redirect("/login");
   }
@@ -229,18 +231,26 @@ export default async function InboxPage({searchParams}: InboxPageProps) {
   const kycStatus = await getKYCStatus(userId);
 
   // Redirect to KYC page if PENDING or REJECTED
-  // if (kycStatus === "PENDING" || kycStatus === "REJECTED") {
-  //   redirect("/user/kyc");
-  // }
+  if (kycStatus === "PENDING" || kycStatus === "REJECTED") {
+    redirect("/app/kyc");
+  }
+
+  // Get user's plan type
+  const planType = await getCurrentUserPlanType();
+
+  // Redirect free users to pricing page
+  if (planType === "FREE") {
+    redirect("/app/pricing");
+  }
 
   // Show welcome content if KYC not started
-  // if (kycStatus === "NOT_STARTED") {
-  //   return (
-  //     <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
-  //       <WelcomeContent />
-  //     </Stack>
-  //   );
-  // }
+  if (kycStatus === "NOT_STARTED") {
+    return (
+      <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
+        <WelcomeContent planType={planType} />
+      </Stack>
+    );
+  }
 
   // Await searchParams if it's a Promise (Next.js 15)
   const params = await searchParams;

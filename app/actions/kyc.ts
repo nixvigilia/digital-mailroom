@@ -138,9 +138,9 @@ export async function submitKYC(formData: {
       },
     });
 
-    revalidatePath("/user/kyc");
-    revalidatePath("/user/inbox");
-    revalidatePath("/user/welcome");
+    revalidatePath("/app/kyc");
+    revalidatePath("/app/dashboard");
+    revalidatePath("/app/welcome");
 
     return {
       success: true,

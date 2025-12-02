@@ -35,7 +35,7 @@ const mockArchivedItems: MailItem[] = [
   },
 ];
 
-export default function ArchivedPage() {
+export function ArchivedPageClient() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [tagFilter, setTagFilter] = useState<string>("");
@@ -43,9 +43,14 @@ export default function ArchivedPage() {
 
   const filteredItems = mailItems.filter((item) => {
     if (statusFilter !== "all" && item.status !== statusFilter) return false;
-    if (searchQuery && !item.sender?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        !item.subject?.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-    if (tagFilter && tagFilter !== "" && !item.tags?.includes(tagFilter)) return false;
+    if (
+      searchQuery &&
+      !item.sender?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !item.subject?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+      return false;
+    if (tagFilter && tagFilter !== "" && !item.tags?.includes(tagFilter))
+      return false;
     return true;
   });
 
@@ -62,7 +67,8 @@ export default function ArchivedPage() {
             Archived
           </Title>
           <Text c="dimmed" size="lg">
-            {filteredItems.length} {filteredItems.length === 1 ? "item" : "items"}
+            {filteredItems.length}{" "}
+            {filteredItems.length === 1 ? "item" : "items"}
           </Text>
         </Stack>
       </Group>
@@ -83,13 +89,11 @@ export default function ArchivedPage() {
                 placeholder="Filter by tag"
                 leftSection={<IconTag size={16} />}
                 value={tagFilter}
-                onChange={setTagFilter}
+                onChange={(value) => setTagFilter(value || "")}
                 data={[
                   {value: "", label: "All Tags"},
                   ...allTags.map((tag) => ({value: tag, label: tag})),
                 ]}
-                value={tagFilter}
-                onChange={(value) => setTagFilter(value || "")}
                 clearable
                 style={{minWidth: 150}}
               />
@@ -121,4 +125,3 @@ export default function ArchivedPage() {
     </Stack>
   );
 }
-

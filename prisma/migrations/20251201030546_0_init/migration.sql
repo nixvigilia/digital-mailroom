@@ -1,3 +1,6 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
 -- CreateEnum
 CREATE TYPE "UserType" AS ENUM ('INDIVIDUAL', 'BUSINESS', 'OPERATOR', 'ADMIN');
 
@@ -120,10 +123,33 @@ CREATE TABLE "team_member" (
 );
 
 -- CreateTable
+CREATE TABLE "package" (
+    "id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "plan_type" TEXT NOT NULL,
+    "description" TEXT,
+    "price_monthly" DECIMAL(10,2) NOT NULL,
+    "price_quarterly" DECIMAL(10,2),
+    "price_yearly" DECIMAL(10,2),
+    "features" TEXT[],
+    "max_mail_items" INTEGER,
+    "max_team_members" INTEGER,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
+    "is_featured" BOOLEAN NOT NULL DEFAULT false,
+    "display_order" INTEGER NOT NULL DEFAULT 0,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "created_by" UUID,
+
+    CONSTRAINT "package_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "subscription" (
     "id" UUID NOT NULL,
     "profile_id" UUID NOT NULL,
-    "plan_type" "PlanType" NOT NULL,
+    "package_id" UUID,
+    "plan_type" TEXT NOT NULL,
     "status" "SubscriptionStatus" NOT NULL DEFAULT 'ACTIVE',
     "billing_cycle" "BillingCycle" NOT NULL DEFAULT 'MONTHLY',
     "payment_method_id" TEXT,
@@ -202,6 +228,9 @@ CREATE UNIQUE INDEX "team_member_invitation_token_key" ON "team_member"("invitat
 -- CreateIndex
 CREATE UNIQUE INDEX "team_member_profile_id_business_account_id_key" ON "team_member"("profile_id", "business_account_id");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "package_plan_type_key" ON "package"("plan_type");
+
 -- AddForeignKey
 ALTER TABLE "kyc_verification" ADD CONSTRAINT "kyc_verification_profile_id_fkey" FOREIGN KEY ("profile_id") REFERENCES "profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -216,6 +245,9 @@ ALTER TABLE "team_member" ADD CONSTRAINT "team_member_profile_id_fkey" FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE "subscription" ADD CONSTRAINT "subscription_profile_id_fkey" FOREIGN KEY ("profile_id") REFERENCES "profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "subscription" ADD CONSTRAINT "subscription_package_id_fkey" FOREIGN KEY ("package_id") REFERENCES "package"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "mail_item" ADD CONSTRAINT "mail_item_business_account_id_fkey" FOREIGN KEY ("business_account_id") REFERENCES "business_account"("id") ON DELETE CASCADE ON UPDATE CASCADE;

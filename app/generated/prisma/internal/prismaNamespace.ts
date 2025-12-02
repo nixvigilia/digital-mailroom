@@ -388,9 +388,11 @@ export const ModelName = {
   KYCVerification: 'KYCVerification',
   BusinessAccount: 'BusinessAccount',
   TeamMember: 'TeamMember',
+  Package: 'Package',
   Subscription: 'Subscription',
   MailItem: 'MailItem',
-  MailActionRequest: 'MailActionRequest'
+  MailActionRequest: 'MailActionRequest',
+  Referral: 'Referral'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -406,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "profile" | "kYCVerification" | "businessAccount" | "teamMember" | "subscription" | "mailItem" | "mailActionRequest"
+    modelProps: "profile" | "kYCVerification" | "businessAccount" | "teamMember" | "package" | "subscription" | "mailItem" | "mailActionRequest" | "referral"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -706,6 +708,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Package: {
+      payload: Prisma.$PackagePayload<ExtArgs>
+      fields: Prisma.PackageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PackageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PackagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PackageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PackagePayload>
+        }
+        findFirst: {
+          args: Prisma.PackageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PackagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PackageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PackagePayload>
+        }
+        findMany: {
+          args: Prisma.PackageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PackagePayload>[]
+        }
+        create: {
+          args: Prisma.PackageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PackagePayload>
+        }
+        createMany: {
+          args: Prisma.PackageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PackageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PackagePayload>[]
+        }
+        delete: {
+          args: Prisma.PackageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PackagePayload>
+        }
+        update: {
+          args: Prisma.PackageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PackagePayload>
+        }
+        deleteMany: {
+          args: Prisma.PackageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PackageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PackageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PackagePayload>[]
+        }
+        upsert: {
+          args: Prisma.PackageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PackagePayload>
+        }
+        aggregate: {
+          args: Prisma.PackageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePackage>
+        }
+        groupBy: {
+          args: Prisma.PackageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PackageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PackageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PackageCountAggregateOutputType> | number
+        }
+      }
+    }
     Subscription: {
       payload: Prisma.$SubscriptionPayload<ExtArgs>
       fields: Prisma.SubscriptionFieldRefs
@@ -928,6 +1004,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Referral: {
+      payload: Prisma.$ReferralPayload<ExtArgs>
+      fields: Prisma.ReferralFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReferralFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReferralFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralPayload>
+        }
+        findFirst: {
+          args: Prisma.ReferralFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReferralFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralPayload>
+        }
+        findMany: {
+          args: Prisma.ReferralFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralPayload>[]
+        }
+        create: {
+          args: Prisma.ReferralCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralPayload>
+        }
+        createMany: {
+          args: Prisma.ReferralCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReferralCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralPayload>[]
+        }
+        delete: {
+          args: Prisma.ReferralDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralPayload>
+        }
+        update: {
+          args: Prisma.ReferralUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralPayload>
+        }
+        deleteMany: {
+          args: Prisma.ReferralDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReferralUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReferralUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralPayload>[]
+        }
+        upsert: {
+          args: Prisma.ReferralUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralPayload>
+        }
+        aggregate: {
+          args: Prisma.ReferralAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReferral>
+        }
+        groupBy: {
+          args: Prisma.ReferralGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReferralGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReferralCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReferralCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -969,9 +1119,10 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const ProfileScalarFieldEnum = {
   id: 'id',
-  full_name: 'full_name',
   avatar_url: 'avatar_url',
   email: 'email',
+  referral_code: 'referral_code',
+  referred_by: 'referred_by',
   updated_at: 'updated_at',
   created_at: 'created_at',
   user_type: 'user_type',
@@ -1055,9 +1206,32 @@ export const TeamMemberScalarFieldEnum = {
 export type TeamMemberScalarFieldEnum = (typeof TeamMemberScalarFieldEnum)[keyof typeof TeamMemberScalarFieldEnum]
 
 
+export const PackageScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  plan_type: 'plan_type',
+  description: 'description',
+  price_monthly: 'price_monthly',
+  price_quarterly: 'price_quarterly',
+  price_yearly: 'price_yearly',
+  features: 'features',
+  max_mail_items: 'max_mail_items',
+  max_team_members: 'max_team_members',
+  is_active: 'is_active',
+  is_featured: 'is_featured',
+  display_order: 'display_order',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by'
+} as const
+
+export type PackageScalarFieldEnum = (typeof PackageScalarFieldEnum)[keyof typeof PackageScalarFieldEnum]
+
+
 export const SubscriptionScalarFieldEnum = {
   id: 'id',
   profile_id: 'profile_id',
+  package_id: 'package_id',
   plan_type: 'plan_type',
   status: 'status',
   billing_cycle: 'billing_cycle',
@@ -1121,6 +1295,21 @@ export const MailActionRequestScalarFieldEnum = {
 } as const
 
 export type MailActionRequestScalarFieldEnum = (typeof MailActionRequestScalarFieldEnum)[keyof typeof MailActionRequestScalarFieldEnum]
+
+
+export const ReferralScalarFieldEnum = {
+  id: 'id',
+  referrer_id: 'referrer_id',
+  referred_id: 'referred_id',
+  referral_code: 'referral_code',
+  status: 'status',
+  earnings: 'earnings',
+  subscription_plan: 'subscription_plan',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type ReferralScalarFieldEnum = (typeof ReferralScalarFieldEnum)[keyof typeof ReferralScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1259,16 +1448,30 @@ export type ListEnumInvitationStatusFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
- * Reference to a field of type 'PlanType'
+ * Reference to a field of type 'Decimal'
  */
-export type EnumPlanTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PlanType'>
+export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
     
 
 
 /**
- * Reference to a field of type 'PlanType[]'
+ * Reference to a field of type 'Decimal[]'
  */
-export type ListEnumPlanTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PlanType[]'>
+export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -1343,16 +1546,16 @@ export type ListEnumActionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
- * Reference to a field of type 'Int'
+ * Reference to a field of type 'Float'
  */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
     
 
 
 /**
- * Reference to a field of type 'Int[]'
+ * Reference to a field of type 'Float[]'
  */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 /**
@@ -1438,9 +1641,11 @@ export type GlobalOmitConfig = {
   kYCVerification?: Prisma.KYCVerificationOmit
   businessAccount?: Prisma.BusinessAccountOmit
   teamMember?: Prisma.TeamMemberOmit
+  package?: Prisma.PackageOmit
   subscription?: Prisma.SubscriptionOmit
   mailItem?: Prisma.MailItemOmit
   mailActionRequest?: Prisma.MailActionRequestOmit
+  referral?: Prisma.ReferralOmit
 }
 
 /* Types for Logging */

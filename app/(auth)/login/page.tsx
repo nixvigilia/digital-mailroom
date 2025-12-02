@@ -45,8 +45,8 @@ export default function LoginPage() {
           color: "green",
           icon: <IconCheck size={18} />,
         });
-        // Redirect to user inbox
-        router.push("/user/inbox");
+        // Redirect to user dashboard
+        router.push("/app");
       } else {
         notifications.show({
           title: "Error",

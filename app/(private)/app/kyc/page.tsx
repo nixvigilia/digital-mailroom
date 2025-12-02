@@ -89,7 +89,7 @@ export default function KYCPage() {
       const status = await getKYCStatus();
       setKycStatusState(status);
       if (status === "APPROVED") {
-        router.push("/user/inbox");
+        router.push("/app/dashboard");
       } else if (status === "PENDING") {
         setActive(3); // Show review step if pending
       }
@@ -211,7 +211,7 @@ export default function KYCPage() {
 
         // Redirect to inbox after submission (will be blocked until approved)
         setTimeout(() => {
-          router.push("/user/inbox");
+          router.push("/app/dashboard");
         }, 2000);
       } else {
         notifications.show({
@@ -783,8 +783,8 @@ function Step3Consent({
             label="I consent to data processing and storage"
             description={
               <>
-                I agree to Keep PH - Digital Mailbox processing and storing my personal
-                data and mail content in accordance with the{" "}
+                I agree to Keep PH - Digital Mailbox processing and storing my
+                personal data and mail content in accordance with the{" "}
                 <Anchor
                   href="/terms/privacy-policy"
                   target="_blank"

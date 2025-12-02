@@ -23,8 +23,9 @@ import {
   IconSearch,
   IconSun,
   IconMoon,
+  IconLayoutDashboard,
 } from "@tabler/icons-react";
-import {UserButton} from "./UserButton";
+import {UserButton} from "@/components/user/UserButton";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
 import {signOut} from "@/app/actions/auth";
@@ -35,24 +36,41 @@ export interface NavbarSearchRef {
 }
 
 const mainLinks = [
-  {icon: IconInbox, label: "Inbox", href: "/user/inbox"},
-  {icon: IconArchive, label: "Archived", href: "/user/archived"},
-  {icon: IconTag, label: "Tags & Categories", href: "/user/tags"},
-  {icon: IconSettings, label: "Settings", href: "/user/settings"},
-  {icon: IconCreditCard, label: "Billing", href: "/user/billing"},
+  {icon: IconLayoutDashboard, label: "Dashboard", href: "/app"},
+  {icon: IconInbox, label: "Inbox", href: "/app/inbox"},
+  {icon: IconArchive, label: "Archived", href: "/app/archived"},
+  {icon: IconTag, label: "Tags & Categories", href: "/app/tags"},
+  {icon: IconSettings, label: "Settings", href: "/app/settings"},
+  {icon: IconCreditCard, label: "Billing", href: "/app/billing"},
+  {icon: IconCreditCard, label: "Pricing", href: "/app/pricing"},
 ];
 
 export function NavbarSearch({
   searchRef,
+  planType,
 }: {
   searchRef?: React.RefObject<HTMLInputElement | null>;
+  planType?: string;
 }) {
   const pathname = usePathname();
   const {colorScheme, toggleColorScheme} = useMantineColorScheme();
   const internalSearchRef = useRef<HTMLInputElement>(null);
   const searchInputRef = searchRef || internalSearchRef;
+  const isFreePlan = planType === "FREE";
 
-  const mainLinksElements = mainLinks.map((link) => {
+  // Filter links based on plan type
+  // Dashboard is available to all users
+  // Pricing is only for free users
+  const visibleLinks = isFreePlan
+    ? mainLinks.filter(
+        (link) =>
+          link.href === "/app" ||
+          link.href === "/app/pricing" ||
+          link.href === "/app/settings"
+      )
+    : mainLinks.filter((link) => link.href !== "/app/pricing"); // Hide pricing for paid users, show everything else
+
+  const mainLinksElements = visibleLinks.map((link) => {
     const Icon = link.icon;
     const isActive = pathname === link.href;
     return (

@@ -55,9 +55,11 @@ export const ModelName = {
   KYCVerification: 'KYCVerification',
   BusinessAccount: 'BusinessAccount',
   TeamMember: 'TeamMember',
+  Package: 'Package',
   Subscription: 'Subscription',
   MailItem: 'MailItem',
-  MailActionRequest: 'MailActionRequest'
+  MailActionRequest: 'MailActionRequest',
+  Referral: 'Referral'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -78,9 +80,10 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const ProfileScalarFieldEnum = {
   id: 'id',
-  full_name: 'full_name',
   avatar_url: 'avatar_url',
   email: 'email',
+  referral_code: 'referral_code',
+  referred_by: 'referred_by',
   updated_at: 'updated_at',
   created_at: 'created_at',
   user_type: 'user_type',
@@ -164,9 +167,32 @@ export const TeamMemberScalarFieldEnum = {
 export type TeamMemberScalarFieldEnum = (typeof TeamMemberScalarFieldEnum)[keyof typeof TeamMemberScalarFieldEnum]
 
 
+export const PackageScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  plan_type: 'plan_type',
+  description: 'description',
+  price_monthly: 'price_monthly',
+  price_quarterly: 'price_quarterly',
+  price_yearly: 'price_yearly',
+  features: 'features',
+  max_mail_items: 'max_mail_items',
+  max_team_members: 'max_team_members',
+  is_active: 'is_active',
+  is_featured: 'is_featured',
+  display_order: 'display_order',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  created_by: 'created_by'
+} as const
+
+export type PackageScalarFieldEnum = (typeof PackageScalarFieldEnum)[keyof typeof PackageScalarFieldEnum]
+
+
 export const SubscriptionScalarFieldEnum = {
   id: 'id',
   profile_id: 'profile_id',
+  package_id: 'package_id',
   plan_type: 'plan_type',
   status: 'status',
   billing_cycle: 'billing_cycle',
@@ -230,6 +256,21 @@ export const MailActionRequestScalarFieldEnum = {
 } as const
 
 export type MailActionRequestScalarFieldEnum = (typeof MailActionRequestScalarFieldEnum)[keyof typeof MailActionRequestScalarFieldEnum]
+
+
+export const ReferralScalarFieldEnum = {
+  id: 'id',
+  referrer_id: 'referrer_id',
+  referred_id: 'referred_id',
+  referral_code: 'referral_code',
+  status: 'status',
+  earnings: 'earnings',
+  subscription_plan: 'subscription_plan',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type ReferralScalarFieldEnum = (typeof ReferralScalarFieldEnum)[keyof typeof ReferralScalarFieldEnum]
 
 
 export const SortOrder = {

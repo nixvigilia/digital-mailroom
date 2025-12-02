@@ -4,6 +4,7 @@ import {cache} from "react";
 import {redirect} from "next/navigation";
 import {createClient} from "@/utils/supabase/server";
 import {prisma} from "@/utils/prisma";
+import {SubscriptionStatus} from "@/app/generated/prisma/enums";
 
 export const verifySession = cache(async () => {
   const supabase = await createClient();
@@ -40,7 +41,6 @@ export const getUserProfile = cache(async (userId: string) => {
       select: {
         id: true,
         email: true,
-        full_name: true,
         avatar_url: true,
         user_type: true,
         role: true,
@@ -93,4 +93,45 @@ export const getCurrentUserKYCStatus = cache(async (): Promise<string> => {
     return "NOT_STARTED";
   }
   return await getKYCStatus(currentUser.userId);
+});
+
+/**
+ * Get the user's plan type
+ * Returns the plan_type string (e.g., "FREE", "BASIC", "PREMIUM")
+ * Returns "FREE" if no active subscription exists
+ */
+export const getUserPlanType = cache(
+  async (userId: string): Promise<string> => {
+    try {
+      const subscription = await prisma.subscription.findFirst({
+        where: {
+          profile_id: userId,
+          status: SubscriptionStatus.ACTIVE,
+        },
+        select: {
+          plan_type: true,
+        },
+        orderBy: {
+          started_at: "desc",
+        },
+      });
+
+      return subscription?.plan_type || "FREE";
+    } catch (error) {
+      console.error("Error fetching user plan type:", error);
+      // If it's a connection error, return FREE and log it
+      if (error instanceof Error) {
+        console.error("Database connection error:", error.message);
+      }
+      return "FREE"; // Default to FREE on error
+    }
+  }
+);
+
+/**
+ * Get the current user's plan type
+ */
+export const getCurrentUserPlanType = cache(async (): Promise<string> => {
+  const session = await verifySession();
+  return await getUserPlanType(session.userId);
 });

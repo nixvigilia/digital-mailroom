@@ -54,17 +54,15 @@ export function UserButton() {
             {user?.email || ""}
           </Text>
         </Box>
-        <IconChevronDown
+        {/* <IconChevronDown
           size={18}
           stroke={1.5}
           style={{
             color: "var(--mantine-color-gray-5)",
             flexShrink: 0,
           }}
-        />
+        /> */}
       </Group>
     </UnstyledButton>
   );
 }
-
-

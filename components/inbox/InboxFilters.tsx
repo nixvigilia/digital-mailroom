@@ -46,7 +46,7 @@ export function InboxFilters({allTags}: InboxFiltersProps) {
     }
     // Reset to page 1 when filters change
     params.delete("page");
-    router.push(`/user/inbox?${params.toString()}`);
+    router.push(`/app/dashboard?${params.toString()}`);
   };
 
   return (
@@ -95,7 +95,12 @@ export function InboxFilters({allTags}: InboxFiltersProps) {
         </Group>
         {(searchQuery || statusFilter !== "all" || tagFilter) && (
           <Group gap="xs">
-            <span style={{fontSize: "0.875rem", color: "var(--mantine-color-dimmed)"}}>
+            <span
+              style={{
+                fontSize: "0.875rem",
+                color: "var(--mantine-color-dimmed)",
+              }}
+            >
               Active filters:
             </span>
             {searchQuery && (
@@ -161,4 +166,3 @@ export function InboxFilters({allTags}: InboxFiltersProps) {
     </Paper>
   );
 }
-

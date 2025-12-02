@@ -8,14 +8,17 @@ interface InboxPaginationProps {
   currentPage: number;
 }
 
-export function InboxPagination({totalPages, currentPage}: InboxPaginationProps) {
+export function InboxPagination({
+  totalPages,
+  currentPage,
+}: InboxPaginationProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", page.toString());
-    router.push(`/user/inbox?${params.toString()}`);
+    router.push(`/app/dashboard?${params.toString()}`);
   };
 
   if (totalPages <= 1) return null;
@@ -33,4 +36,3 @@ export function InboxPagination({totalPages, currentPage}: InboxPaginationProps)
     </Group>
   );
 }
-
