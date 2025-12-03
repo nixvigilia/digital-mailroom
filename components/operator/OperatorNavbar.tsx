@@ -13,8 +13,11 @@ import {
   IconTruck,
   IconTrash,
   IconPackage,
+  IconUsers,
+  IconHistory,
+  IconMail,
 } from "@tabler/icons-react";
-import {UserButton} from "@/components/user/appButton";
+import {UserButton} from "@/components/user/UserButton";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
 import {signOut} from "@/app/actions/auth";
@@ -26,9 +29,10 @@ export interface OperatorNavbarRef {
 
 const mainLinks = [
   {icon: IconLayoutDashboard, label: "Dashboard", href: "/operator"},
+  {icon: IconMail, label: "Receive Mail", href: "/operator/receive"},
   {icon: IconInbox, label: "Action Queue", href: "/operator/queue"},
   {icon: IconChecklist, label: "KYC/KYB Review", href: "/operator/approvals"},
-  {icon: IconPackage, label: "Packages & Pricing", href: "/operator/packages"},
+  // {icon: IconPackage, label: "Packages & Pricing", href: "/operator/packages"},
   {icon: IconScan, label: "Scanning", href: "/operator/scanning"},
   {icon: IconTruck, label: "Forwarding", href: "/operator/forwarding"},
   {icon: IconTrash, label: "Shredding", href: "/operator/shredding"},
@@ -36,8 +40,10 @@ const mainLinks = [
 
 export function OperatorNavbar({
   searchRef,
+  user,
 }: {
   searchRef?: React.RefObject<HTMLInputElement | null>;
+  user?: any;
 }) {
   const pathname = usePathname();
   const {colorScheme, toggleColorScheme} = useMantineColorScheme();
@@ -65,7 +71,7 @@ export function OperatorNavbar({
     <nav className={classes.navbar}>
       {/* User Account Section */}
       <div className={classes.userSection}>
-        <UserButton />
+        <UserButton user={user} />
       </div>
 
       {/* Navigation Links */}

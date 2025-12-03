@@ -8,9 +8,13 @@ import {OperatorNavbar} from "@/components/operator/OperatorNavbar";
 
 interface OperatorLayoutClientProps {
   children: React.ReactNode;
+  user: any;
 }
 
-export function OperatorLayoutClient({children}: OperatorLayoutClientProps) {
+export function OperatorLayoutClient({
+  children,
+  user,
+}: OperatorLayoutClientProps) {
   const [opened, {toggle, close}] = useDisclosure(false);
   const {colorScheme, toggleColorScheme} = useMantineColorScheme();
 
@@ -18,7 +22,7 @@ export function OperatorLayoutClient({children}: OperatorLayoutClientProps) {
     <Box style={{display: "flex", minHeight: "100vh"}}>
       {/* Desktop Sidebar */}
       <Box visibleFrom="md" style={{flexShrink: 0}}>
-        <OperatorNavbar />
+        <OperatorNavbar user={user} />
       </Box>
 
       {/* Main Content */}
@@ -53,7 +57,7 @@ export function OperatorLayoutClient({children}: OperatorLayoutClientProps) {
           size="300px"
           styles={{body: {padding: 0}}}
         >
-          <OperatorNavbar />
+          <OperatorNavbar user={user} />
         </Drawer>
 
         {/* Page Content */}
@@ -72,5 +76,3 @@ export function OperatorLayoutClient({children}: OperatorLayoutClientProps) {
     </Box>
   );
 }
-
-

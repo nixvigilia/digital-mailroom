@@ -23,6 +23,16 @@ export * from './enums';
  */
 export type Profile = Prisma.ProfileModel
 /**
+ * Model BackofficeProfile
+ * 
+ */
+export type BackofficeProfile = Prisma.BackofficeProfileModel
+/**
+ * Model ActivityLog
+ * 
+ */
+export type ActivityLog = Prisma.ActivityLogModel
+/**
  * Model KYCVerification
  * 
  */

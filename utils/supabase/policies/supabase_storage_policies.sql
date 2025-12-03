@@ -50,3 +50,25 @@ using (
   bucket_id = 'keep' and
   public.is_operator() = true
 );
+
+-- Policy 5: Users can read (download) their own mail item files
+-- REQUIRED for users to see their mail scans
+create policy "Users can view their own mail items"
+on storage.objects for select
+to authenticated
+using (
+  bucket_id = 'keep' and
+  (storage.foldername(name))[1] = 'mail-items' and
+  (storage.foldername(name))[2] = auth.uid()::text
+);
+
+-- Policy 6: Operators can read ALL mail item files
+-- REQUIRED for operators to view mail scans
+create policy "Operators can view all mail items"
+on storage.objects for select
+to authenticated
+using (
+  bucket_id = 'keep' and
+  (storage.foldername(name))[1] = 'mail-items' and
+  public.is_operator() = true
+);

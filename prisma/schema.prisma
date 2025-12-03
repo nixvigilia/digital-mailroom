@@ -18,8 +18,11 @@ model Profile {
   created_at           DateTime             @default(now())
   user_type            UserType             @default(INDIVIDUAL)
   role                 UserRole             @default(USER)
+  password_hint        String?
+  integration_email    String?
   business_account     BusinessAccount?
   kyc_verification     KYCVerification?
+  backoffice_profile   BackofficeProfile?
   mail_action_requests MailActionRequest[]
   mail_items           MailItem[]
   subscriptions        Subscription[]
@@ -27,8 +30,38 @@ model Profile {
   team_memberships     TeamMember[]
   referrals            Referral[]           @relation("Referrer")
   referred_users       Referral[]           @relation("Referred")
+  activity_logs        ActivityLog[]
 
   @@map("profile")
+}
+
+model BackofficeProfile {
+  id         String   @id @default(uuid()) @db.Uuid
+  profile_id String   @unique @db.Uuid
+  first_name String
+  last_name  String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  profile    Profile  @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+
+  @@map("backoffice_profile")
+}
+
+model ActivityLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  profile_id  String   @db.Uuid
+  action      String
+  entity_type String?
+  entity_id   String?
+  details     Json?
+  ip_address  String?
+  user_agent  String?
+  created_at  DateTime @default(now())
+
+  profile Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+
+  @@index([profile_id])
+  @@map("activity_log")
 }
 
 model KYCVerification {

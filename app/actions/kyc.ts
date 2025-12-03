@@ -4,6 +4,7 @@ import {verifySession} from "@/utils/supabase/dal";
 import {prisma} from "@/utils/prisma";
 import {revalidatePath} from "next/cache";
 import {createAdminClient} from "@/utils/supabase/admin";
+import {logActivity} from "./activity-log";
 
 export type ActionResult =
   | {success: true; message: string}
@@ -188,6 +189,12 @@ export async function submitKYC(formData: FormData): Promise<ActionResult> {
         status: "PENDING",
         submitted_at: new Date(),
       },
+    });
+
+    // Log Activity
+    await logActivity(userId, "KYC_SUBMIT", {
+      submitted_at: new Date().toISOString(),
+      id_type: idType,
     });
 
     revalidatePath("/app/kyc");

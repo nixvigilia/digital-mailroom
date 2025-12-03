@@ -1,6 +1,7 @@
 import {
   getCurrentUserPlanType,
-  getCurrentUserKYCStatus,
+  getCurrentUser,
+  getKYCData,
 } from "@/utils/supabase/dal";
 import {getReferralData} from "@/lib/referrals";
 import {getFreePlanData} from "@/lib/packages";
@@ -15,7 +16,11 @@ import {DashboardSkeleton} from "@/components/user/skeletons/DashboardSkeleton";
 export default async function UserDashboardPage() {
   // We can fetch plan type immediately as it's fast (cached)
   const planType = await getCurrentUserPlanType();
-  const kycStatus = await getCurrentUserKYCStatus();
+
+  const currentUser = await getCurrentUser();
+  const kycData = currentUser ? await getKYCData(currentUser.userId) : null;
+  const kycStatus = kycData?.status || "NOT_STARTED";
+  const rejectionReason = kycData?.rejection_reason || null;
 
   // Start fetching referral data but don't await it
   // This creates a Promise we can pass to the client component
@@ -27,6 +32,7 @@ export default async function UserDashboardPage() {
       <UserDashboardClient
         planType={planType}
         kycStatus={kycStatus}
+        rejectionReason={rejectionReason}
         referralDataPromise={referralDataPromise}
         freePlanDataPromise={freePlanDataPromise}
       />

@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {
   Title,
   Text,
@@ -19,6 +19,10 @@ import {
   Alert,
   Image,
   Divider,
+  Textarea,
+  Loader,
+  Center,
+  SimpleGrid,
 } from "@mantine/core";
 import {
   IconUserCheck,
@@ -30,134 +34,166 @@ import {
   IconFileText,
   IconBuilding,
   IconId,
+  IconRefresh,
 } from "@tabler/icons-react";
 import {notifications} from "@mantine/notifications";
+import {
+  getKYCRequestDetails,
+  reviewKYCRequest,
+  KYCRequest,
+  KYCDetails,
+} from "@/app/actions/operator-kyc";
+import useSWR, {mutate} from "swr";
 
-// Mock KYC/KYB submissions - will be replaced with backend
-interface VerificationSubmission {
-  id: string;
-  userId: string;
-  userName: string;
-  userType: "individual" | "business";
-  type: "kyc" | "kyb";
-  status: "pending" | "approved" | "rejected";
-  submittedAt: Date;
-  businessName?: string;
-  department?: string;
-}
-
-const mockSubmissions: VerificationSubmission[] = [
-  {
-    id: "1",
-    userId: "user-1",
-    userName: "John Doe",
-    userType: "individual",
-    type: "kyc",
-    status: "pending",
-    submittedAt: new Date("2025-01-14T10:00:00"),
-  },
-  {
-    id: "2",
-    userId: "user-2",
-    userName: "Jane Smith",
-    userType: "business",
-    type: "kyb",
-    status: "pending",
-    submittedAt: new Date("2025-01-13T14:30:00"),
-    businessName: "ABC Corporation",
-    department: "Finance",
-  },
-  {
-    id: "3",
-    userId: "user-3",
-    userName: "Mike Johnson",
-    userType: "individual",
-    type: "kyc",
-    status: "approved",
-    submittedAt: new Date("2025-01-10T09:15:00"),
-  },
-];
+const fetcher = (url: string) =>
+  fetch(url)
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.success) return res.data;
+      throw new Error(res.message);
+    });
 
 export default function ApprovalsPage() {
-  const [submissions, setSubmissions] = useState<VerificationSubmission[]>(mockSubmissions);
-  const [selectedSubmission, setSelectedSubmission] = useState<VerificationSubmission | null>(null);
+  const {
+    data: submissions = [],
+    error,
+    isLoading,
+    mutate: refreshSubmissions,
+  } = useSWR<KYCRequest[]>("/api/operator/kyc/approvals", fetcher);
+
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<KYCDetails | null>(null);
+  const [detailsLoading, setDetailsLoading] = useState(false);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("pending");
-  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("PENDING");
+  const [rejectionReason, setRejectionReason] = useState("");
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (error) {
+      notifications.show({
+        title: "Error",
+        message: error.message || "Failed to fetch submissions",
+        color: "red",
+      });
+    }
+  }, [error]);
 
   const filteredSubmissions = submissions.filter((sub) => {
     if (statusFilter !== "all" && sub.status !== statusFilter) return false;
-    if (typeFilter !== "all" && sub.type !== typeFilter) return false;
+    // Currently only handling KYC, so type filter is implicit or we can add it back later if KYB is mixed in
+    const fullName = `${sub.firstName} ${sub.lastName}`;
     if (
       searchQuery &&
-      !sub.userName.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !sub.businessName?.toLowerCase().includes(searchQuery.toLowerCase())
+      !fullName.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !sub.email.toLowerCase().includes(searchQuery.toLowerCase())
     )
       return false;
     return true;
   });
 
-  const handleReview = (submission: VerificationSubmission) => {
-    setSelectedSubmission(submission);
+  const handleReview = async (id: string) => {
+    setDetailsLoading(true);
     setReviewModalOpen(true);
+    const result = await getKYCRequestDetails(id);
+    if (result.success && result.data) {
+      setSelectedSubmission(result.data);
+    } else {
+      notifications.show({
+        title: "Error",
+        message: result.message || "Failed to fetch details",
+        color: "red",
+      });
+      setReviewModalOpen(false);
+    }
+    setDetailsLoading(false);
   };
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
     if (!selectedSubmission) return;
-    // TODO: Implement actual approval API call
-    setSubmissions(
-      submissions.map((s) =>
-        s.id === selectedSubmission.id ? {...s, status: "approved"} : s
-      )
-    );
-    setReviewModalOpen(false);
-    setSelectedSubmission(null);
-    notifications.show({
-      title: "Success",
-      message: "Verification approved successfully",
-      color: "green",
-    });
+
+    const result = await reviewKYCRequest(selectedSubmission.id, "APPROVED");
+
+    if (result.success) {
+      notifications.show({
+        title: "Success",
+        message: "Verification approved successfully",
+        color: "green",
+      });
+      setReviewModalOpen(false);
+      setSelectedSubmission(null);
+      refreshSubmissions();
+    } else {
+      notifications.show({
+        title: "Error",
+        message: result.message || "Failed to approve",
+        color: "red",
+      });
+    }
   };
 
-  const handleReject = () => {
+  const handleReject = async () => {
     if (!selectedSubmission) return;
-    // TODO: Implement actual rejection API call
-    setSubmissions(
-      submissions.map((s) =>
-        s.id === selectedSubmission.id ? {...s, status: "rejected"} : s
-      )
+    if (!rejectionReason.trim()) {
+      notifications.show({
+        title: "Error",
+        message: "Please provide a rejection reason",
+        color: "red",
+      });
+      return;
+    }
+
+    const result = await reviewKYCRequest(
+      selectedSubmission.id,
+      "REJECTED",
+      rejectionReason
     );
-    setReviewModalOpen(false);
-    setSelectedSubmission(null);
-    notifications.show({
-      title: "Success",
-      message: "Verification rejected",
-      color: "orange",
-    });
+
+    if (result.success) {
+      notifications.show({
+        title: "Success",
+        message: "Verification rejected",
+        color: "orange",
+      });
+      setRejectModalOpen(false);
+      setReviewModalOpen(false);
+      setSelectedSubmission(null);
+      setRejectionReason("");
+      refreshSubmissions();
+    } else {
+      notifications.show({
+        title: "Error",
+        message: result.message || "Failed to reject",
+        color: "red",
+      });
+    }
   };
 
   const statusColors: Record<string, string> = {
-    pending: "yellow",
-    approved: "green",
-    rejected: "red",
+    PENDING: "yellow",
+    APPROVED: "green",
+    REJECTED: "red",
+    NOT_STARTED: "gray",
   };
 
-  const pendingCount = submissions.filter((s) => s.status === "pending").length;
+  const pendingCount = submissions.filter((s) => s.status === "PENDING").length;
 
   return (
     <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
       {/* Header */}
       <Stack gap="xs">
-        <Group gap="md" align="center">
-          <IconUserCheck size={32} color="var(--mantine-color-blue-6)" />
-          <Title
-            order={1}
-            fw={800}
-            style={{fontSize: "clamp(1.5rem, 4vw, 2.5rem)"}}
-          >
-            KYC/KYB Approvals
-          </Title>
+        <Group gap="md" align="center" justify="space-between">
+          <Group>
+            <IconUserCheck size={32} color="var(--mantine-color-blue-6)" />
+            <Title
+              order={1}
+              fw={800}
+              style={{fontSize: "clamp(1.5rem, 4vw, 2.5rem)"}}
+            >
+              KYC/KYB Approvals
+            </Title>
+          </Group>
         </Group>
         <Text c="dimmed" size="lg" visibleFrom="sm">
           Review and approve user verification submissions
@@ -166,7 +202,8 @@ export default function ApprovalsPage() {
 
       {pendingCount > 0 && (
         <Alert icon={<IconUserCheck size={16} />} color="yellow">
-          You have {pendingCount} pending verification{pendingCount > 1 ? "s" : ""} to review.
+          You have {pendingCount} pending verification
+          {pendingCount !== 1 ? "s" : ""} to review.
         </Alert>
       )}
 
@@ -174,7 +211,7 @@ export default function ApprovalsPage() {
       <Paper withBorder p="md" radius="md">
         <Group gap="md" wrap="wrap">
           <TextInput
-            placeholder="Search by name or business..."
+            placeholder="Search by name or email..."
             leftSection={<IconSearch size={16} />}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -187,22 +224,11 @@ export default function ApprovalsPage() {
             onChange={(value) => setStatusFilter(value || "all")}
             data={[
               {value: "all", label: "All Status"},
-              {value: "pending", label: "Pending"},
-              {value: "approved", label: "Approved"},
-              {value: "rejected", label: "Rejected"},
+              {value: "PENDING", label: "Pending"},
+              {value: "APPROVED", label: "Approved"},
+              {value: "REJECTED", label: "Rejected"},
             ]}
             style={{minWidth: 140}}
-          />
-          <Select
-            placeholder="Filter by type"
-            value={typeFilter}
-            onChange={(value) => setTypeFilter(value || "all")}
-            data={[
-              {value: "all", label: "All Types"},
-              {value: "kyc", label: "KYC (Individual)"},
-              {value: "kyb", label: "KYB (Business)"},
-            ]}
-            style={{minWidth: 160}}
           />
         </Group>
       </Paper>
@@ -218,7 +244,12 @@ export default function ApprovalsPage() {
               </Title>
             </Group>
           </Group>
-          {filteredSubmissions.length === 0 ? (
+
+          {isLoading ? (
+            <Center py="xl">
+              <Loader size="lg" />
+            </Center>
+          ) : filteredSubmissions.length === 0 ? (
             <Text c="dimmed" ta="center" py="xl">
               No verification submissions found.
             </Text>
@@ -226,7 +257,7 @@ export default function ApprovalsPage() {
             <Table>
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th>User / Business</Table.Th>
+                  <Table.Th>User</Table.Th>
                   <Table.Th>Type</Table.Th>
                   <Table.Th>Status</Table.Th>
                   <Table.Th>Submitted</Table.Th>
@@ -239,13 +270,11 @@ export default function ApprovalsPage() {
                     <Table.Td>
                       <Stack gap={2}>
                         <Text fw={500} size="sm">
-                          {submission.businessName || submission.userName}
+                          {submission.firstName} {submission.lastName}
                         </Text>
-                        {submission.businessName && (
-                          <Text size="xs" c="dimmed">
-                            {submission.userName}
-                          </Text>
-                        )}
+                        <Text size="xs" c="dimmed">
+                          {submission.email}
+                        </Text>
                         <Badge size="xs" variant="outline">
                           {submission.userType}
                         </Badge>
@@ -254,7 +283,7 @@ export default function ApprovalsPage() {
                     <Table.Td>
                       <Badge
                         leftSection={
-                          submission.type === "kyb" ? (
+                          submission.userType === "BUSINESS" ? (
                             <IconBuilding size={12} />
                           ) : (
                             <IconId size={12} />
@@ -263,17 +292,22 @@ export default function ApprovalsPage() {
                         variant="light"
                         color="blue"
                       >
-                        {submission.type.toUpperCase()}
+                        KYC
                       </Badge>
                     </Table.Td>
                     <Table.Td>
-                      <Badge color={statusColors[submission.status]} variant="light">
+                      <Badge
+                        color={statusColors[submission.status]}
+                        variant="light"
+                      >
                         {submission.status}
                       </Badge>
                     </Table.Td>
                     <Table.Td>
                       <Text size="xs" c="dimmed">
-                        {submission.submittedAt.toLocaleString()}
+                        {submission.submittedAt
+                          ? new Date(submission.submittedAt).toLocaleString()
+                          : "N/A"}
                       </Text>
                     </Table.Td>
                     <Table.Td>
@@ -281,7 +315,7 @@ export default function ApprovalsPage() {
                         <Tooltip label="Review Submission">
                           <ActionIcon
                             variant="light"
-                            onClick={() => handleReview(submission)}
+                            onClick={() => handleReview(submission.id)}
                           >
                             <IconEye size={16} />
                           </ActionIcon>
@@ -306,7 +340,11 @@ export default function ApprovalsPage() {
         title="Review Verification Submission"
         size="xl"
       >
-        {selectedSubmission && (
+        {detailsLoading ? (
+          <Center p="xl">
+            <Loader />
+          </Center>
+        ) : selectedSubmission ? (
           <Stack gap="md">
             <Tabs defaultValue="info">
               <Tabs.List>
@@ -323,58 +361,95 @@ export default function ApprovalsPage() {
                   <Group justify="space-between">
                     <Stack gap={4}>
                       <Text size="sm" c="dimmed">
-                        User
+                        Applicant
                       </Text>
-                      <Text fw={500}>{selectedSubmission.userName}</Text>
+                      <Text fw={500}>
+                        {selectedSubmission.firstName}{" "}
+                        {selectedSubmission.lastName}
+                      </Text>
                     </Stack>
-                    <Badge color={statusColors[selectedSubmission.status]} variant="light">
+                    <Badge
+                      color={statusColors[selectedSubmission.status]}
+                      variant="light"
+                    >
                       {selectedSubmission.status}
                     </Badge>
                   </Group>
                   <Divider />
-                  {selectedSubmission.businessName && (
-                    <>
-                      <Stack gap={4}>
-                        <Text size="sm" c="dimmed">
-                          Business Name
-                        </Text>
-                        <Text fw={500}>{selectedSubmission.businessName}</Text>
-                      </Stack>
-                      {selectedSubmission.department && (
-                        <Stack gap={4}>
-                          <Text size="sm" c="dimmed">
-                            Department
-                          </Text>
-                          <Text>{selectedSubmission.department}</Text>
-                        </Stack>
-                      )}
-                    </>
-                  )}
+
+                  <SimpleGrid cols={2}>
+                    <Stack gap={4}>
+                      <Text size="sm" c="dimmed">
+                        Date of Birth
+                      </Text>
+                      <Text>
+                        {new Date(
+                          selectedSubmission.dateOfBirth
+                        ).toLocaleDateString()}
+                      </Text>
+                    </Stack>
+                    <Stack gap={4}>
+                      <Text size="sm" c="dimmed">
+                        Phone
+                      </Text>
+                      <Text>{selectedSubmission.phoneNumber}</Text>
+                    </Stack>
+                    <Stack gap={4}>
+                      <Text size="sm" c="dimmed">
+                        ID Type
+                      </Text>
+                      <Text>{selectedSubmission.idType}</Text>
+                    </Stack>
+                    <Stack gap={4}>
+                      <Text size="sm" c="dimmed">
+                        Email
+                      </Text>
+                      <Text>{selectedSubmission.email}</Text>
+                    </Stack>
+                  </SimpleGrid>
+
+                  <Divider label="Address" labelPosition="center" />
+
                   <Stack gap={4}>
-                    <Text size="sm" c="dimmed">
-                      Type
+                    <Text>{selectedSubmission.address}</Text>
+                    <Text>
+                      {selectedSubmission.city}, {selectedSubmission.province}
                     </Text>
-                    <Badge variant="light" color="blue">
-                      {selectedSubmission.type.toUpperCase()}
-                    </Badge>
+                    <Text>{selectedSubmission.postalCode}</Text>
+                    <Text>{selectedSubmission.country}</Text>
                   </Stack>
-                  <Stack gap={4}>
-                    <Text size="sm" c="dimmed">
-                      Submitted At
-                    </Text>
-                    <Text>{selectedSubmission.submittedAt.toLocaleString()}</Text>
-                  </Stack>
-                  {/* TODO: Add more detailed information from backend */}
                 </Stack>
               </Tabs.Panel>
 
               <Tabs.Panel value="documents" pt="md">
                 <Stack gap="md">
-                  <Alert color="blue">
-                    Document preview will be loaded from backend. This includes ID
-                    documents, business registration, tax certificates, etc.
-                  </Alert>
-                  {/* TODO: Add document preview components */}
+                  <Text fw={500}>Front ID</Text>
+                  {selectedSubmission.idFileFrontSignedUrl ? (
+                    <Image
+                      src={selectedSubmission.idFileFrontSignedUrl}
+                      alt="Front ID"
+                      radius="md"
+                      mah={400}
+                      fit="contain"
+                    />
+                  ) : (
+                    <Alert color="red">Image not available</Alert>
+                  )}
+
+                  <Divider />
+
+                  <Text fw={500}>Back ID</Text>
+                  {selectedSubmission.idFileBackSignedUrl ? (
+                    <Image
+                      src={selectedSubmission.idFileBackSignedUrl}
+                      alt="Back ID"
+                      radius="md"
+                      mah={400}
+                      fit="contain"
+                    />
+                  ) : (
+                    <Alert color="red">Image not available</Alert>
+                  )}
                 </Stack>
               </Tabs.Panel>
             </Tabs>
@@ -395,23 +470,51 @@ export default function ApprovalsPage() {
                 variant="outline"
                 color="red"
                 leftSection={<IconX size={18} />}
-                onClick={handleReject}
+                onClick={() => setRejectModalOpen(true)}
+                disabled={selectedSubmission.status !== "PENDING"}
               >
                 Reject
               </Button>
               <Button
                 leftSection={<IconCheck size={18} />}
                 onClick={handleApprove}
-                disabled={selectedSubmission.status !== "pending"}
+                disabled={selectedSubmission.status !== "PENDING"}
               >
                 Approve
               </Button>
             </Group>
           </Stack>
+        ) : (
+          <Text c="red">Failed to load details</Text>
         )}
+      </Modal>
+
+      {/* Rejection Reason Modal */}
+      <Modal
+        opened={rejectModalOpen}
+        onClose={() => setRejectModalOpen(false)}
+        title="Reject Verification"
+      >
+        <Stack>
+          <Text size="sm">
+            Please provide a reason for rejecting this verification request:
+          </Text>
+          <Textarea
+            placeholder="Reason for rejection..."
+            minRows={3}
+            value={rejectionReason}
+            onChange={(e) => setRejectionReason(e.target.value)}
+          />
+          <Group justify="flex-end">
+            <Button variant="subtle" onClick={() => setRejectModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button color="red" onClick={handleReject}>
+              Confirm Rejection
+            </Button>
+          </Group>
+        </Stack>
       </Modal>
     </Stack>
   );
 }
-
-
