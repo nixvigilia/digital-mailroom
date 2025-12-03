@@ -4,6 +4,7 @@ import {cache} from "react";
 import {redirect} from "next/navigation";
 import {createClient} from "@/utils/supabase/server";
 import {prisma} from "@/utils/prisma";
+import {SubscriptionStatus} from "@/app/generated/prisma/enums";
 
 export const verifySession = cache(async () => {
   const supabase = await createClient();
@@ -40,7 +41,6 @@ export const getUserProfile = cache(async (userId: string) => {
       select: {
         id: true,
         email: true,
-        full_name: true,
         avatar_url: true,
         user_type: true,
         role: true,
@@ -87,10 +87,96 @@ export const getKYCStatus = cache(async (userId: string): Promise<string> => {
   }
 });
 
+export const getKYCData = cache(async (userId: string) => {
+  try {
+    const profile = await prisma.profile.findUnique({
+      where: {id: userId},
+      select: {
+        kyc_verification: true,
+      },
+    });
+
+    if (!profile?.kyc_verification) {
+      return null;
+    }
+
+    const kyc = profile.kyc_verification;
+    const supabase = await createClient();
+
+    // Generate signed URLs for images
+    let idFileFrontUrl = null;
+    let idFileBackUrl = null;
+
+    if (kyc.id_file_front_url) {
+      const {data} = await supabase.storage
+        .from("keep")
+        .createSignedUrl(kyc.id_file_front_url, 3600); // 1 hour expiry
+      idFileFrontUrl = data?.signedUrl || null;
+    }
+
+    if (kyc.id_file_back_url) {
+      const {data} = await supabase.storage
+        .from("keep")
+        .createSignedUrl(kyc.id_file_back_url, 3600);
+      idFileBackUrl = data?.signedUrl || null;
+    }
+
+    return {
+      ...kyc,
+      id_file_front_signed_url: idFileFrontUrl, // New field for signed URL
+      id_file_back_signed_url: idFileBackUrl,
+    };
+  } catch (error) {
+    console.error("Error fetching KYC data:", error);
+    return null;
+  }
+});
+
 export const getCurrentUserKYCStatus = cache(async (): Promise<string> => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     return "NOT_STARTED";
   }
   return await getKYCStatus(currentUser.userId);
+});
+
+/**
+ * Get the user's plan type
+ * Returns the plan_type string (e.g., "FREE", "BASIC", "PREMIUM")
+ * Returns "FREE" if no active subscription exists
+ */
+export const getUserPlanType = cache(
+  async (userId: string): Promise<string> => {
+    try {
+      const subscription = await prisma.subscription.findFirst({
+        where: {
+          profile_id: userId,
+          status: SubscriptionStatus.ACTIVE,
+        },
+        select: {
+          plan_type: true,
+        },
+        orderBy: {
+          started_at: "desc",
+        },
+      });
+
+      return subscription?.plan_type || "FREE";
+    } catch (error) {
+      console.error("Error fetching user plan type:", error);
+      // If it's a connection error, return FREE and log it
+      if (error instanceof Error) {
+        console.error("Database connection error:", error.message);
+      }
+      return "FREE"; // Default to FREE on error
+    }
+  }
+);
+
+/**
+ * Get the current user's plan type
+ */
+export const getCurrentUserPlanType = cache(async (): Promise<string> => {
+  const session = await verifySession();
+  return await getUserPlanType(session.userId);
 });

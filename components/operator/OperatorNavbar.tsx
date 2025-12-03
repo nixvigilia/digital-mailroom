@@ -1,10 +1,7 @@
 "use client";
 
 import {useRef} from "react";
-import {
-  UnstyledButton,
-  useMantineColorScheme,
-} from "@mantine/core";
+import {UnstyledButton, useMantineColorScheme} from "@mantine/core";
 import {
   IconLayoutDashboard,
   IconInbox,
@@ -15,8 +12,9 @@ import {
   IconScan,
   IconTruck,
   IconTrash,
+  IconPackage,
 } from "@tabler/icons-react";
-import {UserButton} from "@/components/user/UserButton";
+import {UserButton} from "@/components/user/appButton";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
 import {signOut} from "@/app/actions/auth";
@@ -30,6 +28,7 @@ const mainLinks = [
   {icon: IconLayoutDashboard, label: "Dashboard", href: "/operator"},
   {icon: IconInbox, label: "Action Queue", href: "/operator/queue"},
   {icon: IconChecklist, label: "KYC/KYB Review", href: "/operator/approvals"},
+  {icon: IconPackage, label: "Packages & Pricing", href: "/operator/packages"},
   {icon: IconScan, label: "Scanning", href: "/operator/scanning"},
   {icon: IconTruck, label: "Forwarding", href: "/operator/forwarding"},
   {icon: IconTrash, label: "Shredding", href: "/operator/shredding"},
@@ -45,7 +44,8 @@ export function OperatorNavbar({
 
   const mainLinksElements = mainLinks.map((link) => {
     const Icon = link.icon;
-    const isActive = pathname === link.href || pathname?.startsWith(link.href + "/");
+    const isActive =
+      pathname === link.href || pathname?.startsWith(link.href + "/");
     return (
       <UnstyledButton
         key={link.label}
@@ -112,4 +112,3 @@ export function OperatorNavbar({
     </nav>
   );
 }
-

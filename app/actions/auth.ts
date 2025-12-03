@@ -36,6 +36,7 @@ const signupSchema = z.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
       "Password must contain at least one uppercase letter, one lowercase letter, and one number"
     ),
+  referralCode: z.string().optional().nullable(),
 });
 
 export async function login(
@@ -90,6 +91,7 @@ export async function signup(
   const rawData = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
+    referralCode: formData.get("referralCode") as string | null,
   };
 
   // Validate with Zod
@@ -112,9 +114,55 @@ export async function signup(
     };
   }
 
+  // Find referrer if referral code is provided
+  let referrerId: string | null = null;
+  if (rawData.referralCode) {
+    try {
+      const {prisma} = await import("@/utils/prisma");
+      const referralCodeUpper = rawData.referralCode.toUpperCase();
+      console.log("Looking up referrer with code:", referralCodeUpper);
+
+      const referrer = await prisma.profile.findFirst({
+        where: {
+          referral_code: referralCodeUpper,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (referrer) {
+        referrerId = referrer.id;
+        console.log("Found referrer ID:", referrerId);
+      } else {
+        console.log("No referrer found with code:", referralCodeUpper);
+      }
+    } catch (dbError) {
+      // Log error but don't block signup if referral lookup fails
+      console.error("Error looking up referrer:", dbError);
+      // Continue with signup without referral tracking
+      referrerId = null;
+    }
+  }
+
+  // Sign up user - store referred_by in metadata for profile creation
+  // Note: Only store if referrerId is not null (valid UUID string)
+  const metadata: Record<string, any> = {};
+  if (referrerId) {
+    metadata.referred_by = referrerId; // Store as UUID string
+    console.log("Storing referred_by in metadata:", referrerId);
+  } else {
+    console.log(
+      "No referrer ID to store (referral code not found or not provided)"
+    );
+  }
+
   const {error} = await supabase.auth.signUp({
     email: validation.data.email,
     password: validation.data.password,
+    options: {
+      data: metadata, // Only include referred_by if it exists
+    },
   });
 
   if (error) {

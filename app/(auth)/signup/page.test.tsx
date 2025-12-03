@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
 import {render, screen, waitFor, fireEvent} from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import userEvent from "@testing-library/app-event";
 import {toast} from "sonner";
 import SignupPage from "./page";
 import {signup} from "../../actions/auth";

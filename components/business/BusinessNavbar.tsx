@@ -27,7 +27,7 @@ import {
   IconUsers,
   IconBuilding,
 } from "@tabler/icons-react";
-import {UserButton} from "@/components/user/UserButton";
+import {UserButton} from "@/components/user/appButton";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
 import {signOut} from "@/app/actions/auth";
@@ -69,7 +69,8 @@ export function BusinessNavbar({
 
   const mainLinksElements = mainLinks.map((link) => {
     const Icon = link.icon;
-    const isActive = pathname === link.href || pathname?.startsWith(link.href + "/");
+    const isActive =
+      pathname === link.href || pathname?.startsWith(link.href + "/");
     return (
       <UnstyledButton
         key={link.label}
@@ -160,4 +161,3 @@ export function BusinessNavbar({
     </nav>
   );
 }
-
