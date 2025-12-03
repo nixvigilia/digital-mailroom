@@ -40,8 +40,10 @@ const mainLinks = [
 
 export function OperatorNavbar({
   searchRef,
+  user,
 }: {
   searchRef?: React.RefObject<HTMLInputElement | null>;
+  user?: any;
 }) {
   const pathname = usePathname();
   const {colorScheme, toggleColorScheme} = useMantineColorScheme();
@@ -69,7 +71,7 @@ export function OperatorNavbar({
     <nav className={classes.navbar}>
       {/* User Account Section */}
       <div className={classes.userSection}>
-        <UserButton />
+        <UserButton user={user} />
       </div>
 
       {/* Navigation Links */}

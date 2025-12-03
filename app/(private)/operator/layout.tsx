@@ -34,5 +34,12 @@ export default async function OperatorLayout({
     redirect("/app");
   }
 
-  return <OperatorLayoutClient>{children}</OperatorLayoutClient>;
+  const userWithRole = {
+    ...user,
+    role: profile.role,
+  };
+
+  return (
+    <OperatorLayoutClient user={userWithRole}>{children}</OperatorLayoutClient>
+  );
 }

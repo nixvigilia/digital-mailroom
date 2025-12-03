@@ -12,7 +12,7 @@ export function InboxViewToggle() {
     const params = new URLSearchParams(searchParams.toString());
     params.set("view", value);
     params.delete("page"); // Reset to page 1
-    router.push(`/app?${params.toString()}`);
+    router.push(`/app/inbox?${params.toString()}`);
   };
 
   return (

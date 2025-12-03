@@ -1,128 +1,215 @@
-"use client";
-
-import {useState, useEffect} from "react";
-import {useParams, useRouter} from "next/navigation";
+import {Suspense, cache} from "react";
 import {
   Title,
   Text,
   Stack,
   Group,
-  Paper,
-  Image,
   Button,
   Badge,
-  Divider,
-  Box,
-  Loader,
   Center,
-  Tabs,
-  TextInput,
-  ActionIcon,
-  Tooltip,
+  Loader,
 } from "@mantine/core";
-import {
-  IconDownload,
-  IconTag,
-  IconArrowLeft,
-  IconMail,
-  IconCalendar,
-  IconUser,
-  IconFileText,
-  IconPhoto,
-} from "@tabler/icons-react";
+import {IconArrowLeft, IconCalendar, IconUser} from "@tabler/icons-react";
 import Link from "next/link";
 import {MailActions} from "@/components/mail/MailActions";
+import {MailDetailClient} from "@/components/mail/MailDetailClient";
+import {
+  getCurrentUser,
+  getKYCStatus,
+  getCurrentUserPlanType,
+} from "@/utils/supabase/dal";
+import {prisma} from "@/utils/prisma";
+import {redirect} from "next/navigation";
+import {MailStatus} from "@/app/generated/prisma/enums";
+import {createClient} from "@/utils/supabase/server";
 
-// Mock data - will be replaced with backend integration
-const getMockMailItem = (id: string) => {
-  const mockItems: Record<string, any> = {
-    "1": {
-      id: "1",
-      receivedAt: new Date("2025-01-15T10:30:00"),
-      sender: "BDO Unibank",
-      subject: "Monthly Statement",
-      status: "received",
-      envelopeScanUrl: undefined,
-      hasFullScan: false,
-      tags: ["Bills", "Financial"],
-      category: "Financial",
-      fullScanUrl: undefined,
-      notes: "Monthly account statement for December 2024",
-    },
-    "2": {
-      id: "2",
-      receivedAt: new Date("2025-01-14T14:20:00"),
-      sender: "Lazada Philippines",
-      subject: "Package Delivery Notice",
-      status: "scanned",
-      envelopeScanUrl: undefined,
-      hasFullScan: true,
-      tags: ["Shopping"],
-      category: "Shipping",
-      fullScanUrl: undefined,
-      notes: "Package delivery notification",
-    },
-    "3": {
-      id: "3",
-      receivedAt: new Date("2025-01-13T09:15:00"),
-      sender: "Bureau of Internal Revenue (BIR)",
-      subject: "Tax Document",
-      status: "processed",
-      envelopeScanUrl: undefined,
-      hasFullScan: true,
-      tags: ["Tax", "Important"],
-      category: "Legal",
-      fullScanUrl: undefined,
-      notes: "Important tax document - please review",
-    },
-  };
-  return mockItems[id] || null;
-};
+interface MailDetailPageProps {
+  params: Promise<{id: string}>;
+}
 
-export default function MailDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const id = params.id as string;
-  const [mailItem, setMailItem] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState("");
+// Map database MailStatus enum to component status strings
+function mapStatusToComponentStatus(
+  status: MailStatus,
+  isArchived: boolean
+): "received" | "scanned" | "processed" | "archived" {
+  if (isArchived) return "archived";
 
-  useEffect(() => {
-    // TODO: Replace with actual data fetching
-    const fetchMailItem = async () => {
-      setLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        const item = getMockMailItem(id);
-        setMailItem(item);
-        setTags(item?.tags || []);
-        setLoading(false);
-      }, 500);
+  switch (status) {
+    case MailStatus.RECEIVED:
+      return "received";
+    case MailStatus.SCANNED:
+      return "scanned";
+    case MailStatus.PROCESSED:
+    case MailStatus.FORWARDED:
+    case MailStatus.SHREDDED:
+      return "processed";
+    default:
+      return "received";
+  }
+}
+
+// Cache the mail item query
+const getMailItem = cache(async (mailId: string, userId: string) => {
+  try {
+    // First check if mail item exists and user owns it
+    const mailItem = await prisma.mailItem.findUnique({
+      where: {
+        id: mailId,
+      },
+    });
+
+    // Security check: Ensure user owns this mail item
+    if (!mailItem || mailItem.profile_id !== userId) {
+      console.error("Access denied: User does not own this mail item", {
+        mailId,
+        userId,
+        mailItemProfileId: mailItem?.profile_id,
+      });
+      return null;
+    }
+
+    // Additional check: Only personal mail items (not business)
+    if (mailItem.business_account_id !== null) {
+      console.error("Access denied: This is a business mail item", {
+        mailId,
+        businessAccountId: mailItem.business_account_id,
+      });
+      return null;
+    }
+
+    // Convert storage paths to signed URLs
+    const supabase = await createClient();
+    const bucketName = process.env.SUPABASE_STORAGE_BUCKET_NAME || "keep";
+
+    let envelopeScanUrl: string | undefined = undefined;
+    if (mailItem.envelope_scan_url) {
+      try {
+        const {data, error} = await supabase.storage
+          .from(bucketName)
+          .createSignedUrl(mailItem.envelope_scan_url, 3600); // 1 hour expiry
+
+        if (error) {
+          console.error(
+            "Error creating signed URL for envelope:",
+            error.message
+          );
+          console.error("Full error object:", JSON.stringify(error, null, 2));
+          console.error("Storage path:", mailItem.envelope_scan_url);
+        } else {
+          envelopeScanUrl = data?.signedUrl || undefined;
+        }
+      } catch (error) {
+        console.error("Exception creating signed URL for envelope:", error);
+        console.error("Storage path:", mailItem.envelope_scan_url);
+      }
+    }
+
+    let fullScanUrl: string | undefined = undefined;
+    if (mailItem.full_scan_url) {
+      try {
+        const {data, error} = await supabase.storage
+          .from(bucketName)
+          .createSignedUrl(mailItem.full_scan_url, 3600); // 1 hour expiry
+
+        if (error) {
+          console.error(
+            "Error creating signed URL for full scan:",
+            error.message
+          );
+          console.error("Full error object:", JSON.stringify(error, null, 2));
+          console.error("Storage path:", mailItem.full_scan_url);
+        } else {
+          fullScanUrl = data?.signedUrl || undefined;
+        }
+      } catch (error) {
+        console.error("Exception creating signed URL for full scan:", error);
+        console.error("Storage path:", mailItem.full_scan_url);
+      }
+    }
+
+    return {
+      id: mailItem.id,
+      receivedAt: mailItem.received_at,
+      sender: mailItem.sender,
+      subject: mailItem.subject || undefined,
+      status: mapStatusToComponentStatus(mailItem.status, mailItem.is_archived),
+      envelopeScanUrl,
+      hasFullScan: mailItem.has_full_scan,
+      fullScanUrl,
+      tags: mailItem.tags || [],
+      category: mailItem.category || undefined,
+      notes: mailItem.notes || undefined,
     };
+  } catch (error) {
+    console.error("Error fetching mail item:", error);
+    return null;
+  }
+});
 
-    if (id) {
-      fetchMailItem();
-    }
-  }, [id]);
+export default async function MailDetailPage({params}: MailDetailPageProps) {
+  const currentUser = await getCurrentUser();
 
-  const handleAddTag = () => {
-    if (newTag.trim() && !tags.includes(newTag.trim())) {
-      setTags([...tags, newTag.trim()]);
-      setNewTag("");
-      // TODO: Save to backend
-    }
-  };
+  if (!currentUser) {
+    redirect("/login");
+  }
 
-  const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
-    // TODO: Save to backend
-  };
+  const userId = currentUser.userId;
 
-  const handleDownload = (type: "envelope" | "full") => {
-    // TODO: Implement download
-    console.log(`Downloading ${type} scan for mail item ${id}`);
-  };
+  // Check KYC status
+  const kycStatus = await getKYCStatus(userId);
+
+  // Redirect to KYC page if PENDING or REJECTED
+  if (kycStatus === "PENDING" || kycStatus === "REJECTED") {
+    redirect("/app/kyc");
+  }
+
+  // Get user's plan type
+  const planType = await getCurrentUserPlanType();
+
+  // Redirect free users to pricing page
+  if (planType === "FREE") {
+    redirect("/app/pricing");
+  }
+
+  const {id} = await params;
+  const mailItemPromise = getMailItem(id, userId);
+
+  return (
+    <Suspense
+      fallback={
+        <Center style={{minHeight: 400}}>
+          <Loader size="lg" />
+        </Center>
+      }
+    >
+      <MailDetailContent mailItemPromise={mailItemPromise} mailId={id} />
+    </Suspense>
+  );
+}
+
+async function MailDetailContent({
+  mailItemPromise,
+  mailId,
+}: {
+  mailItemPromise: Promise<any>;
+  mailId: string;
+}) {
+  const mailItem = await mailItemPromise;
+
+  if (!mailItem) {
+    return (
+      <Stack gap="md" align="center" py="xl">
+        <Text size="lg" c="dimmed">
+          Mail item not found
+        </Text>
+        <Link href="/app/inbox" style={{textDecoration: "none"}}>
+          <Button leftSection={<IconArrowLeft size={18} />}>
+            Back to Inbox
+          </Button>
+        </Link>
+      </Stack>
+    );
+  }
 
   const statusColors: Record<string, string> = {
     received: "blue",
@@ -131,64 +218,39 @@ export default function MailDetailPage() {
     archived: "orange",
   };
 
-  if (loading) {
-    return (
-      <Center style={{minHeight: 400}}>
-        <Loader size="lg" />
-      </Center>
-    );
-  }
-
-  if (!mailItem) {
-    return (
-      <Stack gap="md" align="center" py="xl">
-        <Text size="lg" c="dimmed">
-          Mail item not found
-        </Text>
-        <Button
-          component={Link}
-          href="/app"
-          leftSection={<IconArrowLeft size={18} />}
-        >
-          Back to Inbox
-        </Button>
-      </Stack>
-    );
-  }
-
   return (
     <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
       {/* Header */}
       <Stack gap="sm">
         <Group justify="flex-start">
-          <Button
-            component={Link}
-            href="/app"
-            variant="subtle"
-            leftSection={<IconArrowLeft size={18} />}
-            size="md"
-            visibleFrom="sm"
-          >
-            Back to Inbox
-          </Button>
-          <Button
-            component={Link}
-            href="/app"
-            variant="subtle"
-            leftSection={<IconArrowLeft size={18} />}
-            size="sm"
-            hiddenFrom="sm"
-          >
-            Back to Inbox
-          </Button>
+          <Link href="/app/inbox" style={{textDecoration: "none"}}>
+            <Button
+              variant="subtle"
+              leftSection={<IconArrowLeft size={18} />}
+              size="md"
+              visibleFrom="sm"
+            >
+              Back to Inbox
+            </Button>
+          </Link>
+          <Link href="/app/inbox" style={{textDecoration: "none"}}>
+            <Button
+              variant="subtle"
+              leftSection={<IconArrowLeft size={18} />}
+              size="sm"
+              hiddenFrom="sm"
+            >
+              Back to Inbox
+            </Button>
+          </Link>
         </Group>
         <Stack gap="xs">
           <Group gap="sm" align="flex-start" wrap="wrap">
             <Title
               order={1}
               fw={800}
+              size="h2"
               style={{
-                fontSize: "clamp(1.25rem, 4vw, 2rem)",
                 flex: 1,
                 minWidth: 200,
               }}
@@ -249,321 +311,8 @@ export default function MailDetailPage() {
         </Stack>
       </Stack>
 
-      <Tabs defaultValue="details">
-        <Tabs.List style={{overflowX: "auto", flexWrap: "nowrap"}}>
-          <Tabs.Tab
-            value="details"
-            leftSection={<IconFileText size={16} />}
-            style={{whiteSpace: "nowrap"}}
-          >
-            Details
-          </Tabs.Tab>
-          <Tabs.Tab
-            value="scans"
-            leftSection={<IconPhoto size={16} />}
-            style={{whiteSpace: "nowrap"}}
-          >
-            Scans
-          </Tabs.Tab>
-          <Tabs.Tab
-            value="tags"
-            leftSection={<IconTag size={16} />}
-            style={{whiteSpace: "nowrap"}}
-          >
-            Tags
-          </Tabs.Tab>
-        </Tabs.List>
-
-        {/* Details Tab */}
-        <Tabs.Panel value="details" pt={{base: "sm", sm: "md"}}>
-          <Stack gap="md">
-            <Paper withBorder p="md" radius="md">
-              <Stack gap="md">
-                <Group justify="space-between">
-                  <Text size="sm" fw={600} c="dimmed" tt="uppercase">
-                    Mail Information
-                  </Text>
-                </Group>
-                <Divider />
-                <Stack gap="sm">
-                  {mailItem.sender && (
-                    <Group justify="space-between">
-                      <Text size="sm" c="dimmed">
-                        Sender
-                      </Text>
-                      <Text size="sm" fw={500}>
-                        {mailItem.sender}
-                      </Text>
-                    </Group>
-                  )}
-                  {mailItem.subject && (
-                    <Group justify="space-between">
-                      <Text size="sm" c="dimmed">
-                        Subject
-                      </Text>
-                      <Text size="sm" fw={500}>
-                        {mailItem.subject}
-                      </Text>
-                    </Group>
-                  )}
-                  <Group justify="space-between">
-                    <Text size="sm" c="dimmed">
-                      Status
-                    </Text>
-                    <Badge
-                      color={statusColors[mailItem.status]}
-                      variant="light"
-                    >
-                      {mailItem.status}
-                    </Badge>
-                  </Group>
-                  <Group justify="space-between">
-                    <Text size="sm" c="dimmed">
-                      Received
-                    </Text>
-                    <Text size="sm" fw={500}>
-                      {new Date(mailItem.receivedAt).toLocaleString()}
-                    </Text>
-                  </Group>
-                  {mailItem.category && (
-                    <Group justify="space-between">
-                      <Text size="sm" c="dimmed">
-                        Category
-                      </Text>
-                      <Badge variant="outline">{mailItem.category}</Badge>
-                    </Group>
-                  )}
-                </Stack>
-                {mailItem.notes && (
-                  <>
-                    <Divider />
-                    <Stack gap="xs">
-                      <Text size="sm" fw={600} c="dimmed" tt="uppercase">
-                        Notes
-                      </Text>
-                      <Text size="sm">{mailItem.notes}</Text>
-                    </Stack>
-                  </>
-                )}
-              </Stack>
-            </Paper>
-
-            {/* Physical Actions */}
-            <MailActions mailId={id} status={mailItem.status} />
-          </Stack>
-        </Tabs.Panel>
-
-        {/* Scans Tab */}
-        <Tabs.Panel value="scans" pt="md">
-          <Stack gap="md">
-            {/* Envelope Scan */}
-            <Paper withBorder p="md" radius="md">
-              <Stack gap="md">
-                <Group justify="space-between">
-                  <Text size="sm" fw={600} c="dimmed" tt="uppercase">
-                    Envelope Scan
-                  </Text>
-                  <Button
-                    size="xs"
-                    variant="light"
-                    leftSection={<IconDownload size={16} />}
-                    onClick={() => handleDownload("envelope")}
-                  >
-                    Download
-                  </Button>
-                </Group>
-                <Divider />
-                {mailItem.envelopeScanUrl ? (
-                  <Box
-                    style={{
-                      borderRadius: "var(--mantine-radius-md)",
-                      overflow: "hidden",
-                      backgroundColor: "var(--mantine-color-gray-1)",
-                      minHeight: 400,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Image
-                      src={mailItem.envelopeScanUrl}
-                      alt="Envelope scan"
-                      style={{maxWidth: "100%"}}
-                    />
-                  </Box>
-                ) : (
-                  <Box
-                    style={{
-                      borderRadius: "var(--mantine-radius-md)",
-                      backgroundColor: "var(--mantine-color-gray-1)",
-                      minHeight: 400,
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "md",
-                    }}
-                  >
-                    <IconMail size={64} color="var(--mantine-color-gray-5)" />
-                    <Text c="dimmed">Envelope scan not available</Text>
-                  </Box>
-                )}
-              </Stack>
-            </Paper>
-
-            {/* Full Document Scan */}
-            {mailItem.hasFullScan && (
-              <Paper withBorder p="md" radius="md">
-                <Stack gap="md">
-                  <Group justify="space-between">
-                    <Text size="sm" fw={600} c="dimmed" tt="uppercase">
-                      Full Document Scan
-                    </Text>
-                    <Button
-                      size="xs"
-                      variant="light"
-                      leftSection={<IconDownload size={16} />}
-                      onClick={() => handleDownload("full")}
-                    >
-                      Download PDF
-                    </Button>
-                  </Group>
-                  <Divider />
-                  {mailItem.fullScanUrl ? (
-                    <Box
-                      style={{
-                        borderRadius: "var(--mantine-radius-md)",
-                        overflow: "hidden",
-                        backgroundColor: "var(--mantine-color-gray-1)",
-                        minHeight: 400,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Image
-                        src={mailItem.fullScanUrl}
-                        alt="Full document scan"
-                        style={{maxWidth: "100%"}}
-                      />
-                    </Box>
-                  ) : (
-                    <Box
-                      style={{
-                        borderRadius: "var(--mantine-radius-md)",
-                        backgroundColor: "var(--mantine-color-gray-1)",
-                        minHeight: 400,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "md",
-                      }}
-                    >
-                      <IconFileText
-                        size={64}
-                        color="var(--mantine-color-gray-5)"
-                      />
-                      <Text c="dimmed">Full scan available for download</Text>
-                      <Button
-                        variant="light"
-                        leftSection={<IconDownload size={18} />}
-                        onClick={() => handleDownload("full")}
-                      >
-                        Download Full Scan
-                      </Button>
-                    </Box>
-                  )}
-                </Stack>
-              </Paper>
-            )}
-
-            {!mailItem.hasFullScan && (
-              <Paper withBorder p="md" radius="md">
-                <Stack gap="md" align="center">
-                  <IconFileText size={48} color="var(--mantine-color-gray-5)" />
-                  <Text c="dimmed" ta="center">
-                    Full document scan not yet available. Request a scan using
-                    the "Open & Scan" action in the Details tab.
-                  </Text>
-                </Stack>
-              </Paper>
-            )}
-          </Stack>
-        </Tabs.Panel>
-
-        {/* Tags Tab */}
-        <Tabs.Panel value="tags" pt="md">
-          <Stack gap="md">
-            <Paper withBorder p="md" radius="md">
-              <Stack gap="md">
-                <Text size="sm" fw={600} c="dimmed" tt="uppercase">
-                  Tags
-                </Text>
-                <Divider />
-                {tags.length > 0 ? (
-                  <Group gap="xs">
-                    {tags.map((tag) => (
-                      <Badge
-                        key={tag}
-                        variant="light"
-                        size="lg"
-                        rightSection={
-                          <ActionIcon
-                            size="xs"
-                            color="blue"
-                            radius="xl"
-                            variant="transparent"
-                            onClick={() => handleRemoveTag(tag)}
-                          >
-                            ×
-                          </ActionIcon>
-                        }
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                  </Group>
-                ) : (
-                  <Text size="sm" c="dimmed">
-                    No tags added yet
-                  </Text>
-                )}
-                <Group gap="xs">
-                  <TextInput
-                    placeholder="Add a tag"
-                    value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleAddTag();
-                      }
-                    }}
-                    style={{flex: 1}}
-                  />
-                  <Button onClick={handleAddTag} disabled={!newTag.trim()}>
-                    Add Tag
-                  </Button>
-                </Group>
-              </Stack>
-            </Paper>
-
-            {mailItem.category && (
-              <Paper withBorder p="md" radius="md">
-                <Stack gap="md">
-                  <Text size="sm" fw={600} c="dimmed" tt="uppercase">
-                    Category
-                  </Text>
-                  <Divider />
-                  <Badge variant="outline" size="lg">
-                    {mailItem.category}
-                  </Badge>
-                </Stack>
-              </Paper>
-            )}
-          </Stack>
-        </Tabs.Panel>
-      </Tabs>
+      {/* Client component for interactive parts */}
+      <MailDetailClient mailItem={mailItem} mailId={mailId} />
     </Stack>
   );
 }

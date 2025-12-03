@@ -22,6 +22,18 @@ export function UserButton({
     return email.split("@")[0];
   };
 
+  // Check if user has admin or operator role (assuming role is passed in metadata or we check based on user type if available)
+  // Since we don't have full user object structure here, let's assume regular users are the only ones needing KYC display
+  // But if user prop has role info, we can use it. For now, let's rely on the fact that this component is used in contexts where we might know.
+  // Actually, looking at usage, user is from auth.getUser().
+  // Let's hide it if kycStatus is undefined (which might happen for admins if not passed) OR explicitly check.
+  // However, the request is "if admin or operator dont show".
+
+  // We can check if the user metadata has role
+  const role = user?.role || user?.user_metadata?.role;
+  const isStaff =
+    role === "ADMIN" || role === "OPERATOR" || role === "SYSTEM_ADMIN";
+
   return (
     <UnstyledButton className={classes.user}>
       <Group gap="md" wrap="nowrap" style={{flex: 1}}>
@@ -46,15 +58,17 @@ export function UserButton({
           <Text c="dimmed" size="xs" truncate>
             {user?.email || ""}
           </Text>
-          {kycStatus === "APPROVED" ? (
-            <Badge size="xs" variant="light" color="green">
-              Verified
-            </Badge>
-          ) : (
-            <Badge size="xs" variant="light" color="gray">
-              Unverified
-            </Badge>
-          )}
+          {!isStaff &&
+            kycStatus &&
+            (kycStatus === "APPROVED" ? (
+              <Badge size="xs" variant="light" color="green">
+                Verified
+              </Badge>
+            ) : (
+              <Badge size="xs" variant="light" color="gray">
+                Unverified
+              </Badge>
+            ))}
         </Box>
         {/* <IconChevronDown
           size={18}

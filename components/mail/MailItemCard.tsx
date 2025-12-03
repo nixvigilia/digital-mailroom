@@ -57,7 +57,9 @@ export function MailItemCard({item, onView}: MailItemCardProps) {
       radius="md"
       style={{cursor: "pointer", height: "100%"}}
       component={Link}
-      href={item.department ? `/business/inbox/${item.id}` : `/app/${item.id}`}
+      href={
+        item.department ? `/business/inbox/${item.id}` : `/app/inbox/${item.id}`
+      }
     >
       {/* Desktop Layout - Grid View */}
       <Stack gap="sm" visibleFrom="sm">
@@ -149,7 +151,7 @@ export function MailItemCard({item, onView}: MailItemCardProps) {
                   else {
                     const href = item.department
                       ? `/business/inbox/${item.id}`
-                      : `/app/${item.id}`;
+                      : `/app/inbox/${item.id}`;
                     window.location.href = href;
                   }
                 }}
@@ -259,7 +261,7 @@ export function MailItemCard({item, onView}: MailItemCardProps) {
                   else {
                     const href = item.department
                       ? `/business/inbox/${item.id}`
-                      : `/app/${item.id}`;
+                      : `/app/inbox/${item.id}`;
                     window.location.href = href;
                   }
                 }}
