@@ -52,6 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Profile: 'Profile',
+  BackofficeProfile: 'BackofficeProfile',
+  ActivityLog: 'ActivityLog',
   KYCVerification: 'KYCVerification',
   BusinessAccount: 'BusinessAccount',
   TeamMember: 'TeamMember',
@@ -89,10 +91,39 @@ export const ProfileScalarFieldEnum = {
   updated_at: 'updated_at',
   created_at: 'created_at',
   user_type: 'user_type',
-  role: 'role'
+  role: 'role',
+  password_hint: 'password_hint',
+  integration_email: 'integration_email'
 } as const
 
 export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
+
+
+export const BackofficeProfileScalarFieldEnum = {
+  id: 'id',
+  profile_id: 'profile_id',
+  first_name: 'first_name',
+  last_name: 'last_name',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type BackofficeProfileScalarFieldEnum = (typeof BackofficeProfileScalarFieldEnum)[keyof typeof BackofficeProfileScalarFieldEnum]
+
+
+export const ActivityLogScalarFieldEnum = {
+  id: 'id',
+  profile_id: 'profile_id',
+  action: 'action',
+  entity_type: 'entity_type',
+  entity_id: 'entity_id',
+  details: 'details',
+  ip_address: 'ip_address',
+  user_agent: 'user_agent',
+  created_at: 'created_at'
+} as const
+
+export type ActivityLogScalarFieldEnum = (typeof ActivityLogScalarFieldEnum)[keyof typeof ActivityLogScalarFieldEnum]
 
 
 export const KYCVerificationScalarFieldEnum = {

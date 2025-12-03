@@ -43,25 +43,17 @@ const mainLinks = [
 export function NavbarSearch({
   searchRef,
   planType,
+  user,
+  kycStatus,
 }: {
   searchRef?: React.RefObject<HTMLInputElement | null>;
   planType?: string;
+  user?: any;
+  kycStatus?: string;
 }) {
   const pathname = usePathname();
   const {colorScheme, toggleColorScheme} = useMantineColorScheme();
   const isFreePlan = planType === "FREE";
-  const [user, setUser] = useState<any>(null);
-  const supabase = createClient();
-
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: {user},
-      } = await supabase.auth.getUser();
-      setUser(user);
-    };
-    getUser();
-  }, [supabase]);
 
   const getInitials = (email: string) => {
     if (!email) return "U";
@@ -103,7 +95,7 @@ export function NavbarSearch({
     <nav className={classes.navbar}>
       {/* User Account Section */}
       <div className={classes.userSection}>
-        <UserButton />
+        <UserButton user={user} kycStatus={kycStatus} />
       </div>
 
       {/* Navigation Links */}

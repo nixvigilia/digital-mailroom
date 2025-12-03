@@ -7,10 +7,12 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "npx tsx prisma/seed.ts"
+    "seed": "npx tsx prisma/seed.ts",
+    "prisma:seed:admin": "tsx prisma/seed-admin.ts"
   },
   "dependencies": {
     "@mantine/core": "8.3.9",
+    "@mantine/form": "^8.3.9",
     "@mantine/hooks": "8.3.9",
     "@mantine/notifications": "^8.3.9",
     "@prisma/adapter-pg": "^7.0.1",
@@ -18,11 +20,14 @@
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.86.0",
     "@tabler/icons-react": "^3.35.0",
+    "@tanstack/react-virtual": "^3.13.12",
     "dotenv": "^17.2.3",
     "next": "16.0.6",
     "pg": "^8.16.3",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "react-webcam": "^7.2.0",
+    "swr": "^2.3.7"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

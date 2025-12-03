@@ -34,6 +34,8 @@ export type ProfileMinAggregateOutputType = {
   created_at: Date | null
   user_type: $Enums.UserType | null
   role: $Enums.UserRole | null
+  password_hint: string | null
+  integration_email: string | null
 }
 
 export type ProfileMaxAggregateOutputType = {
@@ -46,6 +48,8 @@ export type ProfileMaxAggregateOutputType = {
   created_at: Date | null
   user_type: $Enums.UserType | null
   role: $Enums.UserRole | null
+  password_hint: string | null
+  integration_email: string | null
 }
 
 export type ProfileCountAggregateOutputType = {
@@ -58,6 +62,8 @@ export type ProfileCountAggregateOutputType = {
   created_at: number
   user_type: number
   role: number
+  password_hint: number
+  integration_email: number
   _all: number
 }
 
@@ -72,6 +78,8 @@ export type ProfileMinAggregateInputType = {
   created_at?: true
   user_type?: true
   role?: true
+  password_hint?: true
+  integration_email?: true
 }
 
 export type ProfileMaxAggregateInputType = {
@@ -84,6 +92,8 @@ export type ProfileMaxAggregateInputType = {
   created_at?: true
   user_type?: true
   role?: true
+  password_hint?: true
+  integration_email?: true
 }
 
 export type ProfileCountAggregateInputType = {
@@ -96,6 +106,8 @@ export type ProfileCountAggregateInputType = {
   created_at?: true
   user_type?: true
   role?: true
+  password_hint?: true
+  integration_email?: true
   _all?: true
 }
 
@@ -181,6 +193,8 @@ export type ProfileGroupByOutputType = {
   created_at: Date
   user_type: $Enums.UserType
   role: $Enums.UserRole
+  password_hint: string | null
+  integration_email: string | null
   _count: ProfileCountAggregateOutputType | null
   _min: ProfileMinAggregateOutputType | null
   _max: ProfileMaxAggregateOutputType | null
@@ -214,8 +228,11 @@ export type ProfileWhereInput = {
   created_at?: Prisma.DateTimeFilter<"Profile"> | Date | string
   user_type?: Prisma.EnumUserTypeFilter<"Profile"> | $Enums.UserType
   role?: Prisma.EnumUserRoleFilter<"Profile"> | $Enums.UserRole
+  password_hint?: Prisma.StringNullableFilter<"Profile"> | string | null
+  integration_email?: Prisma.StringNullableFilter<"Profile"> | string | null
   business_account?: Prisma.XOR<Prisma.BusinessAccountNullableScalarRelationFilter, Prisma.BusinessAccountWhereInput> | null
   kyc_verification?: Prisma.XOR<Prisma.KYCVerificationNullableScalarRelationFilter, Prisma.KYCVerificationWhereInput> | null
+  backoffice_profile?: Prisma.XOR<Prisma.BackofficeProfileNullableScalarRelationFilter, Prisma.BackofficeProfileWhereInput> | null
   mail_action_requests?: Prisma.MailActionRequestListRelationFilter
   mail_items?: Prisma.MailItemListRelationFilter
   subscriptions?: Prisma.SubscriptionListRelationFilter
@@ -223,6 +240,7 @@ export type ProfileWhereInput = {
   team_memberships?: Prisma.TeamMemberListRelationFilter
   referrals?: Prisma.ReferralListRelationFilter
   referred_users?: Prisma.ReferralListRelationFilter
+  activity_logs?: Prisma.ActivityLogListRelationFilter
 }
 
 export type ProfileOrderByWithRelationInput = {
@@ -235,8 +253,11 @@ export type ProfileOrderByWithRelationInput = {
   created_at?: Prisma.SortOrder
   user_type?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  password_hint?: Prisma.SortOrderInput | Prisma.SortOrder
+  integration_email?: Prisma.SortOrderInput | Prisma.SortOrder
   business_account?: Prisma.BusinessAccountOrderByWithRelationInput
   kyc_verification?: Prisma.KYCVerificationOrderByWithRelationInput
+  backoffice_profile?: Prisma.BackofficeProfileOrderByWithRelationInput
   mail_action_requests?: Prisma.MailActionRequestOrderByRelationAggregateInput
   mail_items?: Prisma.MailItemOrderByRelationAggregateInput
   subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
@@ -244,6 +265,7 @@ export type ProfileOrderByWithRelationInput = {
   team_memberships?: Prisma.TeamMemberOrderByRelationAggregateInput
   referrals?: Prisma.ReferralOrderByRelationAggregateInput
   referred_users?: Prisma.ReferralOrderByRelationAggregateInput
+  activity_logs?: Prisma.ActivityLogOrderByRelationAggregateInput
 }
 
 export type ProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -259,8 +281,11 @@ export type ProfileWhereUniqueInput = Prisma.AtLeast<{
   created_at?: Prisma.DateTimeFilter<"Profile"> | Date | string
   user_type?: Prisma.EnumUserTypeFilter<"Profile"> | $Enums.UserType
   role?: Prisma.EnumUserRoleFilter<"Profile"> | $Enums.UserRole
+  password_hint?: Prisma.StringNullableFilter<"Profile"> | string | null
+  integration_email?: Prisma.StringNullableFilter<"Profile"> | string | null
   business_account?: Prisma.XOR<Prisma.BusinessAccountNullableScalarRelationFilter, Prisma.BusinessAccountWhereInput> | null
   kyc_verification?: Prisma.XOR<Prisma.KYCVerificationNullableScalarRelationFilter, Prisma.KYCVerificationWhereInput> | null
+  backoffice_profile?: Prisma.XOR<Prisma.BackofficeProfileNullableScalarRelationFilter, Prisma.BackofficeProfileWhereInput> | null
   mail_action_requests?: Prisma.MailActionRequestListRelationFilter
   mail_items?: Prisma.MailItemListRelationFilter
   subscriptions?: Prisma.SubscriptionListRelationFilter
@@ -268,6 +293,7 @@ export type ProfileWhereUniqueInput = Prisma.AtLeast<{
   team_memberships?: Prisma.TeamMemberListRelationFilter
   referrals?: Prisma.ReferralListRelationFilter
   referred_users?: Prisma.ReferralListRelationFilter
+  activity_logs?: Prisma.ActivityLogListRelationFilter
 }, "id" | "email" | "referral_code">
 
 export type ProfileOrderByWithAggregationInput = {
@@ -280,6 +306,8 @@ export type ProfileOrderByWithAggregationInput = {
   created_at?: Prisma.SortOrder
   user_type?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  password_hint?: Prisma.SortOrderInput | Prisma.SortOrder
+  integration_email?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ProfileCountOrderByAggregateInput
   _max?: Prisma.ProfileMaxOrderByAggregateInput
   _min?: Prisma.ProfileMinOrderByAggregateInput
@@ -298,6 +326,8 @@ export type ProfileScalarWhereWithAggregatesInput = {
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Profile"> | Date | string
   user_type?: Prisma.EnumUserTypeWithAggregatesFilter<"Profile"> | $Enums.UserType
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"Profile"> | $Enums.UserRole
+  password_hint?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
+  integration_email?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
 }
 
 export type ProfileCreateInput = {
@@ -310,8 +340,11 @@ export type ProfileCreateInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
@@ -319,6 +352,7 @@ export type ProfileCreateInput = {
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateInput = {
@@ -331,8 +365,11 @@ export type ProfileUncheckedCreateInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
@@ -340,6 +377,7 @@ export type ProfileUncheckedCreateInput = {
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUpdateInput = {
@@ -352,8 +390,11 @@ export type ProfileUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
@@ -361,6 +402,7 @@ export type ProfileUpdateInput = {
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateInput = {
@@ -373,8 +415,11 @@ export type ProfileUncheckedUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
@@ -382,6 +427,7 @@ export type ProfileUncheckedUpdateInput = {
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateManyInput = {
@@ -394,6 +440,8 @@ export type ProfileCreateManyInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
 }
 
 export type ProfileUpdateManyMutationInput = {
@@ -406,6 +454,8 @@ export type ProfileUpdateManyMutationInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProfileUncheckedUpdateManyInput = {
@@ -418,6 +468,8 @@ export type ProfileUncheckedUpdateManyInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProfileCountOrderByAggregateInput = {
@@ -430,6 +482,8 @@ export type ProfileCountOrderByAggregateInput = {
   created_at?: Prisma.SortOrder
   user_type?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  password_hint?: Prisma.SortOrder
+  integration_email?: Prisma.SortOrder
 }
 
 export type ProfileMaxOrderByAggregateInput = {
@@ -442,6 +496,8 @@ export type ProfileMaxOrderByAggregateInput = {
   created_at?: Prisma.SortOrder
   user_type?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  password_hint?: Prisma.SortOrder
+  integration_email?: Prisma.SortOrder
 }
 
 export type ProfileMinOrderByAggregateInput = {
@@ -454,6 +510,8 @@ export type ProfileMinOrderByAggregateInput = {
   created_at?: Prisma.SortOrder
   user_type?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  password_hint?: Prisma.SortOrder
+  integration_email?: Prisma.SortOrder
 }
 
 export type ProfileScalarRelationFilter = {
@@ -484,6 +542,34 @@ export type EnumUserTypeFieldUpdateOperationsInput = {
 
 export type EnumUserRoleFieldUpdateOperationsInput = {
   set?: $Enums.UserRole
+}
+
+export type ProfileCreateNestedOneWithoutBackoffice_profileInput = {
+  create?: Prisma.XOR<Prisma.ProfileCreateWithoutBackoffice_profileInput, Prisma.ProfileUncheckedCreateWithoutBackoffice_profileInput>
+  connectOrCreate?: Prisma.ProfileCreateOrConnectWithoutBackoffice_profileInput
+  connect?: Prisma.ProfileWhereUniqueInput
+}
+
+export type ProfileUpdateOneRequiredWithoutBackoffice_profileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProfileCreateWithoutBackoffice_profileInput, Prisma.ProfileUncheckedCreateWithoutBackoffice_profileInput>
+  connectOrCreate?: Prisma.ProfileCreateOrConnectWithoutBackoffice_profileInput
+  upsert?: Prisma.ProfileUpsertWithoutBackoffice_profileInput
+  connect?: Prisma.ProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProfileUpdateToOneWithWhereWithoutBackoffice_profileInput, Prisma.ProfileUpdateWithoutBackoffice_profileInput>, Prisma.ProfileUncheckedUpdateWithoutBackoffice_profileInput>
+}
+
+export type ProfileCreateNestedOneWithoutActivity_logsInput = {
+  create?: Prisma.XOR<Prisma.ProfileCreateWithoutActivity_logsInput, Prisma.ProfileUncheckedCreateWithoutActivity_logsInput>
+  connectOrCreate?: Prisma.ProfileCreateOrConnectWithoutActivity_logsInput
+  connect?: Prisma.ProfileWhereUniqueInput
+}
+
+export type ProfileUpdateOneRequiredWithoutActivity_logsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProfileCreateWithoutActivity_logsInput, Prisma.ProfileUncheckedCreateWithoutActivity_logsInput>
+  connectOrCreate?: Prisma.ProfileCreateOrConnectWithoutActivity_logsInput
+  upsert?: Prisma.ProfileUpsertWithoutActivity_logsInput
+  connect?: Prisma.ProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProfileUpdateToOneWithWhereWithoutActivity_logsInput, Prisma.ProfileUpdateWithoutActivity_logsInput>, Prisma.ProfileUncheckedUpdateWithoutActivity_logsInput>
 }
 
 export type ProfileCreateNestedOneWithoutKyc_verificationInput = {
@@ -614,6 +700,230 @@ export type ProfileUpdateOneRequiredWithoutReferred_usersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProfileUpdateToOneWithWhereWithoutReferred_usersInput, Prisma.ProfileUpdateWithoutReferred_usersInput>, Prisma.ProfileUncheckedUpdateWithoutReferred_usersInput>
 }
 
+export type ProfileCreateWithoutBackoffice_profileInput = {
+  id?: string
+  avatar_url?: string | null
+  email: string
+  referral_code?: string | null
+  referred_by?: string | null
+  updated_at?: Date | string
+  created_at?: Date | string
+  user_type?: $Enums.UserType
+  role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
+  business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
+  kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
+  mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
+  mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
+  team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
+  referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogCreateNestedManyWithoutProfileInput
+}
+
+export type ProfileUncheckedCreateWithoutBackoffice_profileInput = {
+  id?: string
+  avatar_url?: string | null
+  email: string
+  referral_code?: string | null
+  referred_by?: string | null
+  updated_at?: Date | string
+  created_at?: Date | string
+  user_type?: $Enums.UserType
+  role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
+  business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
+  kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
+  mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
+  mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
+  team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
+  referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProfileInput
+}
+
+export type ProfileCreateOrConnectWithoutBackoffice_profileInput = {
+  where: Prisma.ProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProfileCreateWithoutBackoffice_profileInput, Prisma.ProfileUncheckedCreateWithoutBackoffice_profileInput>
+}
+
+export type ProfileUpsertWithoutBackoffice_profileInput = {
+  update: Prisma.XOR<Prisma.ProfileUpdateWithoutBackoffice_profileInput, Prisma.ProfileUncheckedUpdateWithoutBackoffice_profileInput>
+  create: Prisma.XOR<Prisma.ProfileCreateWithoutBackoffice_profileInput, Prisma.ProfileUncheckedCreateWithoutBackoffice_profileInput>
+  where?: Prisma.ProfileWhereInput
+}
+
+export type ProfileUpdateToOneWithWhereWithoutBackoffice_profileInput = {
+  where?: Prisma.ProfileWhereInput
+  data: Prisma.XOR<Prisma.ProfileUpdateWithoutBackoffice_profileInput, Prisma.ProfileUncheckedUpdateWithoutBackoffice_profileInput>
+}
+
+export type ProfileUpdateWithoutBackoffice_profileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referred_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
+  kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
+  mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
+  mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
+  team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
+  referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUpdateManyWithoutProfileNestedInput
+}
+
+export type ProfileUncheckedUpdateWithoutBackoffice_profileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referred_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
+  kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
+  mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
+  mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
+  team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
+  referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProfileNestedInput
+}
+
+export type ProfileCreateWithoutActivity_logsInput = {
+  id?: string
+  avatar_url?: string | null
+  email: string
+  referral_code?: string | null
+  referred_by?: string | null
+  updated_at?: Date | string
+  created_at?: Date | string
+  user_type?: $Enums.UserType
+  role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
+  business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
+  kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
+  mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
+  mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
+  team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
+  referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+}
+
+export type ProfileUncheckedCreateWithoutActivity_logsInput = {
+  id?: string
+  avatar_url?: string | null
+  email: string
+  referral_code?: string | null
+  referred_by?: string | null
+  updated_at?: Date | string
+  created_at?: Date | string
+  user_type?: $Enums.UserType
+  role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
+  business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
+  kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
+  mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
+  mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
+  team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
+  referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+}
+
+export type ProfileCreateOrConnectWithoutActivity_logsInput = {
+  where: Prisma.ProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProfileCreateWithoutActivity_logsInput, Prisma.ProfileUncheckedCreateWithoutActivity_logsInput>
+}
+
+export type ProfileUpsertWithoutActivity_logsInput = {
+  update: Prisma.XOR<Prisma.ProfileUpdateWithoutActivity_logsInput, Prisma.ProfileUncheckedUpdateWithoutActivity_logsInput>
+  create: Prisma.XOR<Prisma.ProfileCreateWithoutActivity_logsInput, Prisma.ProfileUncheckedCreateWithoutActivity_logsInput>
+  where?: Prisma.ProfileWhereInput
+}
+
+export type ProfileUpdateToOneWithWhereWithoutActivity_logsInput = {
+  where?: Prisma.ProfileWhereInput
+  data: Prisma.XOR<Prisma.ProfileUpdateWithoutActivity_logsInput, Prisma.ProfileUncheckedUpdateWithoutActivity_logsInput>
+}
+
+export type ProfileUpdateWithoutActivity_logsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referred_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
+  kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
+  mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
+  mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
+  team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
+  referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+}
+
+export type ProfileUncheckedUpdateWithoutActivity_logsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referred_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
+  kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
+  mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
+  mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
+  team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
+  referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+}
+
 export type ProfileCreateWithoutKyc_verificationInput = {
   id?: string
   avatar_url?: string | null
@@ -624,7 +934,10 @@ export type ProfileCreateWithoutKyc_verificationInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
@@ -632,6 +945,7 @@ export type ProfileCreateWithoutKyc_verificationInput = {
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutKyc_verificationInput = {
@@ -644,7 +958,10 @@ export type ProfileUncheckedCreateWithoutKyc_verificationInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
@@ -652,6 +969,7 @@ export type ProfileUncheckedCreateWithoutKyc_verificationInput = {
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileCreateOrConnectWithoutKyc_verificationInput = {
@@ -680,7 +998,10 @@ export type ProfileUpdateWithoutKyc_verificationInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
@@ -688,6 +1009,7 @@ export type ProfileUpdateWithoutKyc_verificationInput = {
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutKyc_verificationInput = {
@@ -700,7 +1022,10 @@ export type ProfileUncheckedUpdateWithoutKyc_verificationInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
@@ -708,6 +1033,7 @@ export type ProfileUncheckedUpdateWithoutKyc_verificationInput = {
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateWithoutBusiness_accountInput = {
@@ -720,7 +1046,10 @@ export type ProfileCreateWithoutBusiness_accountInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
@@ -728,6 +1057,7 @@ export type ProfileCreateWithoutBusiness_accountInput = {
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutBusiness_accountInput = {
@@ -740,7 +1070,10 @@ export type ProfileUncheckedCreateWithoutBusiness_accountInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
@@ -748,6 +1081,7 @@ export type ProfileUncheckedCreateWithoutBusiness_accountInput = {
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileCreateOrConnectWithoutBusiness_accountInput = {
@@ -776,7 +1110,10 @@ export type ProfileUpdateWithoutBusiness_accountInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
@@ -784,6 +1121,7 @@ export type ProfileUpdateWithoutBusiness_accountInput = {
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutBusiness_accountInput = {
@@ -796,7 +1134,10 @@ export type ProfileUncheckedUpdateWithoutBusiness_accountInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
@@ -804,6 +1145,7 @@ export type ProfileUncheckedUpdateWithoutBusiness_accountInput = {
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateWithoutTeam_membershipsInput = {
@@ -816,14 +1158,18 @@ export type ProfileCreateWithoutTeam_membershipsInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
   payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutTeam_membershipsInput = {
@@ -836,14 +1182,18 @@ export type ProfileUncheckedCreateWithoutTeam_membershipsInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
   payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileCreateOrConnectWithoutTeam_membershipsInput = {
@@ -872,14 +1222,18 @@ export type ProfileUpdateWithoutTeam_membershipsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
   payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutTeam_membershipsInput = {
@@ -892,14 +1246,18 @@ export type ProfileUncheckedUpdateWithoutTeam_membershipsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
   payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateWithoutSubscriptionsInput = {
@@ -912,14 +1270,18 @@ export type ProfileCreateWithoutSubscriptionsInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutSubscriptionsInput = {
@@ -932,14 +1294,18 @@ export type ProfileUncheckedCreateWithoutSubscriptionsInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileCreateOrConnectWithoutSubscriptionsInput = {
@@ -968,14 +1334,18 @@ export type ProfileUpdateWithoutSubscriptionsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutSubscriptionsInput = {
@@ -988,14 +1358,18 @@ export type ProfileUncheckedUpdateWithoutSubscriptionsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateWithoutPayment_transactionsInput = {
@@ -1008,14 +1382,18 @@ export type ProfileCreateWithoutPayment_transactionsInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutPayment_transactionsInput = {
@@ -1028,14 +1406,18 @@ export type ProfileUncheckedCreateWithoutPayment_transactionsInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileCreateOrConnectWithoutPayment_transactionsInput = {
@@ -1064,14 +1446,18 @@ export type ProfileUpdateWithoutPayment_transactionsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutPayment_transactionsInput = {
@@ -1084,14 +1470,18 @@ export type ProfileUncheckedUpdateWithoutPayment_transactionsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateWithoutMail_itemsInput = {
@@ -1104,14 +1494,18 @@ export type ProfileCreateWithoutMail_itemsInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
   payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutMail_itemsInput = {
@@ -1124,14 +1518,18 @@ export type ProfileUncheckedCreateWithoutMail_itemsInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
   payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileCreateOrConnectWithoutMail_itemsInput = {
@@ -1160,14 +1558,18 @@ export type ProfileUpdateWithoutMail_itemsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
   payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutMail_itemsInput = {
@@ -1180,14 +1582,18 @@ export type ProfileUncheckedUpdateWithoutMail_itemsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
   payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateWithoutMail_action_requestsInput = {
@@ -1200,14 +1606,18 @@ export type ProfileCreateWithoutMail_action_requestsInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
   payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutMail_action_requestsInput = {
@@ -1220,14 +1630,18 @@ export type ProfileUncheckedCreateWithoutMail_action_requestsInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
   payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileCreateOrConnectWithoutMail_action_requestsInput = {
@@ -1256,14 +1670,18 @@ export type ProfileUpdateWithoutMail_action_requestsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
   payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutMail_action_requestsInput = {
@@ -1276,14 +1694,18 @@ export type ProfileUncheckedUpdateWithoutMail_action_requestsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
   payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateWithoutReferralsInput = {
@@ -1296,14 +1718,18 @@ export type ProfileCreateWithoutReferralsInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
   payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutReferralsInput = {
@@ -1316,14 +1742,18 @@ export type ProfileUncheckedCreateWithoutReferralsInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
   payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  activity_logs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileCreateOrConnectWithoutReferralsInput = {
@@ -1341,14 +1771,18 @@ export type ProfileCreateWithoutReferred_usersInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
   payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  activity_logs?: Prisma.ActivityLogCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutReferred_usersInput = {
@@ -1361,14 +1795,18 @@ export type ProfileUncheckedCreateWithoutReferred_usersInput = {
   created_at?: Date | string
   user_type?: $Enums.UserType
   role?: $Enums.UserRole
+  password_hint?: string | null
+  integration_email?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
   payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  activity_logs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileCreateOrConnectWithoutReferred_usersInput = {
@@ -1397,14 +1835,18 @@ export type ProfileUpdateWithoutReferralsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
   payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutReferralsInput = {
@@ -1417,14 +1859,18 @@ export type ProfileUncheckedUpdateWithoutReferralsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
   payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  activity_logs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUpsertWithoutReferred_usersInput = {
@@ -1448,14 +1894,18 @@ export type ProfileUpdateWithoutReferred_usersInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
   payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  activity_logs?: Prisma.ActivityLogUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutReferred_usersInput = {
@@ -1468,14 +1918,18 @@ export type ProfileUncheckedUpdateWithoutReferred_usersInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
+  backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
   payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  activity_logs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 
@@ -1491,6 +1945,7 @@ export type ProfileCountOutputType = {
   team_memberships: number
   referrals: number
   referred_users: number
+  activity_logs: number
 }
 
 export type ProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1501,6 +1956,7 @@ export type ProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   team_memberships?: boolean | ProfileCountOutputTypeCountTeam_membershipsArgs
   referrals?: boolean | ProfileCountOutputTypeCountReferralsArgs
   referred_users?: boolean | ProfileCountOutputTypeCountReferred_usersArgs
+  activity_logs?: boolean | ProfileCountOutputTypeCountActivity_logsArgs
 }
 
 /**
@@ -1562,6 +2018,13 @@ export type ProfileCountOutputTypeCountReferred_usersArgs<ExtArgs extends runtim
   where?: Prisma.ReferralWhereInput
 }
 
+/**
+ * ProfileCountOutputType without action
+ */
+export type ProfileCountOutputTypeCountActivity_logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ActivityLogWhereInput
+}
+
 
 export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1573,8 +2036,11 @@ export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   created_at?: boolean
   user_type?: boolean
   role?: boolean
+  password_hint?: boolean
+  integration_email?: boolean
   business_account?: boolean | Prisma.Profile$business_accountArgs<ExtArgs>
   kyc_verification?: boolean | Prisma.Profile$kyc_verificationArgs<ExtArgs>
+  backoffice_profile?: boolean | Prisma.Profile$backoffice_profileArgs<ExtArgs>
   mail_action_requests?: boolean | Prisma.Profile$mail_action_requestsArgs<ExtArgs>
   mail_items?: boolean | Prisma.Profile$mail_itemsArgs<ExtArgs>
   subscriptions?: boolean | Prisma.Profile$subscriptionsArgs<ExtArgs>
@@ -1582,6 +2048,7 @@ export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   team_memberships?: boolean | Prisma.Profile$team_membershipsArgs<ExtArgs>
   referrals?: boolean | Prisma.Profile$referralsArgs<ExtArgs>
   referred_users?: boolean | Prisma.Profile$referred_usersArgs<ExtArgs>
+  activity_logs?: boolean | Prisma.Profile$activity_logsArgs<ExtArgs>
   _count?: boolean | Prisma.ProfileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["profile"]>
 
@@ -1595,6 +2062,8 @@ export type ProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   created_at?: boolean
   user_type?: boolean
   role?: boolean
+  password_hint?: boolean
+  integration_email?: boolean
 }, ExtArgs["result"]["profile"]>
 
 export type ProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1607,6 +2076,8 @@ export type ProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   created_at?: boolean
   user_type?: boolean
   role?: boolean
+  password_hint?: boolean
+  integration_email?: boolean
 }, ExtArgs["result"]["profile"]>
 
 export type ProfileSelectScalar = {
@@ -1619,12 +2090,15 @@ export type ProfileSelectScalar = {
   created_at?: boolean
   user_type?: boolean
   role?: boolean
+  password_hint?: boolean
+  integration_email?: boolean
 }
 
-export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "avatar_url" | "email" | "referral_code" | "referred_by" | "updated_at" | "created_at" | "user_type" | "role", ExtArgs["result"]["profile"]>
+export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "avatar_url" | "email" | "referral_code" | "referred_by" | "updated_at" | "created_at" | "user_type" | "role" | "password_hint" | "integration_email", ExtArgs["result"]["profile"]>
 export type ProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   business_account?: boolean | Prisma.Profile$business_accountArgs<ExtArgs>
   kyc_verification?: boolean | Prisma.Profile$kyc_verificationArgs<ExtArgs>
+  backoffice_profile?: boolean | Prisma.Profile$backoffice_profileArgs<ExtArgs>
   mail_action_requests?: boolean | Prisma.Profile$mail_action_requestsArgs<ExtArgs>
   mail_items?: boolean | Prisma.Profile$mail_itemsArgs<ExtArgs>
   subscriptions?: boolean | Prisma.Profile$subscriptionsArgs<ExtArgs>
@@ -1632,6 +2106,7 @@ export type ProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   team_memberships?: boolean | Prisma.Profile$team_membershipsArgs<ExtArgs>
   referrals?: boolean | Prisma.Profile$referralsArgs<ExtArgs>
   referred_users?: boolean | Prisma.Profile$referred_usersArgs<ExtArgs>
+  activity_logs?: boolean | Prisma.Profile$activity_logsArgs<ExtArgs>
   _count?: boolean | Prisma.ProfileCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProfileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1642,6 +2117,7 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     business_account: Prisma.$BusinessAccountPayload<ExtArgs> | null
     kyc_verification: Prisma.$KYCVerificationPayload<ExtArgs> | null
+    backoffice_profile: Prisma.$BackofficeProfilePayload<ExtArgs> | null
     mail_action_requests: Prisma.$MailActionRequestPayload<ExtArgs>[]
     mail_items: Prisma.$MailItemPayload<ExtArgs>[]
     subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
@@ -1649,6 +2125,7 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     team_memberships: Prisma.$TeamMemberPayload<ExtArgs>[]
     referrals: Prisma.$ReferralPayload<ExtArgs>[]
     referred_users: Prisma.$ReferralPayload<ExtArgs>[]
+    activity_logs: Prisma.$ActivityLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1660,6 +2137,8 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     created_at: Date
     user_type: $Enums.UserType
     role: $Enums.UserRole
+    password_hint: string | null
+    integration_email: string | null
   }, ExtArgs["result"]["profile"]>
   composites: {}
 }
@@ -2056,6 +2535,7 @@ export interface Prisma__ProfileClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   business_account<T extends Prisma.Profile$business_accountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$business_accountArgs<ExtArgs>>): Prisma.Prisma__BusinessAccountClient<runtime.Types.Result.GetResult<Prisma.$BusinessAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   kyc_verification<T extends Prisma.Profile$kyc_verificationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$kyc_verificationArgs<ExtArgs>>): Prisma.Prisma__KYCVerificationClient<runtime.Types.Result.GetResult<Prisma.$KYCVerificationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  backoffice_profile<T extends Prisma.Profile$backoffice_profileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$backoffice_profileArgs<ExtArgs>>): Prisma.Prisma__BackofficeProfileClient<runtime.Types.Result.GetResult<Prisma.$BackofficeProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   mail_action_requests<T extends Prisma.Profile$mail_action_requestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$mail_action_requestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailActionRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mail_items<T extends Prisma.Profile$mail_itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$mail_itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   subscriptions<T extends Prisma.Profile$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2063,6 +2543,7 @@ export interface Prisma__ProfileClient<T, Null = never, ExtArgs extends runtime.
   team_memberships<T extends Prisma.Profile$team_membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$team_membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   referrals<T extends Prisma.Profile$referralsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$referralsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReferralPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   referred_users<T extends Prisma.Profile$referred_usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$referred_usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReferralPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activity_logs<T extends Prisma.Profile$activity_logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$activity_logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2101,6 +2582,8 @@ export interface ProfileFieldRefs {
   readonly created_at: Prisma.FieldRef<"Profile", 'DateTime'>
   readonly user_type: Prisma.FieldRef<"Profile", 'UserType'>
   readonly role: Prisma.FieldRef<"Profile", 'UserRole'>
+  readonly password_hint: Prisma.FieldRef<"Profile", 'String'>
+  readonly integration_email: Prisma.FieldRef<"Profile", 'String'>
 }
     
 
@@ -2527,6 +3010,25 @@ export type Profile$kyc_verificationArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
+ * Profile.backoffice_profile
+ */
+export type Profile$backoffice_profileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BackofficeProfile
+   */
+  select?: Prisma.BackofficeProfileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BackofficeProfile
+   */
+  omit?: Prisma.BackofficeProfileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BackofficeProfileInclude<ExtArgs> | null
+  where?: Prisma.BackofficeProfileWhereInput
+}
+
+/**
  * Profile.mail_action_requests
  */
 export type Profile$mail_action_requestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2692,6 +3194,30 @@ export type Profile$referred_usersArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.ReferralScalarFieldEnum | Prisma.ReferralScalarFieldEnum[]
+}
+
+/**
+ * Profile.activity_logs
+ */
+export type Profile$activity_logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ActivityLog
+   */
+  select?: Prisma.ActivityLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ActivityLog
+   */
+  omit?: Prisma.ActivityLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ActivityLogInclude<ExtArgs> | null
+  where?: Prisma.ActivityLogWhereInput
+  orderBy?: Prisma.ActivityLogOrderByWithRelationInput | Prisma.ActivityLogOrderByWithRelationInput[]
+  cursor?: Prisma.ActivityLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ActivityLogScalarFieldEnum | Prisma.ActivityLogScalarFieldEnum[]
 }
 
 /**

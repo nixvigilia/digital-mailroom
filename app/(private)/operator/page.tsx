@@ -1,6 +1,15 @@
 "use client";
 
-import {Title, Text, Stack, Group, Paper, SimpleGrid, Badge, Button} from "@mantine/core";
+import {
+  Title,
+  Text,
+  Stack,
+  Group,
+  Paper,
+  SimpleGrid,
+  Badge,
+  Button,
+} from "@mantine/core";
 import {
   IconInbox,
   IconClock,
@@ -113,7 +122,10 @@ export default function OperatorDashboardPage() {
         <Paper withBorder p="md" radius="md">
           <Stack gap={4}>
             <Group gap="xs" align="center">
-              <IconAlertCircle size={20} color="var(--mantine-color-orange-6)" />
+              <IconAlertCircle
+                size={20}
+                color="var(--mantine-color-orange-6)"
+              />
               <Text size="sm" c="dimmed" fw={500}>
                 Needs Approval
               </Text>
@@ -238,4 +250,3 @@ export default function OperatorDashboardPage() {
     </Stack>
   );
 }
-

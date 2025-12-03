@@ -9,6 +9,8 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Profile'
+export type * from './models/BackofficeProfile'
+export type * from './models/ActivityLog'
 export type * from './models/KYCVerification'
 export type * from './models/BusinessAccount'
 export type * from './models/TeamMember'

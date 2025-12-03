@@ -51,6 +51,7 @@ interface ReferralData {
 interface UserDashboardClientProps {
   planType: string;
   kycStatus: string;
+  rejectionReason?: string | null;
   referralDataPromise: Promise<ReferralData | null>;
   freePlanDataPromise: Promise<{
     description: string | null;
@@ -64,6 +65,7 @@ interface UserDashboardClientProps {
 export function UserDashboardClient({
   planType,
   kycStatus,
+  rejectionReason,
   referralDataPromise,
   freePlanDataPromise,
 }: UserDashboardClientProps) {
@@ -72,9 +74,11 @@ export function UserDashboardClient({
   const router = useRouter();
   const [copied, setCopied] = useState(false);
   const isFreePlan = planType === "FREE";
-  const isKYCRequired =
-    !isFreePlan && kycStatus !== "APPROVED" && kycStatus !== "PENDING";
+
+  const isKYCRejected = !isFreePlan && kycStatus === "REJECTED";
   const isKYCPending = !isFreePlan && kycStatus === "PENDING";
+  const isKYCRequired =
+    !isFreePlan && !isKYCRejected && !isKYCPending && kycStatus !== "APPROVED";
 
   const cashbackPercentage = freePlanData?.cashback_percentage || 5;
 
@@ -102,6 +106,39 @@ export function UserDashboardClient({
 
   return (
     <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
+      {/* KYC Rejected Alert */}
+      {isKYCRejected && (
+        <Alert
+          variant="filled"
+          color="red"
+          title="Verification Rejected"
+          icon={<IconAlertCircle size={20} />}
+        >
+          <Stack gap="xs">
+            <Text size="sm" c="white">
+              Your identity verification was rejected.
+              {rejectionReason && (
+                <>
+                  <br />
+                  <strong>Reason:</strong> {rejectionReason}
+                </>
+              )}
+            </Text>
+            <Group>
+              <Button
+                component={Link}
+                href="/app/kyc"
+                variant="white"
+                color="red"
+                size="xs"
+              >
+                Update Information
+              </Button>
+            </Group>
+          </Stack>
+        </Alert>
+      )}
+
       {/* KYC Required Alert */}
       {isKYCRequired && (
         <Alert
@@ -244,18 +281,6 @@ export function UserDashboardClient({
               </Button>
             </Stack>
           </Card>
-          <ReferralStatsCard
-            title="Total Referrals"
-            value={referralData.totalReferrals}
-            icon={IconUsers}
-            color="blue"
-          />
-          <ReferralStatsCard
-            title="Total Earnings"
-            value={`₱${referralData.totalEarnings.toLocaleString()}`}
-            icon={IconCash}
-            color="yellow"
-          />
         </SimpleGrid>
       )}
 

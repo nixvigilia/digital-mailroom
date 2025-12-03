@@ -1,6 +1,6 @@
 "use client";
 
-import {useActionState, useEffect} from "react";
+import {useActionState, useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {login, type ActionResult} from "../../actions/auth";
@@ -25,9 +25,11 @@ import {
   IconLock,
   IconMail,
   IconLogin,
+  IconHelp,
 } from "@tabler/icons-react";
 import {Header} from "@/components/header";
 import {Footer} from "@/components/footer";
+import {PasswordHintModal} from "@/components/auth/PasswordHintModal";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -35,6 +37,7 @@ export default function LoginPage() {
     ActionResult | null,
     FormData
   >(login, null);
+  const [hintModalOpened, setHintModalOpened] = useState(false);
 
   useEffect(() => {
     if (loginState) {
@@ -134,13 +137,24 @@ export default function LoginPage() {
                     }}
                   />
 
-                  <Box>
+                  <Box
+                    style={{display: "flex", justifyContent: "space-between"}}
+                  >
                     <Anchor
-                      component={Link}
-                      href="/forgot-password"
+                      component="button"
+                      type="button"
                       size="sm"
-                      style={{float: "right"}}
+                      onClick={() => setHintModalOpened(true)}
+                      c="dimmed"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
                     >
+                      <IconHelp size={14} /> Hint
+                    </Anchor>
+                    <Anchor component={Link} href="/forgot-password" size="sm">
                       Forgot password?
                     </Anchor>
                   </Box>
@@ -185,6 +199,10 @@ export default function LoginPage() {
         </Container>
       </Box>
       <Footer />
+      <PasswordHintModal
+        opened={hintModalOpened}
+        onClose={() => setHintModalOpened(false)}
+      />
     </Box>
   );
 }

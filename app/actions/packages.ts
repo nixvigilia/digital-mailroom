@@ -252,3 +252,41 @@ export async function deletePackage(packageId: string): Promise<ActionResult> {
     };
   }
 }
+
+/**
+ * Gets all packages (operator only)
+ */
+export async function getPackages() {
+  const access = await verifyOperatorAccess();
+  if (!access.success) {
+    return [];
+  }
+
+  try {
+    const packages = await prisma.package.findMany({
+      orderBy: [{display_order: "asc"}, {created_at: "desc"}],
+    });
+
+    return packages.map((pkg) => ({
+      id: pkg.id,
+      name: pkg.name,
+      planType: pkg.plan_type,
+      description: pkg.description,
+      priceMonthly: Number(pkg.price_monthly),
+      priceQuarterly: pkg.price_quarterly ? Number(pkg.price_quarterly) : null,
+      priceYearly: pkg.price_yearly ? Number(pkg.price_yearly) : null,
+      features: pkg.features,
+      maxMailItems: pkg.max_mail_items,
+      maxTeamMembers: pkg.max_team_members,
+      isActive: pkg.is_active,
+      isFeatured: pkg.is_featured,
+      displayOrder: pkg.display_order,
+      createdAt: pkg.created_at,
+      updatedAt: pkg.updated_at,
+      cashbackPercentage: Number(pkg.cashback_percentage), // Include cashback
+    }));
+  } catch (error) {
+    console.error("Error fetching packages:", error);
+    return [];
+  }
+}

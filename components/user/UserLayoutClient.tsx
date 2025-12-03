@@ -9,9 +9,16 @@ import {NavbarSearch} from "@/components/user/NavbarSearch";
 interface UserLayoutClientProps {
   children: React.ReactNode;
   planType?: string;
+  user?: any;
+  kycStatus?: string;
 }
 
-export function UserLayoutClient({children, planType}: UserLayoutClientProps) {
+export function UserLayoutClient({
+  children,
+  planType,
+  user,
+  kycStatus,
+}: UserLayoutClientProps) {
   const [opened, {toggle, close}] = useDisclosure(false);
   const {colorScheme, toggleColorScheme} = useMantineColorScheme();
 
@@ -19,7 +26,7 @@ export function UserLayoutClient({children, planType}: UserLayoutClientProps) {
     <Box style={{display: "flex", minHeight: "100vh"}}>
       {/* Desktop Sidebar */}
       <Box visibleFrom="md" style={{flexShrink: 0}}>
-        <NavbarSearch planType={planType} />
+        <NavbarSearch planType={planType} user={user} kycStatus={kycStatus} />
       </Box>
 
       {/* Main Content */}
@@ -54,7 +61,7 @@ export function UserLayoutClient({children, planType}: UserLayoutClientProps) {
           size="300px"
           styles={{body: {padding: 0}}}
         >
-          <NavbarSearch planType={planType} />
+          <NavbarSearch planType={planType} user={user} kycStatus={kycStatus} />
         </Drawer>
 
         {/* Page Content */}

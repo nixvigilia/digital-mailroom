@@ -85,6 +85,7 @@ export default function KYCPage() {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
   const [kycStatus, setKycStatusState] = useState<string>("NOT_STARTED");
+  const [rejectionReason, setRejectionReason] = useState<string | null>(null);
   const [formData, setFormData] = useState<KYCFormData>({
     firstName: "",
     lastName: "",
@@ -112,6 +113,7 @@ export default function KYCPage() {
       setKycStatusState(status);
 
       if (data) {
+        setRejectionReason(data.rejection_reason || null);
         setFormData((prev) => ({
           ...prev,
           firstName: data.first_name || "",
@@ -312,8 +314,15 @@ export default function KYCPage() {
             variant="filled"
             title="Verification Rejected"
           >
-            Your KYC verification was rejected. Please review and resubmit your
-            information.
+            Your KYC verification was rejected.
+            {rejectionReason && (
+              <>
+                <br />
+                <strong>Reason:</strong> {rejectionReason}
+              </>
+            )}
+            <br />
+            Please review and resubmit your information.
           </Alert>
         )}
 

@@ -1,25 +1,16 @@
 "use client";
 
-import {Avatar, Group, Text, UnstyledButton, Box} from "@mantine/core";
+import {Avatar, Group, Text, UnstyledButton, Box, Badge} from "@mantine/core";
 import {IconChevronDown} from "@tabler/icons-react";
-import {createClient} from "@/utils/supabase/client";
-import {useEffect, useState} from "react";
 import classes from "./NavbarSearch.module.css";
 
-export function UserButton() {
-  const [user, setUser] = useState<any>(null);
-  const supabase = createClient();
-
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: {user},
-      } = await supabase.auth.getUser();
-      setUser(user);
-    };
-    getUser();
-  }, [supabase]);
-
+export function UserButton({
+  user,
+  kycStatus,
+}: {
+  user?: any;
+  kycStatus?: string;
+}) {
   const getInitials = (email: string) => {
     if (!email) return "U";
     const username = email.split("@")[0];
@@ -47,12 +38,23 @@ export function UserButton() {
           {user?.email ? getInitials(user.email) : "U"}
         </Avatar>
         <Box style={{flex: 1, minWidth: 0}}>
-          <Text size="sm" fw={600} truncate>
-            {user?.email ? getUsername(user.email) : "User"}
-          </Text>
+          <Group gap="xs" align="center" wrap="nowrap">
+            <Text size="sm" fw={600} truncate>
+              {user?.email ? getUsername(user.email) : "User"}
+            </Text>
+          </Group>
           <Text c="dimmed" size="xs" truncate>
             {user?.email || ""}
           </Text>
+          {kycStatus === "APPROVED" ? (
+            <Badge size="xs" variant="light" color="green">
+              Verified
+            </Badge>
+          ) : (
+            <Badge size="xs" variant="light" color="gray">
+              Unverified
+            </Badge>
+          )}
         </Box>
         {/* <IconChevronDown
           size={18}
