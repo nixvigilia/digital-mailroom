@@ -1,0 +1,90 @@
+.navbar {
+  background-color: var(--mantine-color-body);
+  height: 100vh;
+  width: 260px; /* w-64 is 16rem = 256px, close enough */
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
+  position: sticky;
+  top: 0;
+}
+
+.userSection {
+  padding: var(--mantine-spacing-md);
+  padding-top: var(--mantine-spacing-xl);
+  padding-bottom: var(--mantine-spacing-xl);
+  /* Removed border-bottom */
+}
+
+.section {
+  padding: 0 var(--mantine-spacing-md); /* px-4 */
+  flex-grow: 1;
+}
+
+.bottomSection {
+  padding: var(--mantine-spacing-md);
+  /* Removed border-top */
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* space-y-2 approx */
+}
+
+.mainLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* space-y-2 */
+}
+
+.mainLink {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-size: var(--mantine-font-size-sm);
+  padding: 10px 16px; /* px-4 py-2 */
+  border-radius: var(--mantine-radius-md);
+  font-weight: 500;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  text-decoration: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.mainLink:hover {
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
+}
+
+.mainLink.active {
+  background-color: light-dark(var(--mantine-color-blue-0), var(--mantine-color-blue-9));
+  color: light-dark(var(--mantine-color-blue-7), var(--mantine-color-blue-1));
+  font-weight: 600;
+}
+
+.mainLinkInner {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.mainLinkIcon {
+  margin-right: var(--mantine-spacing-md); /* space-x-3 */
+  color: inherit; /* Inherit from parent for active state */
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.mainLink.active .mainLinkIcon {
+  opacity: 1;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-dark-0));
+  border-radius: var(--mantine-radius-md);
+}

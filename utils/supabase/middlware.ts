@@ -2,6 +2,13 @@ import {createServerClient} from "@supabase/ssr";
 import {NextResponse, type NextRequest} from "next/server";
 
 export async function updateSession(request: NextRequest) {
+  // Exclude webhook routes from authentication checks
+  if (request.nextUrl.pathname.startsWith("/api/webhooks")) {
+    return NextResponse.next({
+      request,
+    });
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -42,6 +49,7 @@ export async function updateSession(request: NextRequest) {
   if (
     !user &&
     !request.nextUrl.pathname.startsWith("/login") &&
+    !request.nextUrl.pathname.startsWith("/admin/login") &&
     !request.nextUrl.pathname.startsWith("/signup") &&
     !request.nextUrl.pathname.startsWith("/auth") &&
     !request.nextUrl.pathname.startsWith("/error") &&
