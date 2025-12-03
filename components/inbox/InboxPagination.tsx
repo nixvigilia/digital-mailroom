@@ -18,7 +18,7 @@ export function InboxPagination({
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", page.toString());
-    router.push(`/app/dashboard?${params.toString()}`);
+    router.push(`/app?${params.toString()}`);
   };
 
   if (totalPages <= 1) return null;

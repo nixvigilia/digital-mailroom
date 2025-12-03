@@ -27,6 +27,7 @@ export type AggregatePackage = {
 }
 
 export type PackageAvgAggregateOutputType = {
+  cashback_percentage: runtime.Decimal | null
   price_monthly: runtime.Decimal | null
   price_quarterly: runtime.Decimal | null
   price_yearly: runtime.Decimal | null
@@ -36,6 +37,7 @@ export type PackageAvgAggregateOutputType = {
 }
 
 export type PackageSumAggregateOutputType = {
+  cashback_percentage: runtime.Decimal | null
   price_monthly: runtime.Decimal | null
   price_quarterly: runtime.Decimal | null
   price_yearly: runtime.Decimal | null
@@ -48,6 +50,8 @@ export type PackageMinAggregateOutputType = {
   id: string | null
   name: string | null
   plan_type: string | null
+  intended_for: string | null
+  cashback_percentage: runtime.Decimal | null
   description: string | null
   price_monthly: runtime.Decimal | null
   price_quarterly: runtime.Decimal | null
@@ -66,6 +70,8 @@ export type PackageMaxAggregateOutputType = {
   id: string | null
   name: string | null
   plan_type: string | null
+  intended_for: string | null
+  cashback_percentage: runtime.Decimal | null
   description: string | null
   price_monthly: runtime.Decimal | null
   price_quarterly: runtime.Decimal | null
@@ -84,11 +90,14 @@ export type PackageCountAggregateOutputType = {
   id: number
   name: number
   plan_type: number
+  intended_for: number
+  cashback_percentage: number
   description: number
   price_monthly: number
   price_quarterly: number
   price_yearly: number
   features: number
+  not_included: number
   max_mail_items: number
   max_team_members: number
   is_active: number
@@ -102,6 +111,7 @@ export type PackageCountAggregateOutputType = {
 
 
 export type PackageAvgAggregateInputType = {
+  cashback_percentage?: true
   price_monthly?: true
   price_quarterly?: true
   price_yearly?: true
@@ -111,6 +121,7 @@ export type PackageAvgAggregateInputType = {
 }
 
 export type PackageSumAggregateInputType = {
+  cashback_percentage?: true
   price_monthly?: true
   price_quarterly?: true
   price_yearly?: true
@@ -123,6 +134,8 @@ export type PackageMinAggregateInputType = {
   id?: true
   name?: true
   plan_type?: true
+  intended_for?: true
+  cashback_percentage?: true
   description?: true
   price_monthly?: true
   price_quarterly?: true
@@ -141,6 +154,8 @@ export type PackageMaxAggregateInputType = {
   id?: true
   name?: true
   plan_type?: true
+  intended_for?: true
+  cashback_percentage?: true
   description?: true
   price_monthly?: true
   price_quarterly?: true
@@ -159,11 +174,14 @@ export type PackageCountAggregateInputType = {
   id?: true
   name?: true
   plan_type?: true
+  intended_for?: true
+  cashback_percentage?: true
   description?: true
   price_monthly?: true
   price_quarterly?: true
   price_yearly?: true
   features?: true
+  not_included?: true
   max_mail_items?: true
   max_team_members?: true
   is_active?: true
@@ -265,11 +283,14 @@ export type PackageGroupByOutputType = {
   id: string
   name: string
   plan_type: string
+  intended_for: string | null
+  cashback_percentage: runtime.Decimal
   description: string | null
   price_monthly: runtime.Decimal
   price_quarterly: runtime.Decimal | null
   price_yearly: runtime.Decimal | null
   features: string[]
+  not_included: string[]
   max_mail_items: number | null
   max_team_members: number | null
   is_active: boolean
@@ -307,11 +328,14 @@ export type PackageWhereInput = {
   id?: Prisma.UuidFilter<"Package"> | string
   name?: Prisma.StringFilter<"Package"> | string
   plan_type?: Prisma.StringFilter<"Package"> | string
+  intended_for?: Prisma.StringNullableFilter<"Package"> | string | null
+  cashback_percentage?: Prisma.DecimalFilter<"Package"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: Prisma.StringNullableFilter<"Package"> | string | null
   price_monthly?: Prisma.DecimalFilter<"Package"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: Prisma.DecimalNullableFilter<"Package"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: Prisma.DecimalNullableFilter<"Package"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.StringNullableListFilter<"Package">
+  not_included?: Prisma.StringNullableListFilter<"Package">
   max_mail_items?: Prisma.IntNullableFilter<"Package"> | number | null
   max_team_members?: Prisma.IntNullableFilter<"Package"> | number | null
   is_active?: Prisma.BoolFilter<"Package"> | boolean
@@ -327,11 +351,14 @@ export type PackageOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   plan_type?: Prisma.SortOrder
+  intended_for?: Prisma.SortOrderInput | Prisma.SortOrder
+  cashback_percentage?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   price_monthly?: Prisma.SortOrder
   price_quarterly?: Prisma.SortOrderInput | Prisma.SortOrder
   price_yearly?: Prisma.SortOrderInput | Prisma.SortOrder
   features?: Prisma.SortOrder
+  not_included?: Prisma.SortOrder
   max_mail_items?: Prisma.SortOrderInput | Prisma.SortOrder
   max_team_members?: Prisma.SortOrderInput | Prisma.SortOrder
   is_active?: Prisma.SortOrder
@@ -350,11 +377,14 @@ export type PackageWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.PackageWhereInput[]
   NOT?: Prisma.PackageWhereInput | Prisma.PackageWhereInput[]
   name?: Prisma.StringFilter<"Package"> | string
+  intended_for?: Prisma.StringNullableFilter<"Package"> | string | null
+  cashback_percentage?: Prisma.DecimalFilter<"Package"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: Prisma.StringNullableFilter<"Package"> | string | null
   price_monthly?: Prisma.DecimalFilter<"Package"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: Prisma.DecimalNullableFilter<"Package"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: Prisma.DecimalNullableFilter<"Package"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.StringNullableListFilter<"Package">
+  not_included?: Prisma.StringNullableListFilter<"Package">
   max_mail_items?: Prisma.IntNullableFilter<"Package"> | number | null
   max_team_members?: Prisma.IntNullableFilter<"Package"> | number | null
   is_active?: Prisma.BoolFilter<"Package"> | boolean
@@ -370,11 +400,14 @@ export type PackageOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   plan_type?: Prisma.SortOrder
+  intended_for?: Prisma.SortOrderInput | Prisma.SortOrder
+  cashback_percentage?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   price_monthly?: Prisma.SortOrder
   price_quarterly?: Prisma.SortOrderInput | Prisma.SortOrder
   price_yearly?: Prisma.SortOrderInput | Prisma.SortOrder
   features?: Prisma.SortOrder
+  not_included?: Prisma.SortOrder
   max_mail_items?: Prisma.SortOrderInput | Prisma.SortOrder
   max_team_members?: Prisma.SortOrderInput | Prisma.SortOrder
   is_active?: Prisma.SortOrder
@@ -397,11 +430,14 @@ export type PackageScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"Package"> | string
   name?: Prisma.StringWithAggregatesFilter<"Package"> | string
   plan_type?: Prisma.StringWithAggregatesFilter<"Package"> | string
+  intended_for?: Prisma.StringNullableWithAggregatesFilter<"Package"> | string | null
+  cashback_percentage?: Prisma.DecimalWithAggregatesFilter<"Package"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Package"> | string | null
   price_monthly?: Prisma.DecimalWithAggregatesFilter<"Package"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: Prisma.DecimalNullableWithAggregatesFilter<"Package"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: Prisma.DecimalNullableWithAggregatesFilter<"Package"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.StringNullableListFilter<"Package">
+  not_included?: Prisma.StringNullableListFilter<"Package">
   max_mail_items?: Prisma.IntNullableWithAggregatesFilter<"Package"> | number | null
   max_team_members?: Prisma.IntNullableWithAggregatesFilter<"Package"> | number | null
   is_active?: Prisma.BoolWithAggregatesFilter<"Package"> | boolean
@@ -416,11 +452,14 @@ export type PackageCreateInput = {
   id?: string
   name: string
   plan_type: string
+  intended_for?: string | null
+  cashback_percentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: string | null
   price_monthly: runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.PackageCreatefeaturesInput | string[]
+  not_included?: Prisma.PackageCreatenot_includedInput | string[]
   max_mail_items?: number | null
   max_team_members?: number | null
   is_active?: boolean
@@ -436,11 +475,14 @@ export type PackageUncheckedCreateInput = {
   id?: string
   name: string
   plan_type: string
+  intended_for?: string | null
+  cashback_percentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: string | null
   price_monthly: runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.PackageCreatefeaturesInput | string[]
+  not_included?: Prisma.PackageCreatenot_includedInput | string[]
   max_mail_items?: number | null
   max_team_members?: number | null
   is_active?: boolean
@@ -456,11 +498,14 @@ export type PackageUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   plan_type?: Prisma.StringFieldUpdateOperationsInput | string
+  intended_for?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cashback_percentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price_monthly?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.PackageUpdatefeaturesInput | string[]
+  not_included?: Prisma.PackageUpdatenot_includedInput | string[]
   max_mail_items?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   max_team_members?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -476,11 +521,14 @@ export type PackageUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   plan_type?: Prisma.StringFieldUpdateOperationsInput | string
+  intended_for?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cashback_percentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price_monthly?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.PackageUpdatefeaturesInput | string[]
+  not_included?: Prisma.PackageUpdatenot_includedInput | string[]
   max_mail_items?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   max_team_members?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -496,11 +544,14 @@ export type PackageCreateManyInput = {
   id?: string
   name: string
   plan_type: string
+  intended_for?: string | null
+  cashback_percentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: string | null
   price_monthly: runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.PackageCreatefeaturesInput | string[]
+  not_included?: Prisma.PackageCreatenot_includedInput | string[]
   max_mail_items?: number | null
   max_team_members?: number | null
   is_active?: boolean
@@ -515,11 +566,14 @@ export type PackageUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   plan_type?: Prisma.StringFieldUpdateOperationsInput | string
+  intended_for?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cashback_percentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price_monthly?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.PackageUpdatefeaturesInput | string[]
+  not_included?: Prisma.PackageUpdatenot_includedInput | string[]
   max_mail_items?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   max_team_members?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -534,11 +588,14 @@ export type PackageUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   plan_type?: Prisma.StringFieldUpdateOperationsInput | string
+  intended_for?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cashback_percentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price_monthly?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.PackageUpdatefeaturesInput | string[]
+  not_included?: Prisma.PackageUpdatenot_includedInput | string[]
   max_mail_items?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   max_team_members?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -561,11 +618,14 @@ export type PackageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   plan_type?: Prisma.SortOrder
+  intended_for?: Prisma.SortOrder
+  cashback_percentage?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price_monthly?: Prisma.SortOrder
   price_quarterly?: Prisma.SortOrder
   price_yearly?: Prisma.SortOrder
   features?: Prisma.SortOrder
+  not_included?: Prisma.SortOrder
   max_mail_items?: Prisma.SortOrder
   max_team_members?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
@@ -577,6 +637,7 @@ export type PackageCountOrderByAggregateInput = {
 }
 
 export type PackageAvgOrderByAggregateInput = {
+  cashback_percentage?: Prisma.SortOrder
   price_monthly?: Prisma.SortOrder
   price_quarterly?: Prisma.SortOrder
   price_yearly?: Prisma.SortOrder
@@ -589,6 +650,8 @@ export type PackageMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   plan_type?: Prisma.SortOrder
+  intended_for?: Prisma.SortOrder
+  cashback_percentage?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price_monthly?: Prisma.SortOrder
   price_quarterly?: Prisma.SortOrder
@@ -607,6 +670,8 @@ export type PackageMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   plan_type?: Prisma.SortOrder
+  intended_for?: Prisma.SortOrder
+  cashback_percentage?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price_monthly?: Prisma.SortOrder
   price_quarterly?: Prisma.SortOrder
@@ -622,6 +687,7 @@ export type PackageMinOrderByAggregateInput = {
 }
 
 export type PackageSumOrderByAggregateInput = {
+  cashback_percentage?: Prisma.SortOrder
   price_monthly?: Prisma.SortOrder
   price_quarterly?: Prisma.SortOrder
   price_yearly?: Prisma.SortOrder
@@ -636,6 +702,10 @@ export type PackageNullableScalarRelationFilter = {
 }
 
 export type PackageCreatefeaturesInput = {
+  set: string[]
+}
+
+export type PackageCreatenot_includedInput = {
   set: string[]
 }
 
@@ -656,6 +726,11 @@ export type NullableDecimalFieldUpdateOperationsInput = {
 }
 
 export type PackageUpdatefeaturesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type PackageUpdatenot_includedInput = {
   set?: string[]
   push?: string | string[]
 }
@@ -696,11 +771,14 @@ export type PackageCreateWithoutSubscriptionsInput = {
   id?: string
   name: string
   plan_type: string
+  intended_for?: string | null
+  cashback_percentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: string | null
   price_monthly: runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.PackageCreatefeaturesInput | string[]
+  not_included?: Prisma.PackageCreatenot_includedInput | string[]
   max_mail_items?: number | null
   max_team_members?: number | null
   is_active?: boolean
@@ -715,11 +793,14 @@ export type PackageUncheckedCreateWithoutSubscriptionsInput = {
   id?: string
   name: string
   plan_type: string
+  intended_for?: string | null
+  cashback_percentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: string | null
   price_monthly: runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.PackageCreatefeaturesInput | string[]
+  not_included?: Prisma.PackageCreatenot_includedInput | string[]
   max_mail_items?: number | null
   max_team_members?: number | null
   is_active?: boolean
@@ -750,11 +831,14 @@ export type PackageUpdateWithoutSubscriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   plan_type?: Prisma.StringFieldUpdateOperationsInput | string
+  intended_for?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cashback_percentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price_monthly?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.PackageUpdatefeaturesInput | string[]
+  not_included?: Prisma.PackageUpdatenot_includedInput | string[]
   max_mail_items?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   max_team_members?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -769,11 +853,14 @@ export type PackageUncheckedUpdateWithoutSubscriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   plan_type?: Prisma.StringFieldUpdateOperationsInput | string
+  intended_for?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cashback_percentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price_monthly?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   price_quarterly?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   price_yearly?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   features?: Prisma.PackageUpdatefeaturesInput | string[]
+  not_included?: Prisma.PackageUpdatenot_includedInput | string[]
   max_mail_items?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   max_team_members?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -819,11 +906,14 @@ export type PackageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   id?: boolean
   name?: boolean
   plan_type?: boolean
+  intended_for?: boolean
+  cashback_percentage?: boolean
   description?: boolean
   price_monthly?: boolean
   price_quarterly?: boolean
   price_yearly?: boolean
   features?: boolean
+  not_included?: boolean
   max_mail_items?: boolean
   max_team_members?: boolean
   is_active?: boolean
@@ -840,11 +930,14 @@ export type PackageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   name?: boolean
   plan_type?: boolean
+  intended_for?: boolean
+  cashback_percentage?: boolean
   description?: boolean
   price_monthly?: boolean
   price_quarterly?: boolean
   price_yearly?: boolean
   features?: boolean
+  not_included?: boolean
   max_mail_items?: boolean
   max_team_members?: boolean
   is_active?: boolean
@@ -859,11 +952,14 @@ export type PackageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   name?: boolean
   plan_type?: boolean
+  intended_for?: boolean
+  cashback_percentage?: boolean
   description?: boolean
   price_monthly?: boolean
   price_quarterly?: boolean
   price_yearly?: boolean
   features?: boolean
+  not_included?: boolean
   max_mail_items?: boolean
   max_team_members?: boolean
   is_active?: boolean
@@ -878,11 +974,14 @@ export type PackageSelectScalar = {
   id?: boolean
   name?: boolean
   plan_type?: boolean
+  intended_for?: boolean
+  cashback_percentage?: boolean
   description?: boolean
   price_monthly?: boolean
   price_quarterly?: boolean
   price_yearly?: boolean
   features?: boolean
+  not_included?: boolean
   max_mail_items?: boolean
   max_team_members?: boolean
   is_active?: boolean
@@ -893,7 +992,7 @@ export type PackageSelectScalar = {
   created_by?: boolean
 }
 
-export type PackageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "plan_type" | "description" | "price_monthly" | "price_quarterly" | "price_yearly" | "features" | "max_mail_items" | "max_team_members" | "is_active" | "is_featured" | "display_order" | "created_at" | "updated_at" | "created_by", ExtArgs["result"]["package"]>
+export type PackageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "plan_type" | "intended_for" | "cashback_percentage" | "description" | "price_monthly" | "price_quarterly" | "price_yearly" | "features" | "not_included" | "max_mail_items" | "max_team_members" | "is_active" | "is_featured" | "display_order" | "created_at" | "updated_at" | "created_by", ExtArgs["result"]["package"]>
 export type PackageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   subscriptions?: boolean | Prisma.Package$subscriptionsArgs<ExtArgs>
   _count?: boolean | Prisma.PackageCountOutputTypeDefaultArgs<ExtArgs>
@@ -910,11 +1009,14 @@ export type $PackagePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     id: string
     name: string
     plan_type: string
+    intended_for: string | null
+    cashback_percentage: runtime.Decimal
     description: string | null
     price_monthly: runtime.Decimal
     price_quarterly: runtime.Decimal | null
     price_yearly: runtime.Decimal | null
     features: string[]
+    not_included: string[]
     max_mail_items: number | null
     max_team_members: number | null
     is_active: boolean
@@ -1350,11 +1452,14 @@ export interface PackageFieldRefs {
   readonly id: Prisma.FieldRef<"Package", 'String'>
   readonly name: Prisma.FieldRef<"Package", 'String'>
   readonly plan_type: Prisma.FieldRef<"Package", 'String'>
+  readonly intended_for: Prisma.FieldRef<"Package", 'String'>
+  readonly cashback_percentage: Prisma.FieldRef<"Package", 'Decimal'>
   readonly description: Prisma.FieldRef<"Package", 'String'>
   readonly price_monthly: Prisma.FieldRef<"Package", 'Decimal'>
   readonly price_quarterly: Prisma.FieldRef<"Package", 'Decimal'>
   readonly price_yearly: Prisma.FieldRef<"Package", 'Decimal'>
   readonly features: Prisma.FieldRef<"Package", 'String[]'>
+  readonly not_included: Prisma.FieldRef<"Package", 'String[]'>
   readonly max_mail_items: Prisma.FieldRef<"Package", 'Int'>
   readonly max_team_members: Prisma.FieldRef<"Package", 'Int'>
   readonly is_active: Prisma.FieldRef<"Package", 'Boolean'>

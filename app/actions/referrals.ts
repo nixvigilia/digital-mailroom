@@ -2,7 +2,6 @@
 
 import {getCurrentUser} from "@/utils/supabase/dal";
 import {prisma} from "@/utils/prisma";
-import {notFound} from "next/navigation";
 import {SubscriptionStatus} from "@/app/generated/prisma/enums";
 
 /**
@@ -155,106 +154,4 @@ export async function createReferralRecord(userId: string) {
     console.error("Error creating referral record:", error);
     // Don't throw - referral creation shouldn't block user confirmation
   }
-}
-
-/**
- * Get referral data for current user
- */
-export async function getReferralData() {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    notFound();
-  }
-
-  const userId = currentUser.userId;
-
-  // Get user's profile with referral code
-  const profile = await prisma.profile.findUnique({
-    where: {id: userId},
-    select: {
-      referral_code: true,
-    },
-  });
-
-  // Return null referral code if user hasn't generated one yet
-  if (!profile || !profile.referral_code) {
-    return {
-      referralCode: null,
-      referralLink: null,
-      totalReferrals: 0,
-      activeReferrals: 0,
-      totalEarnings: 0,
-      pendingEarnings: 0,
-      referrals: [],
-    };
-  }
-
-  const referralCode = profile.referral_code;
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const referralLink = `${baseUrl}/signup?ref=${referralCode}`;
-
-  // Get all referrals for this user
-  const referrals = await prisma.referral.findMany({
-    where: {referrer_id: userId},
-    include: {
-      referred: {
-        select: {
-          id: true,
-          email: true,
-          created_at: true,
-          subscriptions: {
-            where: {
-              status: SubscriptionStatus.ACTIVE,
-            },
-            select: {
-              plan_type: true,
-            },
-            take: 1,
-            orderBy: {
-              started_at: "desc",
-            },
-          },
-        },
-      },
-    },
-    orderBy: {
-      created_at: "desc",
-    },
-  });
-
-  // Transform referrals data
-  const transformedReferrals = referrals.map((ref) => {
-    const planType = ref.referred.subscriptions[0]?.plan_type || "FREE";
-    const isActive = ref.status === "active" && planType !== "FREE";
-    return {
-      id: ref.id,
-      email: ref.referred.email,
-      planType,
-      joinedAt: ref.referred.created_at,
-      status: isActive ? ("active" as const) : ("pending" as const),
-      earnings: Number(ref.earnings),
-    };
-  });
-
-  const totalReferrals = transformedReferrals.length;
-  const activeReferrals = transformedReferrals.filter(
-    (r) => r.status === "active"
-  ).length;
-  const totalEarnings = transformedReferrals.reduce(
-    (sum, r) => sum + r.earnings,
-    0
-  );
-  const pendingEarnings = transformedReferrals
-    .filter((r) => r.status === "pending")
-    .reduce((sum, r) => sum + r.earnings, 0);
-
-  return {
-    referralCode,
-    referralLink,
-    totalReferrals,
-    activeReferrals,
-    totalEarnings,
-    pendingEarnings,
-    referrals: transformedReferrals,
-  };
 }

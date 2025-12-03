@@ -57,9 +57,11 @@ export const ModelName = {
   TeamMember: 'TeamMember',
   Package: 'Package',
   Subscription: 'Subscription',
+  PaymentTransaction: 'PaymentTransaction',
   MailItem: 'MailItem',
   MailActionRequest: 'MailActionRequest',
-  Referral: 'Referral'
+  Referral: 'Referral',
+  ReferralTransaction: 'ReferralTransaction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -171,11 +173,14 @@ export const PackageScalarFieldEnum = {
   id: 'id',
   name: 'name',
   plan_type: 'plan_type',
+  intended_for: 'intended_for',
+  cashback_percentage: 'cashback_percentage',
   description: 'description',
   price_monthly: 'price_monthly',
   price_quarterly: 'price_quarterly',
   price_yearly: 'price_yearly',
   features: 'features',
+  not_included: 'not_included',
   max_mail_items: 'max_mail_items',
   max_team_members: 'max_team_members',
   is_active: 'is_active',
@@ -207,6 +212,28 @@ export const SubscriptionScalarFieldEnum = {
 } as const
 
 export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const PaymentTransactionScalarFieldEnum = {
+  id: 'id',
+  profile_id: 'profile_id',
+  subscription_id: 'subscription_id',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  external_id: 'external_id',
+  invoice_url: 'invoice_url',
+  payment_method: 'payment_method',
+  payment_channel: 'payment_channel',
+  paid_at: 'paid_at',
+  expired_at: 'expired_at',
+  description: 'description',
+  metadata: 'metadata',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type PaymentTransactionScalarFieldEnum = (typeof PaymentTransactionScalarFieldEnum)[keyof typeof PaymentTransactionScalarFieldEnum]
 
 
 export const MailItemScalarFieldEnum = {
@@ -263,8 +290,6 @@ export const ReferralScalarFieldEnum = {
   referrer_id: 'referrer_id',
   referred_id: 'referred_id',
   referral_code: 'referral_code',
-  status: 'status',
-  earnings: 'earnings',
   subscription_plan: 'subscription_plan',
   created_at: 'created_at',
   updated_at: 'updated_at'
@@ -273,12 +298,34 @@ export const ReferralScalarFieldEnum = {
 export type ReferralScalarFieldEnum = (typeof ReferralScalarFieldEnum)[keyof typeof ReferralScalarFieldEnum]
 
 
+export const ReferralTransactionScalarFieldEnum = {
+  id: 'id',
+  referral_id: 'referral_id',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  invoice_id: 'invoice_id',
+  description: 'description',
+  created_at: 'created_at'
+} as const
+
+export type ReferralTransactionScalarFieldEnum = (typeof ReferralTransactionScalarFieldEnum)[keyof typeof ReferralTransactionScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull'
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -295,4 +342,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+  AnyNull: 'AnyNull'
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

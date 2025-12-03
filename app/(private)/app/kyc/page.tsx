@@ -19,6 +19,9 @@ import {
   Select,
   Anchor,
   Container,
+  Card,
+  SimpleGrid,
+  ThemeIcon,
 } from "@mantine/core";
 import {
   IconUser,
@@ -33,7 +36,7 @@ import {useRouter} from "next/navigation";
 import {submitKYC} from "@/app/actions/kyc";
 
 // Using API route for GET request
-async function getKYCStatus(): Promise<string> {
+async function getKYCStatus() {
   try {
     const response = await fetch("/api/kyc/status", {
       method: "GET",
@@ -41,14 +44,13 @@ async function getKYCStatus(): Promise<string> {
     });
 
     if (!response.ok) {
-      return "NOT_STARTED";
+      return {status: "NOT_STARTED", data: null};
     }
 
-    const data = await response.json();
-    return data.status || "NOT_STARTED";
+    return await response.json();
   } catch (error) {
     console.error("Error fetching KYC status:", error);
-    return "NOT_STARTED";
+    return {status: "NOT_STARTED", data: null};
   }
 }
 
@@ -83,19 +85,6 @@ export default function KYCPage() {
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
   const [kycStatus, setKycStatusState] = useState<string>("NOT_STARTED");
-
-  useEffect(() => {
-    const checkStatus = async () => {
-      const status = await getKYCStatus();
-      setKycStatusState(status);
-      if (status === "APPROVED") {
-        router.push("/app/dashboard");
-      } else if (status === "PENDING") {
-        setActive(3); // Show review step if pending
-      }
-    };
-    checkStatus();
-  }, [router]);
   const [formData, setFormData] = useState<KYCFormData>({
     firstName: "",
     lastName: "",
@@ -116,6 +105,45 @@ export default function KYCPage() {
     consentTermsOfService: false,
     consentPrivacyPolicy: false,
   });
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      const {status, data} = await getKYCStatus();
+      setKycStatusState(status);
+
+      if (data) {
+        setFormData((prev) => ({
+          ...prev,
+          firstName: data.first_name || "",
+          lastName: data.last_name || "",
+          dateOfBirth: data.date_of_birth
+            ? new Date(data.date_of_birth).toISOString().split("T")[0]
+            : "",
+          phoneNumber: data.phone_number || "",
+          address: data.address || "",
+          city: data.city || "",
+          province: data.province || "",
+          postalCode: data.postal_code || "",
+          country: data.country || "Philippines",
+          idType: data.id_type || "",
+          consentMailOpening: data.consent_mail_opening || false,
+          consentDataProcessing: data.consent_data_processing || false,
+          consentTermsOfService: data.consent_terms_of_service || false,
+          consentPrivacyPolicy: data.consent_privacy_policy || false,
+          // Set URL previews if available
+          idFileFrontUrl: data.id_file_front_signed_url || null,
+          idFileBackUrl: data.id_file_back_signed_url || null,
+        }));
+      }
+
+      if (status === "APPROVED") {
+        router.push("/app");
+      } else if (status === "PENDING") {
+        setActive(3); // Show review step if pending
+      }
+    };
+    checkStatus();
+  }, [router]);
 
   const updateFormData = (field: keyof KYCFormData, value: any) => {
     setFormData((prev) => ({...prev, [field]: value}));
@@ -178,26 +206,43 @@ export default function KYCPage() {
     setLoading(true);
 
     try {
-      // TODO: Upload files to Supabase Storage and get URLs
-      // For now, using blob URLs as placeholders
-      const result = await submitKYC({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        dateOfBirth: formData.dateOfBirth,
-        phoneNumber: formData.phoneNumber,
-        address: formData.address,
-        city: formData.city,
-        province: formData.province,
-        postalCode: formData.postalCode,
-        country: formData.country,
-        idType: formData.idType,
-        idFileFrontUrl: formData.idFileFrontUrl,
-        idFileBackUrl: formData.idFileBackUrl,
-        consentMailOpening: formData.consentMailOpening,
-        consentDataProcessing: formData.consentDataProcessing,
-        consentTermsOfService: formData.consentTermsOfService,
-        consentPrivacyPolicy: formData.consentPrivacyPolicy,
-      });
+      // Prepare FormData to send files and data
+      const formDataToSend = new FormData();
+      formDataToSend.append("firstName", formData.firstName);
+      formDataToSend.append("lastName", formData.lastName);
+      formDataToSend.append("dateOfBirth", formData.dateOfBirth);
+      formDataToSend.append("phoneNumber", formData.phoneNumber);
+      formDataToSend.append("address", formData.address);
+      formDataToSend.append("city", formData.city);
+      formDataToSend.append("province", formData.province);
+      formDataToSend.append("postalCode", formData.postalCode);
+      formDataToSend.append("country", formData.country);
+      formDataToSend.append("idType", formData.idType);
+      formDataToSend.append(
+        "consentMailOpening",
+        String(formData.consentMailOpening)
+      );
+      formDataToSend.append(
+        "consentDataProcessing",
+        String(formData.consentDataProcessing)
+      );
+      formDataToSend.append(
+        "consentTermsOfService",
+        String(formData.consentTermsOfService)
+      );
+      formDataToSend.append(
+        "consentPrivacyPolicy",
+        String(formData.consentPrivacyPolicy)
+      );
+
+      if (formData.idFileFront) {
+        formDataToSend.append("idFileFront", formData.idFileFront);
+      }
+      if (formData.idFileBack) {
+        formDataToSend.append("idFileBack", formData.idFileBack);
+      }
+
+      const result = await submitKYC(formDataToSend);
 
       if (result.success) {
         notifications.show({
@@ -211,7 +256,7 @@ export default function KYCPage() {
 
         // Redirect to inbox after submission (will be blocked until approved)
         setTimeout(() => {
-          router.push("/app/dashboard");
+          router.push("/app");
         }, 2000);
       } else {
         notifications.show({
@@ -235,57 +280,45 @@ export default function KYCPage() {
   };
 
   return (
-    <Container size="md" py="xl">
+    <Container size="lg" py="xl">
       <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
         {/* Header */}
-        <Stack gap="md" align="center" ta="center">
-          <Box
-            style={{
-              width: 80,
-              height: 80,
-              borderRadius: "var(--mantine-radius-lg)",
-              backgroundColor: "var(--mantine-color-blue-1)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "var(--mantine-shadow-sm)",
-            }}
+        <Group justify="space-between" align="flex-start" wrap="wrap">
+          <Stack gap={4}>
+            <Title order={1} fw={800} size="h2">
+              Identity Verification
+            </Title>
+            <Text c="dimmed" size="sm">
+              Complete your KYC to start using mailroom services
+            </Text>
+          </Stack>
+        </Group>
+
+        {kycStatus === "PENDING" && (
+          <Alert
+            icon={<IconAlertCircle size={16} />}
+            color="yellow"
+            variant="filled"
+            title="Verification Pending"
           >
-            <IconId size={40} color="var(--mantine-color-blue-6)" />
-          </Box>
-          <Title order={1} fw={700} size="clamp(2rem, 5vw, 3rem)">
-            Complete Your KYC Verification
-          </Title>
-          <Text c="dimmed" size="lg" maw={600}>
-            Complete your Identity Verification to start receiving mail. This
-            process is required for security and compliance.
-          </Text>
-          {kycStatus === "PENDING" && (
-            <Alert
-              icon={<IconAlertCircle size={16} />}
-              color="yellow"
-              maw={600}
-              style={{width: "100%"}}
-            >
-              Your KYC verification is pending review. You'll be notified once
-              approved.
-            </Alert>
-          )}
-          {kycStatus === "REJECTED" && (
-            <Alert
-              icon={<IconAlertCircle size={16} />}
-              color="red"
-              maw={600}
-              style={{width: "100%"}}
-            >
-              Your KYC verification was rejected. Please review and resubmit
-              your information.
-            </Alert>
-          )}
-        </Stack>
+            Your KYC verification is pending review. You'll be notified once
+            approved.
+          </Alert>
+        )}
+        {kycStatus === "REJECTED" && (
+          <Alert
+            icon={<IconAlertCircle size={16} />}
+            color="red"
+            variant="filled"
+            title="Verification Rejected"
+          >
+            Your KYC verification was rejected. Please review and resubmit your
+            information.
+          </Alert>
+        )}
 
         {/* Progress Indicator */}
-        <Paper withBorder p="lg" radius="lg">
+        {/* <Paper withBorder p="lg" radius="lg">
           <Stack gap="md">
             <Group justify="space-between" align="center">
               <Text size="sm" fw={600} c="dimmed">
@@ -302,15 +335,15 @@ export default function KYCPage() {
               color="blue"
             />
           </Stack>
-        </Paper>
+        </Paper> */}
 
         {/* Stepper */}
-        <Paper withBorder p="xl" radius="lg">
-          <Stepper active={active} onStepClick={setActive} size="md">
+        <Card shadow="sm" padding="xl" radius="md" withBorder={false}>
+          <Stepper active={active} onStepClick={setActive} size="sm">
             <Stepper.Step
-              label="Personal Information"
-              description="Your basic details"
-              icon={<IconUser size={20} />}
+              label="Personal Info"
+              description="Basic details"
+              icon={<IconUser size={18} />}
             >
               <Step1PersonalInfo
                 formData={formData}
@@ -320,8 +353,8 @@ export default function KYCPage() {
 
             <Stepper.Step
               label="ID Verification"
-              description="Upload identification"
-              icon={<IconId size={20} />}
+              description="Upload ID"
+              icon={<IconId size={18} />}
             >
               <Step2IDVerification
                 formData={formData}
@@ -330,9 +363,9 @@ export default function KYCPage() {
             </Stepper.Step>
 
             <Stepper.Step
-              label="Consent & Agreement"
-              description="Review and accept"
-              icon={<IconFileText size={20} />}
+              label="Agreements"
+              description="Review & consent"
+              icon={<IconFileText size={18} />}
             >
               <Step3Consent
                 formData={formData}
@@ -344,33 +377,35 @@ export default function KYCPage() {
               <Step4Review formData={formData} />
             </Stepper.Completed>
           </Stepper>
-        </Paper>
 
-        {/* Navigation Buttons */}
-        <Group justify="space-between" mt="xl">
-          <Button
-            variant="default"
-            onClick={prevStep}
-            disabled={active === 0}
-            size="md"
-          >
-            Previous
-          </Button>
-          {active < 3 ? (
-            <Button onClick={nextStep} size="md" color="blue">
-              Next step
-            </Button>
-          ) : (
-            <Button
-              onClick={handleSubmit}
-              loading={loading}
-              size="md"
-              color="blue"
-            >
-              Submit for Verification
-            </Button>
+          {/* Navigation Buttons */}
+          {kycStatus !== "PENDING" && (
+            <Group justify="flex-end" mt="xl">
+              <Button
+                variant="default"
+                onClick={prevStep}
+                disabled={active === 0}
+                size="sm"
+              >
+                Back
+              </Button>
+              {active < 3 ? (
+                <Button onClick={nextStep} size="sm" color="blue">
+                  Next Step
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleSubmit}
+                  loading={loading}
+                  size="sm"
+                  color="blue"
+                >
+                  Submit Verification
+                </Button>
+              )}
+            </Group>
           )}
-        </Group>
+        </Card>
       </Stack>
     </Container>
   );
@@ -385,88 +420,89 @@ function Step1PersonalInfo({
   updateFormData: (field: keyof KYCFormData, value: any) => void;
 }) {
   return (
-    <Stack gap="xl" mt="xl">
-      <Alert icon={<IconAlertCircle size={16} />} color="blue" radius="md">
+    <Stack gap="lg" mt="lg">
+      <Alert
+        variant="light"
+        color="blue"
+        title="Information Required"
+        icon={<IconAlertCircle size={16} />}
+      >
         Please provide your accurate personal information. This will be used for
         mail delivery and account verification.
       </Alert>
 
-      <Paper withBorder p="xl" radius="lg">
-        <Stack gap="lg">
-          <Group grow>
-            <TextInput
-              label="First Name"
-              placeholder="John"
-              required
-              value={formData.firstName}
-              onChange={(e) => updateFormData("firstName", e.target.value)}
-            />
-            <TextInput
-              label="Last Name"
-              placeholder="Doe"
-              required
-              value={formData.lastName}
-              onChange={(e) => updateFormData("lastName", e.target.value)}
-            />
-          </Group>
+      <Group grow>
+        <TextInput
+          label="First Name"
+          placeholder="John"
+          required
+          value={formData.firstName}
+          onChange={(e) => updateFormData("firstName", e.target.value)}
+        />
+        <TextInput
+          label="Last Name"
+          placeholder="Doe"
+          required
+          value={formData.lastName}
+          onChange={(e) => updateFormData("lastName", e.target.value)}
+        />
+      </Group>
 
-          <Group grow>
-            <TextInput
-              label="Date of Birth"
-              type="date"
-              required
-              value={formData.dateOfBirth}
-              onChange={(e) => updateFormData("dateOfBirth", e.target.value)}
-            />
-            <TextInput
-              label="Phone Number"
-              placeholder="+63 912 345 6789"
-              required
-              value={formData.phoneNumber}
-              onChange={(e) => updateFormData("phoneNumber", e.target.value)}
-            />
-          </Group>
+      <Group grow>
+        <TextInput
+          label="Date of Birth"
+          type="date"
+          required
+          value={formData.dateOfBirth}
+          onChange={(e) => updateFormData("dateOfBirth", e.target.value)}
+        />
+        <TextInput
+          label="Phone Number"
+          placeholder="+63 912 345 6789"
+          required
+          value={formData.phoneNumber}
+          onChange={(e) => updateFormData("phoneNumber", e.target.value)}
+        />
+      </Group>
 
-          <TextInput
-            label="Street Address"
-            placeholder="123 Rizal Street, Barangay Poblacion"
-            required
-            value={formData.address}
-            onChange={(e) => updateFormData("address", e.target.value)}
-          />
+      <TextInput
+        label="Street Address"
+        placeholder="123 Rizal Street, Barangay Poblacion"
+        required
+        value={formData.address}
+        onChange={(e) => updateFormData("address", e.target.value)}
+      />
 
-          <Group grow>
-            <TextInput
-              label="City/Municipality"
-              placeholder="Manila"
-              required
-              value={formData.city}
-              onChange={(e) => updateFormData("city", e.target.value)}
-            />
-            <TextInput
-              label="Province"
-              placeholder="Metro Manila"
-              required
-              value={formData.province}
-              onChange={(e) => updateFormData("province", e.target.value)}
-            />
-            <TextInput
-              label="Postal Code"
-              placeholder="1000"
-              required
-              value={formData.postalCode}
-              onChange={(e) => updateFormData("postalCode", e.target.value)}
-            />
-          </Group>
+      <Group grow>
+        <TextInput
+          label="City/Municipality"
+          placeholder="Manila"
+          required
+          value={formData.city}
+          onChange={(e) => updateFormData("city", e.target.value)}
+        />
+        <TextInput
+          label="Province"
+          placeholder="Metro Manila"
+          required
+          value={formData.province}
+          onChange={(e) => updateFormData("province", e.target.value)}
+        />
+        <TextInput
+          label="Postal Code"
+          placeholder="1000"
+          required
+          value={formData.postalCode}
+          onChange={(e) => updateFormData("postalCode", e.target.value)}
+        />
+      </Group>
 
-          <TextInput
-            label="Country"
-            value={formData.country}
-            onChange={(e) => updateFormData("country", e.target.value)}
-            disabled
-          />
-        </Stack>
-      </Paper>
+      <TextInput
+        label="Country"
+        value={formData.country}
+        onChange={(e) => updateFormData("country", e.target.value)}
+        disabled
+      />
     </Stack>
   );
 }
@@ -535,218 +571,222 @@ function Step2IDVerification({
   };
 
   return (
-    <Stack gap="xl" mt="xl">
-      <Alert icon={<IconAlertCircle size={16} />} color="blue" radius="md">
+    <Stack gap="lg" mt="lg">
+      <Alert
+        variant="light"
+        color="blue"
+        title="Document Upload"
+        icon={<IconAlertCircle size={16} />}
+      >
         Upload a clear photo or scan of a government-issued ID. Please select
         your ID type from the list below.
       </Alert>
 
-      <Paper withBorder p="xl" radius="lg">
-        <Stack gap="lg">
-          <Select
-            label="ID Type"
-            placeholder="Select your ID type"
-            required
-            data={[
-              {
-                value: "philpassport",
-                label: "Philippine Passport (DFA)",
-              },
-              {
-                value: "philsys",
-                label: "Philippine National ID / PhilSys ID (PSA)",
-              },
-              {
-                value: "drivers_license",
-                label: "Driver's License (LTO)",
-              },
-              {
-                value: "sss",
-                label: "Social Security System (SSS) ID",
-              },
-              {
-                value: "gsis_umid",
-                label: "GSIS UMID Card",
-              },
-              {
-                value: "tin",
-                label: "Tax Identification Number (TIN) ID (BIR)",
-              },
-              {
-                value: "voters",
-                label: "Voter's ID / COMELEC Voter's Identification Card",
-              },
-              {
-                value: "postal",
-                label: "Postal ID (Philippine Postal Corporation)",
-              },
-              {
-                value: "ofw",
-                label: "OFW ID (DFA)",
-              },
-              {
-                value: "philhealth",
-                label:
-                  "PhilHealth ID (Philippine Health Insurance Corporation)",
-              },
-              {
-                value: "seamans_book",
-                label: "Seaman's Book (POEA)",
-              },
-              {
-                value: "prc",
-                label: "PRC ID (Professional Regulation Commission)",
-              },
-            ]}
-            value={formData.idType}
-            onChange={(value: string | null) =>
-              updateFormData("idType", value || "")
-            }
-            searchable
-            description="Select the type of government-issued ID you will upload"
-          />
+      <Select
+        label="ID Type"
+        placeholder="Select your ID type"
+        required
+        data={[
+          {
+            value: "philpassport",
+            label: "Philippine Passport (DFA)",
+          },
+          {
+            value: "philsys",
+            label: "Philippine National ID / PhilSys ID (PSA)",
+          },
+          {
+            value: "drivers_license",
+            label: "Driver's License (LTO)",
+          },
+          {
+            value: "sss",
+            label: "Social Security System (SSS) ID",
+          },
+          {
+            value: "gsis_umid",
+            label: "GSIS UMID Card",
+          },
+          {
+            value: "tin",
+            label: "Tax Identification Number (TIN) ID (BIR)",
+          },
+          {
+            value: "voters",
+            label: "Voter's ID / COMELEC Voter's Identification Card",
+          },
+          {
+            value: "postal",
+            label: "Postal ID (Philippine Postal Corporation)",
+          },
+          {
+            value: "ofw",
+            label: "OFW ID (DFA)",
+          },
+          {
+            value: "philhealth",
+            label: "PhilHealth ID (Philippine Health Insurance Corporation)",
+          },
+          {
+            value: "seamans_book",
+            label: "Seaman's Book (POEA)",
+          },
+          {
+            value: "prc",
+            label: "PRC ID (Professional Regulation Commission)",
+          },
+        ]}
+        value={formData.idType}
+        onChange={(value: string | null) =>
+          updateFormData("idType", value || "")
+        }
+        searchable
+        description="Select the type of government-issued ID you will upload"
+      />
 
-          <Stack gap="md">
-            {/* Front of ID */}
-            <Box>
-              <Text size="sm" fw={500} mb="xs">
-                Upload ID Document - Front
-              </Text>
-              <Text size="xs" c="dimmed" mb="md">
-                Upload a clear photo or scan of the front side (JPEG, PNG, or
-                PDF, max 5MB)
-              </Text>
-              <Group>
-                <FileButton
-                  onChange={(file) => handleFileUpload(file, "front")}
-                  accept="image/png,image/jpeg,image/jpg,application/pdf"
-                  disabled={uploading}
+      <SimpleGrid cols={{base: 1, sm: 2}} spacing="lg">
+        {/* Front of ID */}
+        <Box>
+          <Text size="sm" fw={500} mb="xs">
+            Front Side
+          </Text>
+          <Text size="xs" c="dimmed" mb="md">
+            Upload a clear photo or scan of the front side (JPEG, PNG, or PDF,
+            max 5MB)
+          </Text>
+          <Group>
+            <FileButton
+              onChange={(file) => handleFileUpload(file, "front")}
+              accept="image/png,image/jpeg,image/jpg,application/pdf"
+              disabled={uploading}
+            >
+              {(props) => (
+                <Button
+                  {...props}
+                  leftSection={<IconUpload size={16} />}
+                  loading={uploading}
+                  variant={formData.idFileFront ? "light" : "default"}
+                  size="sm"
                 >
-                  {(props) => (
-                    <Button
-                      {...props}
-                      leftSection={<IconUpload size={18} />}
-                      loading={uploading}
-                      variant={formData.idFileFront ? "light" : "filled"}
-                    >
-                      {formData.idFileFront
-                        ? formData.idFileFront.name
-                        : "Choose Front File"}
-                    </Button>
-                  )}
-                </FileButton>
-                {formData.idFileFront && (
-                  <Button
-                    variant="subtle"
-                    color="red"
-                    onClick={() => {
-                      updateFormData("idFileFront", null);
-                      updateFormData("idFileFrontUrl", null);
+                  {formData.idFileFront ? "Change File" : "Upload Front"}
+                </Button>
+              )}
+            </FileButton>
+            {formData.idFileFront && (
+              <Button
+                variant="subtle"
+                color="red"
+                size="sm"
+                onClick={() => {
+                  updateFormData("idFileFront", null);
+                  updateFormData("idFileFrontUrl", null);
+                }}
+              >
+                Remove
+              </Button>
+            )}
+          </Group>
+          {formData.idFileFrontUrl &&
+            formData.idFileFront?.type.startsWith("image/") && (
+              <Box mt="md">
+                <Text size="xs" fw={500} mb={4} c="dimmed">
+                  Preview
+                </Text>
+                <Box
+                  style={{
+                    border: "1px solid var(--mantine-color-gray-3)",
+                    borderRadius: "var(--mantine-radius-md)",
+                    overflow: "hidden",
+                    aspectRatio: "16/9",
+                    backgroundColor: "var(--mantine-color-gray-0)",
+                  }}
+                >
+                  <img
+                    src={formData.idFileFrontUrl}
+                    alt="ID Front Preview"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
                     }}
-                  >
-                    Remove
-                  </Button>
-                )}
-              </Group>
-              {formData.idFileFrontUrl &&
-                formData.idFileFront?.type.startsWith("image/") && (
-                  <Box mt="md">
-                    <Text size="sm" fw={500} mb="xs">
-                      Front Preview:
-                    </Text>
-                    <Box
-                      style={{
-                        border: "1px solid var(--mantine-color-gray-3)",
-                        borderRadius: "var(--mantine-radius-md)",
-                        overflow: "hidden",
-                        maxWidth: 400,
-                      }}
-                    >
-                      <img
-                        src={formData.idFileFrontUrl}
-                        alt="ID Front Preview"
-                        style={{
-                          width: "100%",
-                          height: "auto",
-                          display: "block",
-                        }}
-                      />
-                    </Box>
-                  </Box>
-                )}
-            </Box>
+                  />
+                </Box>
+              </Box>
+            )}
+        </Box>
 
-            {/* Back of ID */}
-            <Box>
-              <Text size="sm" fw={500} mb="xs">
-                Upload ID Document - Back
-              </Text>
-              <Text size="xs" c="dimmed" mb="md">
-                Upload a clear photo or scan of the back side (JPEG, PNG, or
-                PDF, max 5MB)
-              </Text>
-              <Group>
-                <FileButton
-                  onChange={(file) => handleFileUpload(file, "back")}
-                  accept="image/png,image/jpeg,image/jpg,application/pdf"
-                  disabled={uploading}
+        {/* Back of ID */}
+        <Box>
+          <Text size="sm" fw={500} mb="xs">
+            Back Side
+          </Text>
+          <Text size="xs" c="dimmed" mb="md">
+            Upload a clear photo or scan of the back side (JPEG, PNG, or PDF,
+            max 5MB)
+          </Text>
+          <Group>
+            <FileButton
+              onChange={(file) => handleFileUpload(file, "back")}
+              accept="image/png,image/jpeg,image/jpg,application/pdf"
+              disabled={uploading}
+            >
+              {(props) => (
+                <Button
+                  {...props}
+                  leftSection={<IconUpload size={16} />}
+                  loading={uploading}
+                  variant={formData.idFileBack ? "light" : "default"}
+                  size="sm"
                 >
-                  {(props) => (
-                    <Button
-                      {...props}
-                      leftSection={<IconUpload size={18} />}
-                      loading={uploading}
-                      variant={formData.idFileBack ? "light" : "filled"}
-                    >
-                      {formData.idFileBack
-                        ? formData.idFileBack.name
-                        : "Choose Back File"}
-                    </Button>
-                  )}
-                </FileButton>
-                {formData.idFileBack && (
-                  <Button
-                    variant="subtle"
-                    color="red"
-                    onClick={() => {
-                      updateFormData("idFileBack", null);
-                      updateFormData("idFileBackUrl", null);
+                  {formData.idFileBack ? "Change File" : "Upload Back"}
+                </Button>
+              )}
+            </FileButton>
+            {formData.idFileBack && (
+              <Button
+                variant="subtle"
+                color="red"
+                size="sm"
+                onClick={() => {
+                  updateFormData("idFileBack", null);
+                  updateFormData("idFileBackUrl", null);
+                }}
+              >
+                Remove
+              </Button>
+            )}
+          </Group>
+          {formData.idFileBackUrl &&
+            formData.idFileBack?.type.startsWith("image/") && (
+              <Box mt="md">
+                <Text size="xs" fw={500} mb={4} c="dimmed">
+                  Preview
+                </Text>
+                <Box
+                  style={{
+                    border: "1px solid var(--mantine-color-gray-3)",
+                    borderRadius: "var(--mantine-radius-md)",
+                    overflow: "hidden",
+                    aspectRatio: "16/9",
+                    backgroundColor: "var(--mantine-color-gray-0)",
+                  }}
+                >
+                  <img
+                    src={formData.idFileBackUrl}
+                    alt="ID Back Preview"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
                     }}
-                  >
-                    Remove
-                  </Button>
-                )}
-              </Group>
-              {formData.idFileBackUrl &&
-                formData.idFileBack?.type.startsWith("image/") && (
-                  <Box mt="md">
-                    <Text size="sm" fw={500} mb="xs">
-                      Back Preview:
-                    </Text>
-                    <Box
-                      style={{
-                        border: "1px solid var(--mantine-color-gray-3)",
-                        borderRadius: "var(--mantine-radius-md)",
-                        overflow: "hidden",
-                        maxWidth: 400,
-                      }}
-                    >
-                      <img
-                        src={formData.idFileBackUrl}
-                        alt="ID Back Preview"
-                        style={{
-                          width: "100%",
-                          height: "auto",
-                          display: "block",
-                        }}
-                      />
-                    </Box>
-                  </Box>
-                )}
-            </Box>
-          </Stack>
-        </Stack>
-      </Paper>
+                  />
+                </Box>
+              </Box>
+            )}
+        </Box>
+      </SimpleGrid>
     </Stack>
   );
 }
@@ -760,107 +800,106 @@ function Step3Consent({
   updateFormData: (field: keyof KYCFormData, value: any) => void;
 }) {
   return (
-    <Stack gap="xl" mt="xl">
-      <Alert icon={<IconAlertCircle size={16} />} color="blue" radius="md">
+    <Stack gap="lg" mt="lg">
+      <Alert
+        variant="light"
+        color="blue"
+        title="Terms & Conditions"
+        icon={<IconAlertCircle size={16} />}
+      >
         Please read and accept all consents to proceed with your verification.
       </Alert>
 
-      <Paper withBorder p="xl" radius="lg">
-        <Stack gap="lg">
-          <Divider label="Required Consents" labelPosition="center" />
+      <Divider label="Required Consents" labelPosition="left" />
 
-          <Checkbox
-            label="I consent to Keep PH - Digital Mailbox opening and scanning my mail"
-            description="I authorize Keep PH - Digital Mailbox to open, scan, and digitize physical mail items addressed to me."
-            checked={formData.consentMailOpening}
-            onChange={(e) =>
-              updateFormData("consentMailOpening", e.currentTarget.checked)
-            }
-            size="md"
-          />
+      <Checkbox
+        label="I consent to Keep PH - Digital Mailbox opening and scanning my mail"
+        description="I authorize Keep PH - Digital Mailbox to open, scan, and digitize physical mail items addressed to me."
+        checked={formData.consentMailOpening}
+        onChange={(e) =>
+          updateFormData("consentMailOpening", e.currentTarget.checked)
+        }
+        size="md"
+      />
 
-          <Checkbox
-            label="I consent to data processing and storage"
-            description={
-              <>
-                I agree to Keep PH - Digital Mailbox processing and storing my
-                personal data and mail content in accordance with the{" "}
-                <Anchor
-                  href="/terms/privacy-policy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  size="sm"
-                  fw={500}
-                >
-                  Privacy Policy
-                </Anchor>
-                .
-              </>
-            }
-            checked={formData.consentDataProcessing}
-            onChange={(e) =>
-              updateFormData("consentDataProcessing", e.currentTarget.checked)
-            }
-            size="md"
-          />
+      <Checkbox
+        label="I consent to data processing and storage"
+        description={
+          <>
+            I agree to Keep PH - Digital Mailbox processing and storing my
+            personal data and mail content in accordance with the{" "}
+            <Anchor
+              href="/terms/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              size="sm"
+              fw={500}
+            >
+              Privacy Policy
+            </Anchor>
+            .
+          </>
+        }
+        checked={formData.consentDataProcessing}
+        onChange={(e) =>
+          updateFormData("consentDataProcessing", e.currentTarget.checked)
+        }
+        size="md"
+      />
 
-          <Checkbox
-            label={
-              <>
-                I accept the{" "}
-                <Anchor
-                  href="/terms/terms-of-service"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  fw={600}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  Terms of Service
-                </Anchor>
-              </>
-            }
-            description="I have read and agree to the Terms of Service governing the use of Keep PH - Digital Mailbox services."
-            checked={formData.consentTermsOfService}
-            onChange={(e) =>
-              updateFormData("consentTermsOfService", e.currentTarget.checked)
-            }
-            size="md"
-          />
+      <Checkbox
+        label={
+          <>
+            I accept the{" "}
+            <Anchor
+              href="/terms/terms-of-service"
+              target="_blank"
+              rel="noopener noreferrer"
+              fw={600}
+              onClick={(e) => e.stopPropagation()}
+            >
+              Terms of Service
+            </Anchor>
+          </>
+        }
+        description="I have read and agree to the Terms of Service governing the use of Keep PH - Digital Mailbox services."
+        checked={formData.consentTermsOfService}
+        onChange={(e) =>
+          updateFormData("consentTermsOfService", e.currentTarget.checked)
+        }
+        size="md"
+      />
 
-          <Checkbox
-            label={
-              <>
-                I accept the{" "}
-                <Anchor
-                  href="/terms/privacy-policy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  fw={600}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  Privacy Policy
-                </Anchor>
-              </>
-            }
-            description="I have read and agree to the Privacy Policy regarding how my data is collected, used, and protected."
-            checked={formData.consentPrivacyPolicy}
-            onChange={(e) =>
-              updateFormData("consentPrivacyPolicy", e.currentTarget.checked)
-            }
-            size="md"
-          />
+      <Checkbox
+        label={
+          <>
+            I accept the{" "}
+            <Anchor
+              href="/terms/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              fw={600}
+              onClick={(e) => e.stopPropagation()}
+            >
+              Privacy Policy
+            </Anchor>
+          </>
+        }
+        description="I have read and agree to the Privacy Policy regarding how my data is collected, used, and protected."
+        checked={formData.consentPrivacyPolicy}
+        onChange={(e) =>
+          updateFormData("consentPrivacyPolicy", e.currentTarget.checked)
+        }
+        size="md"
+      />
 
-          <Divider />
-
-          <Alert color="yellow" radius="md">
-            <Text size="sm">
-              <strong>Important:</strong> By submitting this form, you confirm
-              that all information provided is accurate and truthful. Providing
-              false information may result in account suspension or termination.
-            </Text>
-          </Alert>
-        </Stack>
-      </Paper>
+      <Alert color="yellow" variant="light" radius="md" mt="md">
+        <Text size="sm">
+          <strong>Important:</strong> By submitting this form, you confirm that
+          all information provided is accurate and truthful. Providing false
+          information may result in account suspension or termination.
+        </Text>
+      </Alert>
     </Stack>
   );
 }
@@ -868,143 +907,128 @@ function Step3Consent({
 // Step 4: Review
 function Step4Review({formData}: {formData: KYCFormData}) {
   return (
-    <Stack gap="xl" mt="xl">
-      <Paper withBorder p="xl" radius="lg">
-        <Stack gap="lg">
-          <Title order={3} size="h4" fw={700}>
-            Review Your Information
-          </Title>
-          <Text c="dimmed" size="md">
-            Please review your information before submitting. You can go back to
-            make changes.
+    <Stack gap="lg" mt="lg">
+      <Alert variant="light" color="gray" icon={<IconCheck size={16} />}>
+        Please review your information before submitting. You can go back to
+        make changes.
+      </Alert>
+
+      <Stack gap="md">
+        <Box>
+          <Text size="sm" fw={600} c="dimmed" mb="xs" tt="uppercase">
+            Personal Information
           </Text>
-
-          <Divider />
-
-          <Stack gap="md">
-            <Box>
-              <Text size="sm" fw={600} c="dimmed" mb="xs">
-                Personal Information
+          <Card withBorder padding="md" radius="md">
+            <SimpleGrid cols={{base: 1, sm: 2}} spacing="xs">
+              <Text size="sm">
+                <Text span c="dimmed">
+                  Name:
+                </Text>{" "}
+                {formData.firstName} {formData.lastName}
               </Text>
               <Text size="sm">
-                <strong>Name:</strong> {formData.firstName} {formData.lastName}
-              </Text>
-              <Text size="sm">
-                <strong>Date of Birth:</strong>{" "}
+                <Text span c="dimmed">
+                  Birth Date:
+                </Text>{" "}
                 {new Date(formData.dateOfBirth).toLocaleDateString()}
               </Text>
               <Text size="sm">
-                <strong>Phone:</strong> {formData.phoneNumber}
+                <Text span c="dimmed">
+                  Phone:
+                </Text>{" "}
+                {formData.phoneNumber}
               </Text>
               <Text size="sm">
-                <strong>Address:</strong> {formData.address}, {formData.city},{" "}
-                {formData.province} {formData.postalCode}
+                <Text span c="dimmed">
+                  Address:
+                </Text>{" "}
+                {formData.address}, {formData.city}, {formData.province}{" "}
+                {formData.postalCode}
               </Text>
-            </Box>
+            </SimpleGrid>
+          </Card>
+        </Box>
 
-            <Divider />
-
-            <Box>
-              <Text size="sm" fw={600} c="dimmed" mb="xs">
-                ID Verification
-              </Text>
+        <Box>
+          <Text size="sm" fw={600} c="dimmed" mb="xs" tt="uppercase">
+            ID Verification
+          </Text>
+          <Card withBorder padding="md" radius="md">
+            <Stack gap="xs">
               <Text size="sm">
-                <strong>ID Type:</strong>{" "}
-                {formData.idType
-                  ? [
-                      {
-                        value: "philpassport",
-                        label: "Philippine Passport (DFA)",
-                      },
-                      {
-                        value: "philsys",
-                        label: "Philippine National ID / PhilSys ID (PSA)",
-                      },
-                      {
-                        value: "drivers_license",
-                        label: "Driver's License (LTO)",
-                      },
-                      {
-                        value: "sss",
-                        label: "Social Security System (SSS) ID",
-                      },
-                      {
-                        value: "gsis_umid",
-                        label: "GSIS UMID Card",
-                      },
-                      {
-                        value: "tin",
-                        label: "Tax Identification Number (TIN) ID (BIR)",
-                      },
-                      {
-                        value: "voters",
-                        label:
-                          "Voter's ID / COMELEC Voter's Identification Card",
-                      },
-                      {
-                        value: "postal",
-                        label: "Postal ID (Philippine Postal Corporation)",
-                      },
-                      {
-                        value: "ofw",
-                        label: "OFW ID (DFA)",
-                      },
-                      {
-                        value: "philhealth",
-                        label:
-                          "PhilHealth ID (Philippine Health Insurance Corporation)",
-                      },
-                      {
-                        value: "seamans_book",
-                        label: "Seaman's Book (POEA)",
-                      },
-                      {
-                        value: "prc",
-                        label: "PRC ID (Professional Regulation Commission)",
-                      },
-                    ].find((id) => id.value === formData.idType)?.label ||
-                    formData.idType
-                  : "Not selected"}
+                <Text span c="dimmed">
+                  ID Type:
+                </Text>{" "}
+                {formData.idType || "Not selected"}
               </Text>
-              <Text size="sm">
-                <strong>Front Document:</strong>{" "}
-                {formData.idFileFront
-                  ? formData.idFileFront.name
-                  : "Not uploaded"}
-              </Text>
-              <Text size="sm">
-                <strong>Back Document:</strong>{" "}
-                {formData.idFileBack
-                  ? formData.idFileBack.name
-                  : "Not uploaded"}
-              </Text>
-            </Box>
+              <Group>
+                <Text size="sm">
+                  <Text span c="dimmed">
+                    Front:
+                  </Text>{" "}
+                  {formData.idFileFront || formData.idFileFrontUrl ? (
+                    <Text span c="green" fw={500}>
+                      Attached
+                    </Text>
+                  ) : (
+                    <Text span c="red">
+                      Missing
+                    </Text>
+                  )}
+                </Text>
+                <Text size="sm">
+                  <Text span c="dimmed">
+                    Back:
+                  </Text>{" "}
+                  {formData.idFileBack || formData.idFileBackUrl ? (
+                    <Text span c="green" fw={500}>
+                      Attached
+                    </Text>
+                  ) : (
+                    <Text span c="red">
+                      Missing
+                    </Text>
+                  )}
+                </Text>
+              </Group>
+            </Stack>
+          </Card>
+        </Box>
 
-            <Divider />
-
-            <Box>
-              <Text size="sm" fw={600} c="dimmed" mb="xs">
-                Consents
-              </Text>
-              <Stack gap="xs">
-                <Text size="sm">
-                  {formData.consentMailOpening ? "✓" : "✗"} Mail Opening Consent
-                </Text>
-                <Text size="sm">
-                  {formData.consentDataProcessing ? "✓" : "✗"} Data Processing
-                  Consent
-                </Text>
-                <Text size="sm">
-                  {formData.consentTermsOfService ? "✓" : "✗"} Terms of Service
-                </Text>
-                <Text size="sm">
-                  {formData.consentPrivacyPolicy ? "✓" : "✗"} Privacy Policy
-                </Text>
-              </Stack>
-            </Box>
-          </Stack>
-        </Stack>
-      </Paper>
+        <Box>
+          <Text size="sm" fw={600} c="dimmed" mb="xs" tt="uppercase">
+            Consents
+          </Text>
+          <Card withBorder padding="md" radius="md">
+            <Stack gap="xs">
+              <Group gap="xs">
+                <ThemeIcon color="green" size="xs" variant="light">
+                  <IconCheck size={10} />
+                </ThemeIcon>
+                <Text size="sm">Mail Opening Consent</Text>
+              </Group>
+              <Group gap="xs">
+                <ThemeIcon color="green" size="xs" variant="light">
+                  <IconCheck size={10} />
+                </ThemeIcon>
+                <Text size="sm">Data Processing Consent</Text>
+              </Group>
+              <Group gap="xs">
+                <ThemeIcon color="green" size="xs" variant="light">
+                  <IconCheck size={10} />
+                </ThemeIcon>
+                <Text size="sm">Terms of Service</Text>
+              </Group>
+              <Group gap="xs">
+                <ThemeIcon color="green" size="xs" variant="light">
+                  <IconCheck size={10} />
+                </ThemeIcon>
+                <Text size="sm">Privacy Policy</Text>
+              </Group>
+            </Stack>
+          </Card>
+        </Box>
+      </Stack>
     </Stack>
   );
 }

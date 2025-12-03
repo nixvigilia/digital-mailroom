@@ -89,7 +89,11 @@ export default function BillingPage() {
   return (
     <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
       <Stack gap="xs">
-        <Title order={1} fw={800} style={{fontSize: "clamp(1.5rem, 4vw, 2.5rem)"}}>
+        <Title
+          order={1}
+          fw={800}
+          style={{fontSize: "clamp(1.5rem, 4vw, 2.5rem)"}}
+        >
           Billing & Subscription
         </Title>
         <Text c="dimmed" size="lg" visibleFrom="sm">
@@ -101,7 +105,12 @@ export default function BillingPage() {
       </Stack>
 
       {/* Current Subscription */}
-      <Paper withBorder p="xl" radius="md" style={{padding: "clamp(1rem, 4vw, 1.5rem)"}}>
+      <Paper
+        withBorder
+        p="xl"
+        radius="md"
+        style={{padding: "clamp(1rem, 4vw, 1.5rem)"}}
+      >
         <Stack gap="md">
           <Group justify="space-between" align="flex-start">
             <Stack gap="xs">
@@ -117,7 +126,8 @@ export default function BillingPage() {
                 {subscription.plan} Plan
               </Text>
               <Text size="sm" c="dimmed">
-                ₱{subscription.amount.toLocaleString()} per {subscription.billingCycle}
+                ₱{subscription.amount.toLocaleString()} per{" "}
+                {subscription.billingCycle}
               </Text>
             </Stack>
             <Button variant="outline">Change Plan</Button>
@@ -153,7 +163,12 @@ export default function BillingPage() {
       </Paper>
 
       {/* Payment Methods */}
-      <Paper withBorder p="xl" radius="md" style={{padding: "clamp(1rem, 4vw, 1.5rem)"}}>
+      <Paper
+        withBorder
+        p="xl"
+        radius="md"
+        style={{padding: "clamp(1rem, 4vw, 1.5rem)"}}
+      >
         <Stack gap="md">
           <Group justify="space-between" align="center">
             <Group gap="sm">
@@ -177,7 +192,15 @@ export default function BillingPage() {
           ) : (
             <Stack gap="md">
               {paymentMethods.map((method) => (
-                <Group key={method.id} justify="space-between" p="md" style={{border: "1px solid var(--mantine-color-gray-3)", borderRadius: "var(--mantine-radius-md)"}}>
+                <Group
+                  key={method.id}
+                  justify="space-between"
+                  p="md"
+                  style={{
+                    border: "1px solid var(--mantine-color-gray-3)",
+                    borderRadius: "var(--mantine-radius-md)",
+                  }}
+                >
                   <Group gap="md">
                     <IconCreditCard size={24} />
                     <Stack gap={2}>
@@ -214,7 +237,12 @@ export default function BillingPage() {
       </Paper>
 
       {/* Billing History */}
-      <Paper withBorder p="xl" radius="md" style={{padding: "clamp(1rem, 4vw, 1.5rem)"}}>
+      <Paper
+        withBorder
+        p="xl"
+        radius="md"
+        style={{padding: "clamp(1rem, 4vw, 1.5rem)"}}
+      >
         <Stack gap="md">
           <Group gap="sm">
             <IconCalendar size={24} />
@@ -240,9 +268,7 @@ export default function BillingPage() {
               <Table.Tbody>
                 {billingHistory.map((invoice) => (
                   <Table.Tr key={invoice.id}>
-                    <Table.Td>
-                      {invoice.date.toLocaleDateString()}
-                    </Table.Td>
+                    <Table.Td>{invoice.date.toLocaleDateString()}</Table.Td>
                     <Table.Td>₱{invoice.amount.toLocaleString()}</Table.Td>
                     <Table.Td>
                       <Badge
@@ -302,4 +328,3 @@ export default function BillingPage() {
     </Stack>
   );
 }
-

@@ -40,7 +40,7 @@ export function AuthButton() {
   if (user) {
     return (
       <Group gap="sm">
-        <Button component={Link} href="/app/dashboard" variant="subtle">
+        <Button component={Link} href="/app" variant="subtle">
           Dashboard
         </Button>
         <form action={signOut}>

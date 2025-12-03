@@ -20,18 +20,8 @@ export type ReferralModel = runtime.Types.Result.DefaultSelection<Prisma.$Referr
 
 export type AggregateReferral = {
   _count: ReferralCountAggregateOutputType | null
-  _avg: ReferralAvgAggregateOutputType | null
-  _sum: ReferralSumAggregateOutputType | null
   _min: ReferralMinAggregateOutputType | null
   _max: ReferralMaxAggregateOutputType | null
-}
-
-export type ReferralAvgAggregateOutputType = {
-  earnings: runtime.Decimal | null
-}
-
-export type ReferralSumAggregateOutputType = {
-  earnings: runtime.Decimal | null
 }
 
 export type ReferralMinAggregateOutputType = {
@@ -39,8 +29,6 @@ export type ReferralMinAggregateOutputType = {
   referrer_id: string | null
   referred_id: string | null
   referral_code: string | null
-  status: string | null
-  earnings: runtime.Decimal | null
   subscription_plan: string | null
   created_at: Date | null
   updated_at: Date | null
@@ -51,8 +39,6 @@ export type ReferralMaxAggregateOutputType = {
   referrer_id: string | null
   referred_id: string | null
   referral_code: string | null
-  status: string | null
-  earnings: runtime.Decimal | null
   subscription_plan: string | null
   created_at: Date | null
   updated_at: Date | null
@@ -63,8 +49,6 @@ export type ReferralCountAggregateOutputType = {
   referrer_id: number
   referred_id: number
   referral_code: number
-  status: number
-  earnings: number
   subscription_plan: number
   created_at: number
   updated_at: number
@@ -72,21 +56,11 @@ export type ReferralCountAggregateOutputType = {
 }
 
 
-export type ReferralAvgAggregateInputType = {
-  earnings?: true
-}
-
-export type ReferralSumAggregateInputType = {
-  earnings?: true
-}
-
 export type ReferralMinAggregateInputType = {
   id?: true
   referrer_id?: true
   referred_id?: true
   referral_code?: true
-  status?: true
-  earnings?: true
   subscription_plan?: true
   created_at?: true
   updated_at?: true
@@ -97,8 +71,6 @@ export type ReferralMaxAggregateInputType = {
   referrer_id?: true
   referred_id?: true
   referral_code?: true
-  status?: true
-  earnings?: true
   subscription_plan?: true
   created_at?: true
   updated_at?: true
@@ -109,8 +81,6 @@ export type ReferralCountAggregateInputType = {
   referrer_id?: true
   referred_id?: true
   referral_code?: true
-  status?: true
-  earnings?: true
   subscription_plan?: true
   created_at?: true
   updated_at?: true
@@ -155,18 +125,6 @@ export type ReferralAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inter
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: ReferralAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: ReferralSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: ReferralMinAggregateInputType
@@ -197,8 +155,6 @@ export type ReferralGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   _count?: ReferralCountAggregateInputType | true
-  _avg?: ReferralAvgAggregateInputType
-  _sum?: ReferralSumAggregateInputType
   _min?: ReferralMinAggregateInputType
   _max?: ReferralMaxAggregateInputType
 }
@@ -208,14 +164,10 @@ export type ReferralGroupByOutputType = {
   referrer_id: string
   referred_id: string
   referral_code: string
-  status: string
-  earnings: runtime.Decimal
   subscription_plan: string | null
   created_at: Date
   updated_at: Date
   _count: ReferralCountAggregateOutputType | null
-  _avg: ReferralAvgAggregateOutputType | null
-  _sum: ReferralSumAggregateOutputType | null
   _min: ReferralMinAggregateOutputType | null
   _max: ReferralMaxAggregateOutputType | null
 }
@@ -243,13 +195,12 @@ export type ReferralWhereInput = {
   referrer_id?: Prisma.UuidFilter<"Referral"> | string
   referred_id?: Prisma.UuidFilter<"Referral"> | string
   referral_code?: Prisma.StringFilter<"Referral"> | string
-  status?: Prisma.StringFilter<"Referral"> | string
-  earnings?: Prisma.DecimalFilter<"Referral"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.StringNullableFilter<"Referral"> | string | null
   created_at?: Prisma.DateTimeFilter<"Referral"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Referral"> | Date | string
   referrer?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
   referred?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
+  transactions?: Prisma.ReferralTransactionListRelationFilter
 }
 
 export type ReferralOrderByWithRelationInput = {
@@ -257,13 +208,12 @@ export type ReferralOrderByWithRelationInput = {
   referrer_id?: Prisma.SortOrder
   referred_id?: Prisma.SortOrder
   referral_code?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  earnings?: Prisma.SortOrder
   subscription_plan?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   referrer?: Prisma.ProfileOrderByWithRelationInput
   referred?: Prisma.ProfileOrderByWithRelationInput
+  transactions?: Prisma.ReferralTransactionOrderByRelationAggregateInput
 }
 
 export type ReferralWhereUniqueInput = Prisma.AtLeast<{
@@ -274,13 +224,12 @@ export type ReferralWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ReferralWhereInput | Prisma.ReferralWhereInput[]
   referrer_id?: Prisma.UuidFilter<"Referral"> | string
   referral_code?: Prisma.StringFilter<"Referral"> | string
-  status?: Prisma.StringFilter<"Referral"> | string
-  earnings?: Prisma.DecimalFilter<"Referral"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.StringNullableFilter<"Referral"> | string | null
   created_at?: Prisma.DateTimeFilter<"Referral"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Referral"> | Date | string
   referrer?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
   referred?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
+  transactions?: Prisma.ReferralTransactionListRelationFilter
 }, "id" | "referred_id">
 
 export type ReferralOrderByWithAggregationInput = {
@@ -288,16 +237,12 @@ export type ReferralOrderByWithAggregationInput = {
   referrer_id?: Prisma.SortOrder
   referred_id?: Prisma.SortOrder
   referral_code?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  earnings?: Prisma.SortOrder
   subscription_plan?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   _count?: Prisma.ReferralCountOrderByAggregateInput
-  _avg?: Prisma.ReferralAvgOrderByAggregateInput
   _max?: Prisma.ReferralMaxOrderByAggregateInput
   _min?: Prisma.ReferralMinOrderByAggregateInput
-  _sum?: Prisma.ReferralSumOrderByAggregateInput
 }
 
 export type ReferralScalarWhereWithAggregatesInput = {
@@ -308,8 +253,6 @@ export type ReferralScalarWhereWithAggregatesInput = {
   referrer_id?: Prisma.UuidWithAggregatesFilter<"Referral"> | string
   referred_id?: Prisma.UuidWithAggregatesFilter<"Referral"> | string
   referral_code?: Prisma.StringWithAggregatesFilter<"Referral"> | string
-  status?: Prisma.StringWithAggregatesFilter<"Referral"> | string
-  earnings?: Prisma.DecimalWithAggregatesFilter<"Referral"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.StringNullableWithAggregatesFilter<"Referral"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Referral"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"Referral"> | Date | string
@@ -318,13 +261,12 @@ export type ReferralScalarWhereWithAggregatesInput = {
 export type ReferralCreateInput = {
   id?: string
   referral_code: string
-  status?: string
-  earnings?: runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: string | null
   created_at?: Date | string
   updated_at?: Date | string
   referrer: Prisma.ProfileCreateNestedOneWithoutReferralsInput
   referred: Prisma.ProfileCreateNestedOneWithoutReferred_usersInput
+  transactions?: Prisma.ReferralTransactionCreateNestedManyWithoutReferralInput
 }
 
 export type ReferralUncheckedCreateInput = {
@@ -332,23 +274,21 @@ export type ReferralUncheckedCreateInput = {
   referrer_id: string
   referred_id: string
   referral_code: string
-  status?: string
-  earnings?: runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  transactions?: Prisma.ReferralTransactionUncheckedCreateNestedManyWithoutReferralInput
 }
 
 export type ReferralUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   referral_code?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  earnings?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   referrer?: Prisma.ProfileUpdateOneRequiredWithoutReferralsNestedInput
   referred?: Prisma.ProfileUpdateOneRequiredWithoutReferred_usersNestedInput
+  transactions?: Prisma.ReferralTransactionUpdateManyWithoutReferralNestedInput
 }
 
 export type ReferralUncheckedUpdateInput = {
@@ -356,11 +296,10 @@ export type ReferralUncheckedUpdateInput = {
   referrer_id?: Prisma.StringFieldUpdateOperationsInput | string
   referred_id?: Prisma.StringFieldUpdateOperationsInput | string
   referral_code?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  earnings?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactions?: Prisma.ReferralTransactionUncheckedUpdateManyWithoutReferralNestedInput
 }
 
 export type ReferralCreateManyInput = {
@@ -368,8 +307,6 @@ export type ReferralCreateManyInput = {
   referrer_id: string
   referred_id: string
   referral_code: string
-  status?: string
-  earnings?: runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: string | null
   created_at?: Date | string
   updated_at?: Date | string
@@ -378,8 +315,6 @@ export type ReferralCreateManyInput = {
 export type ReferralUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   referral_code?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  earnings?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -390,8 +325,6 @@ export type ReferralUncheckedUpdateManyInput = {
   referrer_id?: Prisma.StringFieldUpdateOperationsInput | string
   referred_id?: Prisma.StringFieldUpdateOperationsInput | string
   referral_code?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  earnings?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -412,15 +345,9 @@ export type ReferralCountOrderByAggregateInput = {
   referrer_id?: Prisma.SortOrder
   referred_id?: Prisma.SortOrder
   referral_code?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  earnings?: Prisma.SortOrder
   subscription_plan?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
-}
-
-export type ReferralAvgOrderByAggregateInput = {
-  earnings?: Prisma.SortOrder
 }
 
 export type ReferralMaxOrderByAggregateInput = {
@@ -428,8 +355,6 @@ export type ReferralMaxOrderByAggregateInput = {
   referrer_id?: Prisma.SortOrder
   referred_id?: Prisma.SortOrder
   referral_code?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  earnings?: Prisma.SortOrder
   subscription_plan?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -440,15 +365,14 @@ export type ReferralMinOrderByAggregateInput = {
   referrer_id?: Prisma.SortOrder
   referred_id?: Prisma.SortOrder
   referral_code?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  earnings?: Prisma.SortOrder
   subscription_plan?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
 
-export type ReferralSumOrderByAggregateInput = {
-  earnings?: Prisma.SortOrder
+export type ReferralScalarRelationFilter = {
+  is?: Prisma.ReferralWhereInput
+  isNot?: Prisma.ReferralWhereInput
 }
 
 export type ReferralCreateNestedManyWithoutReferrerInput = {
@@ -535,26 +459,38 @@ export type ReferralUncheckedUpdateManyWithoutReferredNestedInput = {
   deleteMany?: Prisma.ReferralScalarWhereInput | Prisma.ReferralScalarWhereInput[]
 }
 
+export type ReferralCreateNestedOneWithoutTransactionsInput = {
+  create?: Prisma.XOR<Prisma.ReferralCreateWithoutTransactionsInput, Prisma.ReferralUncheckedCreateWithoutTransactionsInput>
+  connectOrCreate?: Prisma.ReferralCreateOrConnectWithoutTransactionsInput
+  connect?: Prisma.ReferralWhereUniqueInput
+}
+
+export type ReferralUpdateOneRequiredWithoutTransactionsNestedInput = {
+  create?: Prisma.XOR<Prisma.ReferralCreateWithoutTransactionsInput, Prisma.ReferralUncheckedCreateWithoutTransactionsInput>
+  connectOrCreate?: Prisma.ReferralCreateOrConnectWithoutTransactionsInput
+  upsert?: Prisma.ReferralUpsertWithoutTransactionsInput
+  connect?: Prisma.ReferralWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ReferralUpdateToOneWithWhereWithoutTransactionsInput, Prisma.ReferralUpdateWithoutTransactionsInput>, Prisma.ReferralUncheckedUpdateWithoutTransactionsInput>
+}
+
 export type ReferralCreateWithoutReferrerInput = {
   id?: string
   referral_code: string
-  status?: string
-  earnings?: runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: string | null
   created_at?: Date | string
   updated_at?: Date | string
   referred: Prisma.ProfileCreateNestedOneWithoutReferred_usersInput
+  transactions?: Prisma.ReferralTransactionCreateNestedManyWithoutReferralInput
 }
 
 export type ReferralUncheckedCreateWithoutReferrerInput = {
   id?: string
   referred_id: string
   referral_code: string
-  status?: string
-  earnings?: runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  transactions?: Prisma.ReferralTransactionUncheckedCreateNestedManyWithoutReferralInput
 }
 
 export type ReferralCreateOrConnectWithoutReferrerInput = {
@@ -570,23 +506,21 @@ export type ReferralCreateManyReferrerInputEnvelope = {
 export type ReferralCreateWithoutReferredInput = {
   id?: string
   referral_code: string
-  status?: string
-  earnings?: runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: string | null
   created_at?: Date | string
   updated_at?: Date | string
   referrer: Prisma.ProfileCreateNestedOneWithoutReferralsInput
+  transactions?: Prisma.ReferralTransactionCreateNestedManyWithoutReferralInput
 }
 
 export type ReferralUncheckedCreateWithoutReferredInput = {
   id?: string
   referrer_id: string
   referral_code: string
-  status?: string
-  earnings?: runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  transactions?: Prisma.ReferralTransactionUncheckedCreateNestedManyWithoutReferralInput
 }
 
 export type ReferralCreateOrConnectWithoutReferredInput = {
@@ -623,8 +557,6 @@ export type ReferralScalarWhereInput = {
   referrer_id?: Prisma.UuidFilter<"Referral"> | string
   referred_id?: Prisma.UuidFilter<"Referral"> | string
   referral_code?: Prisma.StringFilter<"Referral"> | string
-  status?: Prisma.StringFilter<"Referral"> | string
-  earnings?: Prisma.DecimalFilter<"Referral"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.StringNullableFilter<"Referral"> | string | null
   created_at?: Prisma.DateTimeFilter<"Referral"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Referral"> | Date | string
@@ -646,12 +578,66 @@ export type ReferralUpdateManyWithWhereWithoutReferredInput = {
   data: Prisma.XOR<Prisma.ReferralUpdateManyMutationInput, Prisma.ReferralUncheckedUpdateManyWithoutReferredInput>
 }
 
+export type ReferralCreateWithoutTransactionsInput = {
+  id?: string
+  referral_code: string
+  subscription_plan?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  referrer: Prisma.ProfileCreateNestedOneWithoutReferralsInput
+  referred: Prisma.ProfileCreateNestedOneWithoutReferred_usersInput
+}
+
+export type ReferralUncheckedCreateWithoutTransactionsInput = {
+  id?: string
+  referrer_id: string
+  referred_id: string
+  referral_code: string
+  subscription_plan?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type ReferralCreateOrConnectWithoutTransactionsInput = {
+  where: Prisma.ReferralWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReferralCreateWithoutTransactionsInput, Prisma.ReferralUncheckedCreateWithoutTransactionsInput>
+}
+
+export type ReferralUpsertWithoutTransactionsInput = {
+  update: Prisma.XOR<Prisma.ReferralUpdateWithoutTransactionsInput, Prisma.ReferralUncheckedUpdateWithoutTransactionsInput>
+  create: Prisma.XOR<Prisma.ReferralCreateWithoutTransactionsInput, Prisma.ReferralUncheckedCreateWithoutTransactionsInput>
+  where?: Prisma.ReferralWhereInput
+}
+
+export type ReferralUpdateToOneWithWhereWithoutTransactionsInput = {
+  where?: Prisma.ReferralWhereInput
+  data: Prisma.XOR<Prisma.ReferralUpdateWithoutTransactionsInput, Prisma.ReferralUncheckedUpdateWithoutTransactionsInput>
+}
+
+export type ReferralUpdateWithoutTransactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_code?: Prisma.StringFieldUpdateOperationsInput | string
+  subscription_plan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrer?: Prisma.ProfileUpdateOneRequiredWithoutReferralsNestedInput
+  referred?: Prisma.ProfileUpdateOneRequiredWithoutReferred_usersNestedInput
+}
+
+export type ReferralUncheckedUpdateWithoutTransactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  referrer_id?: Prisma.StringFieldUpdateOperationsInput | string
+  referred_id?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_code?: Prisma.StringFieldUpdateOperationsInput | string
+  subscription_plan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type ReferralCreateManyReferrerInput = {
   id?: string
   referred_id: string
   referral_code: string
-  status?: string
-  earnings?: runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: string | null
   created_at?: Date | string
   updated_at?: Date | string
@@ -661,8 +647,6 @@ export type ReferralCreateManyReferredInput = {
   id?: string
   referrer_id: string
   referral_code: string
-  status?: string
-  earnings?: runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: string | null
   created_at?: Date | string
   updated_at?: Date | string
@@ -671,31 +655,27 @@ export type ReferralCreateManyReferredInput = {
 export type ReferralUpdateWithoutReferrerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   referral_code?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  earnings?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   referred?: Prisma.ProfileUpdateOneRequiredWithoutReferred_usersNestedInput
+  transactions?: Prisma.ReferralTransactionUpdateManyWithoutReferralNestedInput
 }
 
 export type ReferralUncheckedUpdateWithoutReferrerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   referred_id?: Prisma.StringFieldUpdateOperationsInput | string
   referral_code?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  earnings?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactions?: Prisma.ReferralTransactionUncheckedUpdateManyWithoutReferralNestedInput
 }
 
 export type ReferralUncheckedUpdateManyWithoutReferrerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   referred_id?: Prisma.StringFieldUpdateOperationsInput | string
   referral_code?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  earnings?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -704,36 +684,61 @@ export type ReferralUncheckedUpdateManyWithoutReferrerInput = {
 export type ReferralUpdateWithoutReferredInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   referral_code?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  earnings?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   referrer?: Prisma.ProfileUpdateOneRequiredWithoutReferralsNestedInput
+  transactions?: Prisma.ReferralTransactionUpdateManyWithoutReferralNestedInput
 }
 
 export type ReferralUncheckedUpdateWithoutReferredInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   referrer_id?: Prisma.StringFieldUpdateOperationsInput | string
   referral_code?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  earnings?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactions?: Prisma.ReferralTransactionUncheckedUpdateManyWithoutReferralNestedInput
 }
 
 export type ReferralUncheckedUpdateManyWithoutReferredInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   referrer_id?: Prisma.StringFieldUpdateOperationsInput | string
   referral_code?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  earnings?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   subscription_plan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type ReferralCountOutputType
+ */
+
+export type ReferralCountOutputType = {
+  transactions: number
+}
+
+export type ReferralCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  transactions?: boolean | ReferralCountOutputTypeCountTransactionsArgs
+}
+
+/**
+ * ReferralCountOutputType without action
+ */
+export type ReferralCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReferralCountOutputType
+   */
+  select?: Prisma.ReferralCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ReferralCountOutputType without action
+ */
+export type ReferralCountOutputTypeCountTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReferralTransactionWhereInput
+}
 
 
 export type ReferralSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -741,13 +746,13 @@ export type ReferralSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   referrer_id?: boolean
   referred_id?: boolean
   referral_code?: boolean
-  status?: boolean
-  earnings?: boolean
   subscription_plan?: boolean
   created_at?: boolean
   updated_at?: boolean
   referrer?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   referred?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
+  transactions?: boolean | Prisma.Referral$transactionsArgs<ExtArgs>
+  _count?: boolean | Prisma.ReferralCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["referral"]>
 
 export type ReferralSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -755,8 +760,6 @@ export type ReferralSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   referrer_id?: boolean
   referred_id?: boolean
   referral_code?: boolean
-  status?: boolean
-  earnings?: boolean
   subscription_plan?: boolean
   created_at?: boolean
   updated_at?: boolean
@@ -769,8 +772,6 @@ export type ReferralSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   referrer_id?: boolean
   referred_id?: boolean
   referral_code?: boolean
-  status?: boolean
-  earnings?: boolean
   subscription_plan?: boolean
   created_at?: boolean
   updated_at?: boolean
@@ -783,17 +784,17 @@ export type ReferralSelectScalar = {
   referrer_id?: boolean
   referred_id?: boolean
   referral_code?: boolean
-  status?: boolean
-  earnings?: boolean
   subscription_plan?: boolean
   created_at?: boolean
   updated_at?: boolean
 }
 
-export type ReferralOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "referrer_id" | "referred_id" | "referral_code" | "status" | "earnings" | "subscription_plan" | "created_at" | "updated_at", ExtArgs["result"]["referral"]>
+export type ReferralOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "referrer_id" | "referred_id" | "referral_code" | "subscription_plan" | "created_at" | "updated_at", ExtArgs["result"]["referral"]>
 export type ReferralInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   referrer?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   referred?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
+  transactions?: boolean | Prisma.Referral$transactionsArgs<ExtArgs>
+  _count?: boolean | Prisma.ReferralCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ReferralIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   referrer?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
@@ -809,14 +810,13 @@ export type $ReferralPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   objects: {
     referrer: Prisma.$ProfilePayload<ExtArgs>
     referred: Prisma.$ProfilePayload<ExtArgs>
+    transactions: Prisma.$ReferralTransactionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     referrer_id: string
     referred_id: string
     referral_code: string
-    status: string
-    earnings: runtime.Decimal
     subscription_plan: string | null
     created_at: Date
     updated_at: Date
@@ -1216,6 +1216,7 @@ export interface Prisma__ReferralClient<T, Null = never, ExtArgs extends runtime
   readonly [Symbol.toStringTag]: "PrismaPromise"
   referrer<T extends Prisma.ProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   referred<T extends Prisma.ProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  transactions<T extends Prisma.Referral$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Referral$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReferralTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1249,8 +1250,6 @@ export interface ReferralFieldRefs {
   readonly referrer_id: Prisma.FieldRef<"Referral", 'String'>
   readonly referred_id: Prisma.FieldRef<"Referral", 'String'>
   readonly referral_code: Prisma.FieldRef<"Referral", 'String'>
-  readonly status: Prisma.FieldRef<"Referral", 'String'>
-  readonly earnings: Prisma.FieldRef<"Referral", 'Decimal'>
   readonly subscription_plan: Prisma.FieldRef<"Referral", 'String'>
   readonly created_at: Prisma.FieldRef<"Referral", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"Referral", 'DateTime'>
@@ -1647,6 +1646,30 @@ export type ReferralDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Limit how many Referrals to delete.
    */
   limit?: number
+}
+
+/**
+ * Referral.transactions
+ */
+export type Referral$transactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReferralTransaction
+   */
+  select?: Prisma.ReferralTransactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReferralTransaction
+   */
+  omit?: Prisma.ReferralTransactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReferralTransactionInclude<ExtArgs> | null
+  where?: Prisma.ReferralTransactionWhereInput
+  orderBy?: Prisma.ReferralTransactionOrderByWithRelationInput | Prisma.ReferralTransactionOrderByWithRelationInput[]
+  cursor?: Prisma.ReferralTransactionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReferralTransactionScalarFieldEnum | Prisma.ReferralTransactionScalarFieldEnum[]
 }
 
 /**

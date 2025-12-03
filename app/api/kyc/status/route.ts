@@ -1,5 +1,5 @@
 import {NextResponse} from "next/server";
-import {getCurrentUser, getKYCStatus} from "@/utils/supabase/dal";
+import {getCurrentUser, getKYCData} from "@/utils/supabase/dal";
 
 export async function GET() {
   try {
@@ -13,9 +13,10 @@ export async function GET() {
       );
     }
 
-    const status = await getKYCStatus(currentUser.userId);
+    const kycData = await getKYCData(currentUser.userId);
+    const status = kycData?.status || "NOT_STARTED";
 
-    return NextResponse.json({status});
+    return NextResponse.json({status, data: kycData});
   } catch (error) {
     console.error("Error fetching KYC status:", error);
     return NextResponse.json(

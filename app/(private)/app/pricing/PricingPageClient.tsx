@@ -1,6 +1,8 @@
 "use client";
 
-import {useState, useEffect} from "react";
+import {useState, use} from "react";
+import {notifications} from "@mantine/notifications";
+import {createSubscriptionInvoice} from "@/app/actions/payment";
 import {
   Title,
   Text,
@@ -13,7 +15,6 @@ import {
   ThemeIcon,
   Divider,
   Select,
-  Box,
 } from "@mantine/core";
 import {
   IconCheck,
@@ -22,10 +23,10 @@ import {
   IconBuilding,
   IconRocket,
 } from "@tabler/icons-react";
-import {getPublicPackages} from "@/app/actions/packages";
 
 interface PricingPageClientProps {
   currentPlanType: string;
+  packagesPromise: Promise<Package[]>;
 }
 
 interface Package {
@@ -41,31 +42,20 @@ interface Package {
   display_order: number;
 }
 
-export function PricingPageClient({currentPlanType}: PricingPageClientProps) {
+export function PricingPageClient({
+  currentPlanType,
+  packagesPromise,
+}: PricingPageClientProps) {
   const [billingCycle, setBillingCycle] = useState<
     "MONTHLY" | "QUARTERLY" | "YEARLY"
   >("MONTHLY");
-  const [packages, setPackages] = useState<Package[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
-  // Fetch packages on mount
-  useEffect(() => {
-    const fetchPackages = async () => {
-      try {
-        const data = await getPublicPackages();
-        // Filter out FREE plan and sort by display_order
-        const paidPlans = data
-          .filter((pkg) => pkg.plan_type !== "FREE")
-          .sort((a, b) => a.display_order - b.display_order);
-        setPackages(paidPlans);
-      } catch (error) {
-        console.error("Error fetching packages:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPackages();
-  }, []);
+  const data = use(packagesPromise);
+  // Filter out FREE plan and sort by display_order
+  const packages = data
+    .filter((pkg) => pkg.plan_type !== "FREE")
+    .sort((a, b) => a.display_order - b.display_order);
 
   const getPrice = (pkg: Package) => {
     switch (billingCycle) {
@@ -90,18 +80,29 @@ export function PricingPageClient({currentPlanType}: PricingPageClientProps) {
   };
 
   const handleSelectPlan = async (planType: string) => {
-    // TODO: Implement subscription creation
-    console.log("Selecting plan:", planType, "Billing cycle:", billingCycle);
-    // Redirect to checkout or payment page
-  };
+    try {
+      setLoadingPlan(planType);
+      const result = await createSubscriptionInvoice(planType, billingCycle);
 
-  if (loading) {
-    return (
-      <Stack gap="xl" align="center" py="xl">
-        <Text>Loading pricing plans...</Text>
-      </Stack>
-    );
-  }
+      if (result.success) {
+        window.location.href = result.invoiceUrl;
+      } else {
+        notifications.show({
+          title: "Error",
+          message: result.message,
+          color: "red",
+        });
+      }
+    } catch (error) {
+      notifications.show({
+        title: "Error",
+        message: "Something went wrong",
+        color: "red",
+      });
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   return (
     <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
@@ -264,7 +265,8 @@ export function PricingPageClient({currentPlanType}: PricingPageClientProps) {
                   variant={isFeatured ? "filled" : "outline"}
                   color="blue"
                   leftSection={<IconCreditCard size={18} />}
-                  disabled={isCurrentPlan}
+                  disabled={isCurrentPlan || !!loadingPlan}
+                  loading={loadingPlan === pkg.plan_type}
                   onClick={() => handleSelectPlan(pkg.plan_type)}
                   mt="auto"
                 >

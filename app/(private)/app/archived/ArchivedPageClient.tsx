@@ -12,6 +12,8 @@ import {
   Paper,
   SegmentedControl,
   SimpleGrid,
+  Alert,
+  Button,
 } from "@mantine/core";
 import {
   IconSearch,
@@ -19,8 +21,10 @@ import {
   IconInbox,
   IconArchive,
   IconTag,
+  IconAlertCircle,
 } from "@tabler/icons-react";
 import {MailItemCard, MailItem} from "@/components/mail/MailItemCard";
+import Link from "next/link";
 
 // Mock data - will be replaced with backend integration
 const mockArchivedItems: MailItem[] = [
@@ -35,7 +39,11 @@ const mockArchivedItems: MailItem[] = [
   },
 ];
 
-export function ArchivedPageClient() {
+interface ArchivedPageClientProps {
+  kycStatus: string;
+}
+
+export function ArchivedPageClient({kycStatus}: ArchivedPageClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [tagFilter, setTagFilter] = useState<string>("");
@@ -60,6 +68,31 @@ export function ArchivedPageClient() {
 
   return (
     <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
+      {kycStatus === "PENDING" && (
+        <Alert
+          variant="filled"
+          color="blue"
+          title="Verification Pending"
+          icon={<IconAlertCircle size={20} />}
+        >
+          <Group justify="space-between" align="center" gap="md">
+            <Text size="sm" c="white">
+              Your identity verification is currently under review. You will be
+              notified once it is approved.
+            </Text>
+            <Button
+              component={Link}
+              href="/app/kyc"
+              variant="white"
+              color="blue"
+              size="xs"
+            >
+              View Status
+            </Button>
+          </Group>
+        </Alert>
+      )}
+
       {/* Header */}
       <Group justify="space-between" align="flex-start" wrap="wrap">
         <Stack gap="xs">

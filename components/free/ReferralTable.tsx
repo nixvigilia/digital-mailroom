@@ -11,23 +11,23 @@ import {
   Avatar,
   ThemeIcon,
 } from "@mantine/core";
-import {IconUsers, IconHistory} from "@tabler/icons-react";
+import {IconUsers, IconHistory, IconCurrencyPeso} from "@tabler/icons-react";
 
-interface Referral {
+interface Transaction {
   id: string;
   email: string;
-  planType: string;
-  joinedAt: Date;
-  status: "active" | "pending";
-  earnings: number;
+  amount: number;
+  status: string;
+  date: Date;
+  plan: string;
 }
 
 interface ReferralTableProps {
-  referrals: Referral[];
+  transactions: Transaction[];
 }
 
-export function ReferralTable({referrals}: ReferralTableProps) {
-  if (referrals.length === 0) {
+export function ReferralTable({transactions}: ReferralTableProps) {
+  if (transactions.length === 0) {
     return (
       <Card shadow="sm" padding="xl" radius="md" withBorder={false}>
         <Stack gap="md" align="center" py="lg">
@@ -36,11 +36,11 @@ export function ReferralTable({referrals}: ReferralTableProps) {
           </ThemeIcon>
           <Stack gap="xs" align="center">
             <Text size="lg" fw={600}>
-              No Referrals Yet
+              No Referral Transactions Yet
             </Text>
             <Text size="sm" c="dimmed" ta="center" maw={300}>
-              Start sharing your secure link to earn rewards. Your network will
-              appear here.
+              Start sharing your secure link to earn rewards. Your commissions
+              will appear here.
             </Text>
           </Stack>
         </Stack>
@@ -56,7 +56,7 @@ export function ReferralTable({referrals}: ReferralTableProps) {
             <IconHistory size={16} />
           </ThemeIcon>
           <Title order={3} size="h4" fw={700}>
-            Referral History
+            Referral Transactions
           </Title>
         </Group>
 
@@ -86,7 +86,7 @@ export function ReferralTable({referrals}: ReferralTableProps) {
                     fontWeight: 600,
                   }}
                 >
-                  JOINED
+                  DATE
                 </Table.Th>
                 <Table.Th
                   style={{
@@ -103,49 +103,49 @@ export function ReferralTable({referrals}: ReferralTableProps) {
                     fontWeight: 600,
                   }}
                 >
-                  EARNINGS
+                  AMOUNT
                 </Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {referrals.map((referral) => (
-                <Table.Tr key={referral.id} style={{fontSize: "0.9rem"}}>
+              {transactions.map((tx) => (
+                <Table.Tr key={tx.id} style={{fontSize: "0.9rem"}}>
                   <Table.Td>
                     <Group gap="sm">
                       <Avatar size="sm" radius="xl" color="blue">
-                        {referral.email.substring(0, 2).toUpperCase()}
+                        {tx.email.substring(0, 2).toUpperCase()}
                       </Avatar>
                       <Text size="sm" fw={500}>
-                        {referral.email}
+                        {tx.email}
                       </Text>
                     </Group>
                   </Table.Td>
                   <Table.Td>
                     <Badge variant="light" color="gray" size="sm" radius="sm">
-                      {referral.planType}
+                      {tx.plan}
                     </Badge>
                   </Table.Td>
                   <Table.Td>
                     <Text size="sm" c="dimmed">
-                      {new Date(referral.joinedAt).toLocaleDateString()}
+                      {new Date(tx.date).toLocaleDateString()}
                     </Text>
                   </Table.Td>
                   <Table.Td>
                     <Badge
-                      color={referral.status === "active" ? "green" : "yellow"}
+                      color={tx.status === "paid" ? "green" : "yellow"}
                       variant="dot"
                       size="sm"
                     >
-                      {referral.status}
+                      {tx.status}
                     </Badge>
                   </Table.Td>
                   <Table.Td style={{textAlign: "right"}}>
                     <Text
                       size="sm"
                       fw={600}
-                      c={referral.earnings > 0 ? "green" : "dimmed"}
+                      c={tx.status === "paid" ? "green" : "dimmed"}
                     >
-                      ₱{referral.earnings.toLocaleString()}
+                      ₱{tx.amount.toLocaleString()}
                     </Text>
                   </Table.Td>
                 </Table.Tr>

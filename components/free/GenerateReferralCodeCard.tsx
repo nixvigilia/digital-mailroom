@@ -19,6 +19,7 @@ import {
   IconCheck,
   IconAlertCircle,
   IconGift,
+  IconX,
 } from "@tabler/icons-react";
 import {generateReferralCode} from "@/app/actions/referrals";
 import {notifications} from "@mantine/notifications";
@@ -28,6 +29,8 @@ interface GenerateReferralCodeCardProps {
   planDataPromise: Promise<{
     description: string | null;
     features: string[];
+    not_included: string[];
+    intended_for: string | null;
   } | null>;
 }
 
@@ -37,6 +40,7 @@ export function GenerateReferralCodeCard({
 }: GenerateReferralCodeCardProps) {
   const planData = use(planDataPromise);
   const features = planData?.features || [];
+  const notIncluded = planData?.not_included || [];
   const description = planData?.description;
 
   const [isPending, startTransition] = useTransition();
@@ -73,17 +77,9 @@ export function GenerateReferralCodeCard({
     });
   };
 
-  const filteredFeatures =
-    features.length > 0
-      ? features.filter(
-          (f) =>
-            !f.toLowerCase().includes("cash back") &&
-            !f.toLowerCase().includes("cashback")
-        )
-      : [
-          "Generate your unique referral code",
-          "Share your referral link with friends",
-        ];
+  // Filter features to ensure no duplicates from not_included if they exist in both
+  // Although visually we want to separate them
+  const displayFeatures = features.filter((f) => !notIncluded.includes(f));
 
   return (
     <Card shadow="sm" padding="xl" radius="lg" withBorder>
@@ -122,10 +118,27 @@ export function GenerateReferralCodeCard({
               </ThemeIcon>
             }
           >
-            {filteredFeatures.map((feature, index) => (
-              <List.Item key={index}>
+            {displayFeatures.map((feature, index) => (
+              <List.Item key={`feat-${index}`}>
                 <Text span c="dimmed.8" size="sm">
                   {feature}
+                </Text>
+              </List.Item>
+            ))}
+            {notIncluded.map((item, index) => (
+              <List.Item
+                key={`excl-${index}`}
+                icon={
+                  <ThemeIcon color="gray" variant="light" size={20} radius="xl">
+                    <IconX
+                      style={{width: rem(12), height: rem(12)}}
+                      stroke={3}
+                    />
+                  </ThemeIcon>
+                }
+              >
+                <Text span c="dimmed" size="sm" style={{opacity: 0.8}}>
+                  {item}
                 </Text>
               </List.Item>
             ))}

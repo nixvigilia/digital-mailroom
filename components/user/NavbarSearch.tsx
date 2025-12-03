@@ -1,17 +1,11 @@
 "use client";
 
-import {useRef, useState, useEffect} from "react";
+import {useRef} from "react";
 import {
-  ActionIcon,
-  Badge,
-  Box,
-  Code,
-  Group,
-  Text,
-  TextInput,
-  Tooltip,
+  Avatar,
   UnstyledButton,
   useMantineColorScheme,
+  Group,
 } from "@mantine/core";
 import {
   IconInbox,
@@ -19,17 +13,18 @@ import {
   IconTag,
   IconSettings,
   IconCreditCard,
-  IconLogout,
-  IconSearch,
   IconSun,
   IconMoon,
   IconLayoutDashboard,
+  IconHistory,
 } from "@tabler/icons-react";
 import {UserButton} from "@/components/user/UserButton";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
 import {signOut} from "@/app/actions/auth";
 import classes from "./NavbarSearch.module.css";
+import {createClient} from "@/utils/supabase/client";
+import {useEffect, useState} from "react";
 
 export interface NavbarSearchRef {
   focusSearch: () => void;
@@ -54,21 +49,37 @@ export function NavbarSearch({
 }) {
   const pathname = usePathname();
   const {colorScheme, toggleColorScheme} = useMantineColorScheme();
-  const internalSearchRef = useRef<HTMLInputElement>(null);
-  const searchInputRef = searchRef || internalSearchRef;
   const isFreePlan = planType === "FREE";
+  const [user, setUser] = useState<any>(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: {user},
+      } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
+  }, [supabase]);
+
+  const getInitials = (email: string) => {
+    if (!email) return "U";
+    const username = email.split("@")[0];
+    return username.charAt(0).toUpperCase();
+  };
 
   // Filter links based on plan type
-  // Dashboard is available to all users
-  // Pricing is only for free users
-  const visibleLinks = isFreePlan
-    ? mainLinks.filter(
-        (link) =>
-          link.href === "/app" ||
-          link.href === "/app/pricing" ||
-          link.href === "/app/settings"
-      )
-    : mainLinks.filter((link) => link.href !== "/app/pricing"); // Hide pricing for paid users, show everything else
+  let visibleLinks = [];
+  if (isFreePlan) {
+    visibleLinks = [
+      {icon: IconLayoutDashboard, label: "Dashboard", href: "/app"},
+      {icon: IconHistory, label: "Referral History", href: "/app/referrals"},
+      {icon: IconCreditCard, label: "Pricing", href: "/app/pricing"},
+    ];
+  } else {
+    visibleLinks = mainLinks.filter((link) => link.href !== "/app/pricing");
+  }
 
   const mainLinksElements = visibleLinks.map((link) => {
     const Icon = link.icon;
@@ -123,14 +134,26 @@ export function NavbarSearch({
             <span>Toggle Theme</span>
           </div>
         </UnstyledButton>
+
         <form action={signOut}>
           <UnstyledButton type="submit" className={classes.mainLink}>
             <div className={classes.mainLinkInner}>
-              <IconLogout
-                size={20}
-                className={classes.mainLinkIcon}
-                stroke={1.5}
-              />
+              {/* Sign Out Avatar style from reference */}
+              <Avatar
+                radius="xl"
+                size="sm"
+                mr="md"
+                style={{
+                  width: 24,
+                  height: 24,
+                  fontSize: 10,
+                  fontWeight: 700,
+                  backgroundColor: "var(--mantine-color-gray-7)",
+                  color: "var(--mantine-color-white)",
+                }}
+              >
+                {user?.email ? getInitials(user.email) : "U"}
+              </Avatar>
               <span>Sign Out</span>
             </div>
           </UnstyledButton>

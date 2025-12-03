@@ -46,7 +46,7 @@ export function InboxFilters({allTags}: InboxFiltersProps) {
     }
     // Reset to page 1 when filters change
     params.delete("page");
-    router.push(`/app/dashboard?${params.toString()}`);
+    router.push(`/app?${params.toString()}`);
   };
 
   return (

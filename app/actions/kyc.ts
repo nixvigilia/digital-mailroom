@@ -3,6 +3,7 @@
 import {verifySession} from "@/utils/supabase/dal";
 import {prisma} from "@/utils/prisma";
 import {revalidatePath} from "next/cache";
+import {createAdminClient} from "@/utils/supabase/admin";
 
 export type ActionResult =
   | {success: true; message: string}
@@ -10,43 +11,47 @@ export type ActionResult =
 
 /**
  * Submits KYC verification data
- * Validates the session, ensures profile exists, and creates/updates KYC verification
+ * Validates the session, ensures profile exists, uploads files to storage, and creates/updates KYC verification
  */
-export async function submitKYC(formData: {
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  phoneNumber: string;
-  address: string;
-  city: string;
-  province: string;
-  postalCode: string;
-  country: string;
-  idType: string;
-  idFileFrontUrl: string | null;
-  idFileBackUrl: string | null;
-  consentMailOpening: boolean;
-  consentDataProcessing: boolean;
-  consentTermsOfService: boolean;
-  consentPrivacyPolicy: boolean;
-}): Promise<ActionResult> {
+export async function submitKYC(formData: FormData): Promise<ActionResult> {
   // Verify session using DAL
   const session = await verifySession();
   const userId = session.userId;
 
   try {
+    // Extract fields from FormData
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
+    const dateOfBirth = formData.get("dateOfBirth") as string;
+    const phoneNumber = formData.get("phoneNumber") as string;
+    const address = formData.get("address") as string;
+    const city = formData.get("city") as string;
+    const province = formData.get("province") as string;
+    const postalCode = formData.get("postalCode") as string;
+    const country = formData.get("country") as string;
+    const idType = formData.get("idType") as string;
+    const consentMailOpening = formData.get("consentMailOpening") === "true";
+    const consentDataProcessing =
+      formData.get("consentDataProcessing") === "true";
+    const consentTermsOfService =
+      formData.get("consentTermsOfService") === "true";
+    const consentPrivacyPolicy =
+      formData.get("consentPrivacyPolicy") === "true";
+    const idFileFront = formData.get("idFileFront") as File;
+    const idFileBack = formData.get("idFileBack") as File;
+
     // Validate required fields
     if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.dateOfBirth ||
-      !formData.phoneNumber ||
-      !formData.address ||
-      !formData.city ||
-      !formData.province ||
-      !formData.postalCode ||
-      !formData.country ||
-      !formData.idType
+      !firstName ||
+      !lastName ||
+      !dateOfBirth ||
+      !phoneNumber ||
+      !address ||
+      !city ||
+      !province ||
+      !postalCode ||
+      !country ||
+      !idType
     ) {
       return {
         success: false,
@@ -56,10 +61,10 @@ export async function submitKYC(formData: {
 
     // Validate consents
     if (
-      !formData.consentMailOpening ||
-      !formData.consentDataProcessing ||
-      !formData.consentTermsOfService ||
-      !formData.consentPrivacyPolicy
+      !consentMailOpening ||
+      !consentDataProcessing ||
+      !consentTermsOfService ||
+      !consentPrivacyPolicy
     ) {
       return {
         success: false,
@@ -68,12 +73,61 @@ export async function submitKYC(formData: {
     }
 
     // Validate ID files
-    if (!formData.idFileFrontUrl || !formData.idFileBackUrl) {
+    if (!idFileFront || !idFileBack) {
       return {
         success: false,
         message: "Please upload both front and back of your ID document.",
       };
     }
+
+    // Upload files to Supabase Storage using Admin Client (bypassing RLS for upload)
+    // Since the user session is already verified by `verifySession`, we can safely upload using service role
+    const supabase = createAdminClient();
+    const bucketName = process.env.SUPABASE_STORAGE_BUCKET_NAME || "keep";
+    const folderPath = `kyc/${userId}`;
+
+    // Upload Front ID
+    const frontFileName = `${folderPath}/front_${Date.now()}_${
+      idFileFront.name
+    }`;
+    const {data: frontData, error: frontError} = await supabase.storage
+      .from(bucketName)
+      .upload(frontFileName, idFileFront, {
+        cacheControl: "3600",
+        upsert: true,
+        contentType: idFileFront.type,
+      });
+
+    if (frontError) {
+      console.error("Error uploading front ID:", frontError);
+      return {
+        success: false,
+        message: `Failed to upload front ID: ${frontError.message}`,
+      };
+    }
+
+    // Upload Back ID
+    const backFileName = `${folderPath}/back_${Date.now()}_${idFileBack.name}`;
+    const {data: backData, error: backError} = await supabase.storage
+      .from(bucketName)
+      .upload(backFileName, idFileBack, {
+        cacheControl: "3600",
+        upsert: true,
+        contentType: idFileBack.type,
+      });
+
+    if (backError) {
+      console.error("Error uploading back ID:", backError);
+      return {
+        success: false,
+        message: `Failed to upload back ID: ${backError.message}`,
+      };
+    }
+
+    // Store the storage path relative to the bucket
+    // We will use this path to generate signed URLs later
+    const idFileFrontPath = frontData.path;
+    const idFileBackPath = backData.path;
 
     // Ensure profile exists
     await prisma.profile.upsert({
@@ -88,58 +142,56 @@ export async function submitKYC(formData: {
     });
 
     // Create or update KYC verification
-    // Note: Prisma converts model names to camelCase (KYCVerification -> kYCVerification)
     await prisma.kYCVerification.upsert({
       where: {profile_id: userId},
       update: {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        date_of_birth: new Date(formData.dateOfBirth),
-        phone_number: formData.phoneNumber,
-        address: formData.address,
-        city: formData.city,
-        province: formData.province,
-        postal_code: formData.postalCode,
-        country: formData.country,
-        id_type: formData.idType,
-        id_file_front_url: formData.idFileFrontUrl,
-        id_file_back_url: formData.idFileBackUrl,
-        consent_mail_opening: formData.consentMailOpening,
-        consent_data_processing: formData.consentDataProcessing,
-        consent_terms_of_service: formData.consentTermsOfService,
-        consent_privacy_policy: formData.consentPrivacyPolicy,
+        first_name: firstName,
+        last_name: lastName,
+        date_of_birth: new Date(dateOfBirth),
+        phone_number: phoneNumber,
+        address: address,
+        city: city,
+        province: province,
+        postal_code: postalCode,
+        country: country,
+        id_type: idType,
+        id_file_front_url: idFileFrontPath,
+        id_file_back_url: idFileBackPath,
+        consent_mail_opening: consentMailOpening,
+        consent_data_processing: consentDataProcessing,
+        consent_terms_of_service: consentTermsOfService,
+        consent_privacy_policy: consentPrivacyPolicy,
         status: "PENDING",
         submitted_at: new Date(),
-        // Reset review fields when resubmitting
         reviewed_at: null,
         reviewed_by: null,
         rejection_reason: null,
       },
       create: {
         profile_id: userId,
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        date_of_birth: new Date(formData.dateOfBirth),
-        phone_number: formData.phoneNumber,
-        address: formData.address,
-        city: formData.city,
-        province: formData.province,
-        postal_code: formData.postalCode,
-        country: formData.country,
-        id_type: formData.idType,
-        id_file_front_url: formData.idFileFrontUrl,
-        id_file_back_url: formData.idFileBackUrl,
-        consent_mail_opening: formData.consentMailOpening,
-        consent_data_processing: formData.consentDataProcessing,
-        consent_terms_of_service: formData.consentTermsOfService,
-        consent_privacy_policy: formData.consentPrivacyPolicy,
+        first_name: firstName,
+        last_name: lastName,
+        date_of_birth: new Date(dateOfBirth),
+        phone_number: phoneNumber,
+        address: address,
+        city: city,
+        province: province,
+        postal_code: postalCode,
+        country: country,
+        id_type: idType,
+        id_file_front_url: idFileFrontPath,
+        id_file_back_url: idFileBackPath,
+        consent_mail_opening: consentMailOpening,
+        consent_data_processing: consentDataProcessing,
+        consent_terms_of_service: consentTermsOfService,
+        consent_privacy_policy: consentPrivacyPolicy,
         status: "PENDING",
         submitted_at: new Date(),
       },
     });
 
     revalidatePath("/app/kyc");
-    revalidatePath("/app/dashboard");
+    revalidatePath("/app");
     revalidatePath("/app/welcome");
 
     return {

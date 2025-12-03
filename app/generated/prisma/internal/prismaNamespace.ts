@@ -390,9 +390,11 @@ export const ModelName = {
   TeamMember: 'TeamMember',
   Package: 'Package',
   Subscription: 'Subscription',
+  PaymentTransaction: 'PaymentTransaction',
   MailItem: 'MailItem',
   MailActionRequest: 'MailActionRequest',
-  Referral: 'Referral'
+  Referral: 'Referral',
+  ReferralTransaction: 'ReferralTransaction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -408,7 +410,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "profile" | "kYCVerification" | "businessAccount" | "teamMember" | "package" | "subscription" | "mailItem" | "mailActionRequest" | "referral"
+    modelProps: "profile" | "kYCVerification" | "businessAccount" | "teamMember" | "package" | "subscription" | "paymentTransaction" | "mailItem" | "mailActionRequest" | "referral" | "referralTransaction"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -856,6 +858,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PaymentTransaction: {
+      payload: Prisma.$PaymentTransactionPayload<ExtArgs>
+      fields: Prisma.PaymentTransactionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PaymentTransactionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentTransactionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PaymentTransactionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentTransactionPayload>
+        }
+        findFirst: {
+          args: Prisma.PaymentTransactionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentTransactionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PaymentTransactionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentTransactionPayload>
+        }
+        findMany: {
+          args: Prisma.PaymentTransactionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentTransactionPayload>[]
+        }
+        create: {
+          args: Prisma.PaymentTransactionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentTransactionPayload>
+        }
+        createMany: {
+          args: Prisma.PaymentTransactionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PaymentTransactionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentTransactionPayload>[]
+        }
+        delete: {
+          args: Prisma.PaymentTransactionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentTransactionPayload>
+        }
+        update: {
+          args: Prisma.PaymentTransactionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentTransactionPayload>
+        }
+        deleteMany: {
+          args: Prisma.PaymentTransactionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PaymentTransactionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PaymentTransactionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentTransactionPayload>[]
+        }
+        upsert: {
+          args: Prisma.PaymentTransactionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentTransactionPayload>
+        }
+        aggregate: {
+          args: Prisma.PaymentTransactionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePaymentTransaction>
+        }
+        groupBy: {
+          args: Prisma.PaymentTransactionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PaymentTransactionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PaymentTransactionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PaymentTransactionCountAggregateOutputType> | number
+        }
+      }
+    }
     MailItem: {
       payload: Prisma.$MailItemPayload<ExtArgs>
       fields: Prisma.MailItemFieldRefs
@@ -1078,6 +1154,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ReferralTransaction: {
+      payload: Prisma.$ReferralTransactionPayload<ExtArgs>
+      fields: Prisma.ReferralTransactionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReferralTransactionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralTransactionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReferralTransactionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralTransactionPayload>
+        }
+        findFirst: {
+          args: Prisma.ReferralTransactionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralTransactionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReferralTransactionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralTransactionPayload>
+        }
+        findMany: {
+          args: Prisma.ReferralTransactionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralTransactionPayload>[]
+        }
+        create: {
+          args: Prisma.ReferralTransactionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralTransactionPayload>
+        }
+        createMany: {
+          args: Prisma.ReferralTransactionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReferralTransactionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralTransactionPayload>[]
+        }
+        delete: {
+          args: Prisma.ReferralTransactionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralTransactionPayload>
+        }
+        update: {
+          args: Prisma.ReferralTransactionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralTransactionPayload>
+        }
+        deleteMany: {
+          args: Prisma.ReferralTransactionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReferralTransactionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReferralTransactionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralTransactionPayload>[]
+        }
+        upsert: {
+          args: Prisma.ReferralTransactionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReferralTransactionPayload>
+        }
+        aggregate: {
+          args: Prisma.ReferralTransactionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReferralTransaction>
+        }
+        groupBy: {
+          args: Prisma.ReferralTransactionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReferralTransactionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReferralTransactionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReferralTransactionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1210,11 +1360,14 @@ export const PackageScalarFieldEnum = {
   id: 'id',
   name: 'name',
   plan_type: 'plan_type',
+  intended_for: 'intended_for',
+  cashback_percentage: 'cashback_percentage',
   description: 'description',
   price_monthly: 'price_monthly',
   price_quarterly: 'price_quarterly',
   price_yearly: 'price_yearly',
   features: 'features',
+  not_included: 'not_included',
   max_mail_items: 'max_mail_items',
   max_team_members: 'max_team_members',
   is_active: 'is_active',
@@ -1246,6 +1399,28 @@ export const SubscriptionScalarFieldEnum = {
 } as const
 
 export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const PaymentTransactionScalarFieldEnum = {
+  id: 'id',
+  profile_id: 'profile_id',
+  subscription_id: 'subscription_id',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  external_id: 'external_id',
+  invoice_url: 'invoice_url',
+  payment_method: 'payment_method',
+  payment_channel: 'payment_channel',
+  paid_at: 'paid_at',
+  expired_at: 'expired_at',
+  description: 'description',
+  metadata: 'metadata',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type PaymentTransactionScalarFieldEnum = (typeof PaymentTransactionScalarFieldEnum)[keyof typeof PaymentTransactionScalarFieldEnum]
 
 
 export const MailItemScalarFieldEnum = {
@@ -1302,8 +1477,6 @@ export const ReferralScalarFieldEnum = {
   referrer_id: 'referrer_id',
   referred_id: 'referred_id',
   referral_code: 'referral_code',
-  status: 'status',
-  earnings: 'earnings',
   subscription_plan: 'subscription_plan',
   created_at: 'created_at',
   updated_at: 'updated_at'
@@ -1312,12 +1485,34 @@ export const ReferralScalarFieldEnum = {
 export type ReferralScalarFieldEnum = (typeof ReferralScalarFieldEnum)[keyof typeof ReferralScalarFieldEnum]
 
 
+export const ReferralTransactionScalarFieldEnum = {
+  id: 'id',
+  referral_id: 'referral_id',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  invoice_id: 'invoice_id',
+  description: 'description',
+  created_at: 'created_at'
+} as const
+
+export type ReferralTransactionScalarFieldEnum = (typeof ReferralTransactionScalarFieldEnum)[keyof typeof ReferralTransactionScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -1334,6 +1529,15 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -1504,6 +1708,34 @@ export type ListEnumBillingCycleFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
+ * Reference to a field of type 'PaymentStatus'
+ */
+export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentStatus[]'
+ */
+export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
  * Reference to a field of type 'MailStatus'
  */
 export type EnumMailStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailStatus'>
@@ -1643,9 +1875,11 @@ export type GlobalOmitConfig = {
   teamMember?: Prisma.TeamMemberOmit
   package?: Prisma.PackageOmit
   subscription?: Prisma.SubscriptionOmit
+  paymentTransaction?: Prisma.PaymentTransactionOmit
   mailItem?: Prisma.MailItemOmit
   mailActionRequest?: Prisma.MailActionRequestOmit
   referral?: Prisma.ReferralOmit
+  referralTransaction?: Prisma.ReferralTransactionOmit
 }
 
 /* Types for Logging */

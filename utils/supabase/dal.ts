@@ -87,6 +87,51 @@ export const getKYCStatus = cache(async (userId: string): Promise<string> => {
   }
 });
 
+export const getKYCData = cache(async (userId: string) => {
+  try {
+    const profile = await prisma.profile.findUnique({
+      where: {id: userId},
+      select: {
+        kyc_verification: true,
+      },
+    });
+
+    if (!profile?.kyc_verification) {
+      return null;
+    }
+
+    const kyc = profile.kyc_verification;
+    const supabase = await createClient();
+
+    // Generate signed URLs for images
+    let idFileFrontUrl = null;
+    let idFileBackUrl = null;
+
+    if (kyc.id_file_front_url) {
+      const {data} = await supabase.storage
+        .from("keep")
+        .createSignedUrl(kyc.id_file_front_url, 3600); // 1 hour expiry
+      idFileFrontUrl = data?.signedUrl || null;
+    }
+
+    if (kyc.id_file_back_url) {
+      const {data} = await supabase.storage
+        .from("keep")
+        .createSignedUrl(kyc.id_file_back_url, 3600);
+      idFileBackUrl = data?.signedUrl || null;
+    }
+
+    return {
+      ...kyc,
+      id_file_front_signed_url: idFileFrontUrl, // New field for signed URL
+      id_file_back_signed_url: idFileBackUrl,
+    };
+  } catch (error) {
+    console.error("Error fetching KYC data:", error);
+    return null;
+  }
+});
+
 export const getCurrentUserKYCStatus = cache(async (): Promise<string> => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {

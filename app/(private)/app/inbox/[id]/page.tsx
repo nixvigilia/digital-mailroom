@@ -147,7 +147,7 @@ export default function MailDetailPage() {
         </Text>
         <Button
           component={Link}
-          href="/app/dashboard"
+          href="/app"
           leftSection={<IconArrowLeft size={18} />}
         >
           Back to Inbox
@@ -163,7 +163,7 @@ export default function MailDetailPage() {
         <Group justify="flex-start">
           <Button
             component={Link}
-            href="/app/dashboard"
+            href="/app"
             variant="subtle"
             leftSection={<IconArrowLeft size={18} />}
             size="md"
@@ -173,7 +173,7 @@ export default function MailDetailPage() {
           </Button>
           <Button
             component={Link}
-            href="/app/dashboard"
+            href="/app"
             variant="subtle"
             leftSection={<IconArrowLeft size={18} />}
             size="sm"

@@ -9,23 +9,24 @@ datasource db {
 }
 
 model Profile {
-  id                   String              @id @default(uuid()) @db.Uuid
+  id                   String               @id @default(uuid()) @db.Uuid
   avatar_url           String?
-  email                String              @unique
-  referral_code        String?             @unique
-  referred_by          String?             @db.Uuid
-  updated_at           DateTime            @updatedAt
-  created_at           DateTime            @default(now())
-  user_type            UserType            @default(INDIVIDUAL)
-  role                 UserRole            @default(USER)
+  email                String               @unique
+  referral_code        String?              @unique
+  referred_by          String?              @db.Uuid
+  updated_at           DateTime             @updatedAt
+  created_at           DateTime             @default(now())
+  user_type            UserType             @default(INDIVIDUAL)
+  role                 UserRole             @default(USER)
   business_account     BusinessAccount?
   kyc_verification     KYCVerification?
   mail_action_requests MailActionRequest[]
   mail_items           MailItem[]
   subscriptions        Subscription[]
+  payment_transactions PaymentTransaction[]
   team_memberships     TeamMember[]
-  referrals            Referral[]          @relation("Referrer")
-  referred_users       Referral[]          @relation("Referred")
+  referrals            Referral[]           @relation("Referrer")
+  referred_users       Referral[]           @relation("Referred")
 
   @@map("profile")
 }
@@ -109,46 +110,73 @@ model TeamMember {
 }
 
 model Package {
-  id               String         @id @default(uuid()) @db.Uuid
-  name             String
-  plan_type        String         @unique
-  description      String?
-  price_monthly    Decimal        @db.Decimal(10, 2)
-  price_quarterly  Decimal?       @db.Decimal(10, 2)
-  price_yearly     Decimal?       @db.Decimal(10, 2)
-  features         String[]
-  max_mail_items   Int?
-  max_team_members Int?
-  is_active        Boolean        @default(true)
-  is_featured      Boolean        @default(false)
-  display_order    Int            @default(0)
-  created_at       DateTime       @default(now())
-  updated_at       DateTime       @updatedAt
-  created_by       String?        @db.Uuid
-  subscriptions    Subscription[]
+  id                  String         @id @default(uuid()) @db.Uuid
+  name                String
+  plan_type           String         @unique
+  intended_for        String?
+  cashback_percentage Decimal        @default(5.00) @db.Decimal(5, 2) // Default 5% referral fee
+  description         String?
+  price_monthly       Decimal        @db.Decimal(10, 2)
+  price_quarterly     Decimal?       @db.Decimal(10, 2)
+  price_yearly        Decimal?       @db.Decimal(10, 2)
+  features            String[]
+  not_included        String[]
+  max_mail_items      Int?
+  max_team_members    Int?
+  is_active           Boolean        @default(true)
+  is_featured         Boolean        @default(false)
+  display_order       Int            @default(0)
+  created_at          DateTime       @default(now())
+  updated_at          DateTime       @updatedAt
+  created_by          String?        @db.Uuid
+  subscriptions       Subscription[]
 
   @@map("package")
 }
 
 model Subscription {
-  id                String             @id @default(uuid()) @db.Uuid
-  profile_id        String             @db.Uuid
-  package_id        String?            @db.Uuid
-  plan_type         String
-  status            SubscriptionStatus @default(ACTIVE)
-  billing_cycle     BillingCycle       @default(MONTHLY)
-  payment_method_id String?
-  next_billing_date DateTime?
-  last_payment_date DateTime?
-  started_at        DateTime           @default(now())
-  expires_at        DateTime?
-  cancelled_at      DateTime?
-  created_at        DateTime           @default(now())
-  updated_at        DateTime           @updatedAt
-  profile           Profile            @relation(fields: [profile_id], references: [id], onDelete: Cascade)
-  package           Package?           @relation(fields: [package_id], references: [id], onDelete: SetNull)
+  id                   String               @id @default(uuid()) @db.Uuid
+  profile_id           String               @db.Uuid
+  package_id           String?              @db.Uuid
+  plan_type            String
+  status               SubscriptionStatus   @default(ACTIVE)
+  billing_cycle        BillingCycle         @default(MONTHLY)
+  payment_method_id    String?
+  next_billing_date    DateTime?
+  last_payment_date    DateTime?
+  started_at           DateTime             @default(now())
+  expires_at           DateTime?
+  cancelled_at         DateTime?
+  created_at           DateTime             @default(now())
+  updated_at           DateTime             @updatedAt
+  profile              Profile              @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+  package              Package?             @relation(fields: [package_id], references: [id], onDelete: SetNull)
+  payment_transactions PaymentTransaction[]
 
   @@map("subscription")
+}
+
+model PaymentTransaction {
+  id              String        @id @default(uuid()) @db.Uuid
+  profile_id      String        @db.Uuid
+  subscription_id String?       @db.Uuid
+  amount          Decimal       @db.Decimal(10, 2)
+  currency        String        @default("PHP")
+  status          PaymentStatus @default(PENDING)
+  external_id     String        @unique // Xendit Invoice ID or Reference ID
+  invoice_url     String?
+  payment_method  String?
+  payment_channel String?
+  paid_at         DateTime?
+  expired_at      DateTime?
+  description     String?
+  metadata        Json?
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+  profile         Profile       @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+  subscription    Subscription? @relation(fields: [subscription_id], references: [id], onDelete: SetNull)
+
+  @@map("payment_transaction")
 }
 
 model MailItem {
@@ -254,6 +282,14 @@ enum SubscriptionStatus {
   SUSPENDED
 }
 
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+  REFUNDED
+}
+
 enum BillingCycle {
   MONTHLY
   QUARTERLY
@@ -288,19 +324,32 @@ enum ActionStatus {
 }
 
 model Referral {
-  id                String   @id @default(uuid()) @db.Uuid
-  referrer_id       String   @db.Uuid
-  referred_id       String   @unique @db.Uuid
+  id                String                @id @default(uuid()) @db.Uuid
+  referrer_id       String                @db.Uuid
+  referred_id       String                @unique @db.Uuid
   referral_code     String
-  status            String   @default("pending") // pending, active, completed
-  earnings          Decimal  @default(0) @db.Decimal(10, 2)
   subscription_plan String?
-  created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
-  referrer          Profile  @relation("Referrer", fields: [referrer_id], references: [id], onDelete: Cascade)
-  referred          Profile  @relation("Referred", fields: [referred_id], references: [id], onDelete: Cascade)
+  created_at        DateTime              @default(now())
+  updated_at        DateTime              @updatedAt
+  referrer          Profile               @relation("Referrer", fields: [referrer_id], references: [id], onDelete: Cascade)
+  referred          Profile               @relation("Referred", fields: [referred_id], references: [id], onDelete: Cascade)
+  transactions      ReferralTransaction[]
 
   @@index([referrer_id])
   @@index([referral_code])
   @@map("referral")
+}
+
+model ReferralTransaction {
+  id          String   @id @default(uuid()) @db.Uuid
+  referral_id String   @db.Uuid
+  amount      Decimal  @db.Decimal(10, 2)
+  currency    String   @default("PHP")
+  status      String   @default("paid") // paid, pending, void
+  invoice_id  String? // payment invoice id
+  description String?
+  created_at  DateTime @default(now())
+  referral    Referral @relation(fields: [referral_id], references: [id], onDelete: Cascade)
+
+  @@map("referral_transaction")
 }

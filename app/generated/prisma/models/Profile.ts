@@ -219,6 +219,7 @@ export type ProfileWhereInput = {
   mail_action_requests?: Prisma.MailActionRequestListRelationFilter
   mail_items?: Prisma.MailItemListRelationFilter
   subscriptions?: Prisma.SubscriptionListRelationFilter
+  payment_transactions?: Prisma.PaymentTransactionListRelationFilter
   team_memberships?: Prisma.TeamMemberListRelationFilter
   referrals?: Prisma.ReferralListRelationFilter
   referred_users?: Prisma.ReferralListRelationFilter
@@ -239,6 +240,7 @@ export type ProfileOrderByWithRelationInput = {
   mail_action_requests?: Prisma.MailActionRequestOrderByRelationAggregateInput
   mail_items?: Prisma.MailItemOrderByRelationAggregateInput
   subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
+  payment_transactions?: Prisma.PaymentTransactionOrderByRelationAggregateInput
   team_memberships?: Prisma.TeamMemberOrderByRelationAggregateInput
   referrals?: Prisma.ReferralOrderByRelationAggregateInput
   referred_users?: Prisma.ReferralOrderByRelationAggregateInput
@@ -262,6 +264,7 @@ export type ProfileWhereUniqueInput = Prisma.AtLeast<{
   mail_action_requests?: Prisma.MailActionRequestListRelationFilter
   mail_items?: Prisma.MailItemListRelationFilter
   subscriptions?: Prisma.SubscriptionListRelationFilter
+  payment_transactions?: Prisma.PaymentTransactionListRelationFilter
   team_memberships?: Prisma.TeamMemberListRelationFilter
   referrals?: Prisma.ReferralListRelationFilter
   referred_users?: Prisma.ReferralListRelationFilter
@@ -312,6 +315,7 @@ export type ProfileCreateInput = {
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -332,6 +336,7 @@ export type ProfileUncheckedCreateInput = {
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -352,6 +357,7 @@ export type ProfileUpdateInput = {
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -372,6 +378,7 @@ export type ProfileUncheckedUpdateInput = {
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -535,6 +542,20 @@ export type ProfileUpdateOneRequiredWithoutSubscriptionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProfileUpdateToOneWithWhereWithoutSubscriptionsInput, Prisma.ProfileUpdateWithoutSubscriptionsInput>, Prisma.ProfileUncheckedUpdateWithoutSubscriptionsInput>
 }
 
+export type ProfileCreateNestedOneWithoutPayment_transactionsInput = {
+  create?: Prisma.XOR<Prisma.ProfileCreateWithoutPayment_transactionsInput, Prisma.ProfileUncheckedCreateWithoutPayment_transactionsInput>
+  connectOrCreate?: Prisma.ProfileCreateOrConnectWithoutPayment_transactionsInput
+  connect?: Prisma.ProfileWhereUniqueInput
+}
+
+export type ProfileUpdateOneRequiredWithoutPayment_transactionsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProfileCreateWithoutPayment_transactionsInput, Prisma.ProfileUncheckedCreateWithoutPayment_transactionsInput>
+  connectOrCreate?: Prisma.ProfileCreateOrConnectWithoutPayment_transactionsInput
+  upsert?: Prisma.ProfileUpsertWithoutPayment_transactionsInput
+  connect?: Prisma.ProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProfileUpdateToOneWithWhereWithoutPayment_transactionsInput, Prisma.ProfileUpdateWithoutPayment_transactionsInput>, Prisma.ProfileUncheckedUpdateWithoutPayment_transactionsInput>
+}
+
 export type ProfileCreateNestedOneWithoutMail_itemsInput = {
   create?: Prisma.XOR<Prisma.ProfileCreateWithoutMail_itemsInput, Prisma.ProfileUncheckedCreateWithoutMail_itemsInput>
   connectOrCreate?: Prisma.ProfileCreateOrConnectWithoutMail_itemsInput
@@ -607,6 +628,7 @@ export type ProfileCreateWithoutKyc_verificationInput = {
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -626,6 +648,7 @@ export type ProfileUncheckedCreateWithoutKyc_verificationInput = {
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -661,6 +684,7 @@ export type ProfileUpdateWithoutKyc_verificationInput = {
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -680,6 +704,7 @@ export type ProfileUncheckedUpdateWithoutKyc_verificationInput = {
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -699,6 +724,7 @@ export type ProfileCreateWithoutBusiness_accountInput = {
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -718,6 +744,7 @@ export type ProfileUncheckedCreateWithoutBusiness_accountInput = {
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -753,6 +780,7 @@ export type ProfileUpdateWithoutBusiness_accountInput = {
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -772,6 +800,7 @@ export type ProfileUncheckedUpdateWithoutBusiness_accountInput = {
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -792,6 +821,7 @@ export type ProfileCreateWithoutTeam_membershipsInput = {
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
 }
@@ -811,6 +841,7 @@ export type ProfileUncheckedCreateWithoutTeam_membershipsInput = {
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
 }
@@ -846,6 +877,7 @@ export type ProfileUpdateWithoutTeam_membershipsInput = {
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
 }
@@ -865,6 +897,7 @@ export type ProfileUncheckedUpdateWithoutTeam_membershipsInput = {
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
 }
@@ -883,6 +916,7 @@ export type ProfileCreateWithoutSubscriptionsInput = {
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -902,6 +936,7 @@ export type ProfileUncheckedCreateWithoutSubscriptionsInput = {
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -937,6 +972,7 @@ export type ProfileUpdateWithoutSubscriptionsInput = {
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -956,6 +992,103 @@ export type ProfileUncheckedUpdateWithoutSubscriptionsInput = {
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
+  team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
+  referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+}
+
+export type ProfileCreateWithoutPayment_transactionsInput = {
+  id?: string
+  avatar_url?: string | null
+  email: string
+  referral_code?: string | null
+  referred_by?: string | null
+  updated_at?: Date | string
+  created_at?: Date | string
+  user_type?: $Enums.UserType
+  role?: $Enums.UserRole
+  business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
+  kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
+  mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
+  mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
+  team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
+  referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+}
+
+export type ProfileUncheckedCreateWithoutPayment_transactionsInput = {
+  id?: string
+  avatar_url?: string | null
+  email: string
+  referral_code?: string | null
+  referred_by?: string | null
+  updated_at?: Date | string
+  created_at?: Date | string
+  user_type?: $Enums.UserType
+  role?: $Enums.UserRole
+  business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
+  kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
+  mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
+  mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
+  team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
+  referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+}
+
+export type ProfileCreateOrConnectWithoutPayment_transactionsInput = {
+  where: Prisma.ProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProfileCreateWithoutPayment_transactionsInput, Prisma.ProfileUncheckedCreateWithoutPayment_transactionsInput>
+}
+
+export type ProfileUpsertWithoutPayment_transactionsInput = {
+  update: Prisma.XOR<Prisma.ProfileUpdateWithoutPayment_transactionsInput, Prisma.ProfileUncheckedUpdateWithoutPayment_transactionsInput>
+  create: Prisma.XOR<Prisma.ProfileCreateWithoutPayment_transactionsInput, Prisma.ProfileUncheckedCreateWithoutPayment_transactionsInput>
+  where?: Prisma.ProfileWhereInput
+}
+
+export type ProfileUpdateToOneWithWhereWithoutPayment_transactionsInput = {
+  where?: Prisma.ProfileWhereInput
+  data: Prisma.XOR<Prisma.ProfileUpdateWithoutPayment_transactionsInput, Prisma.ProfileUncheckedUpdateWithoutPayment_transactionsInput>
+}
+
+export type ProfileUpdateWithoutPayment_transactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referred_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
+  kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
+  mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
+  mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
+  team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
+  referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+}
+
+export type ProfileUncheckedUpdateWithoutPayment_transactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  referral_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referred_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_type?: Prisma.EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
+  kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
+  mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
+  mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -975,6 +1108,7 @@ export type ProfileCreateWithoutMail_itemsInput = {
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -994,6 +1128,7 @@ export type ProfileUncheckedCreateWithoutMail_itemsInput = {
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -1029,6 +1164,7 @@ export type ProfileUpdateWithoutMail_itemsInput = {
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -1048,6 +1184,7 @@ export type ProfileUncheckedUpdateWithoutMail_itemsInput = {
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -1067,6 +1204,7 @@ export type ProfileCreateWithoutMail_action_requestsInput = {
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -1086,6 +1224,7 @@ export type ProfileUncheckedCreateWithoutMail_action_requestsInput = {
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -1121,6 +1260,7 @@ export type ProfileUpdateWithoutMail_action_requestsInput = {
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -1140,6 +1280,7 @@ export type ProfileUncheckedUpdateWithoutMail_action_requestsInput = {
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -1160,6 +1301,7 @@ export type ProfileCreateWithoutReferralsInput = {
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referred_users?: Prisma.ReferralCreateNestedManyWithoutReferredInput
 }
@@ -1179,6 +1321,7 @@ export type ProfileUncheckedCreateWithoutReferralsInput = {
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referred_users?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
 }
@@ -1203,6 +1346,7 @@ export type ProfileCreateWithoutReferred_usersInput = {
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
 }
@@ -1222,6 +1366,7 @@ export type ProfileUncheckedCreateWithoutReferred_usersInput = {
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
   mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutProfileInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutProfileInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutProfileInput
   team_memberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutProfileInput
   referrals?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
 }
@@ -1257,6 +1402,7 @@ export type ProfileUpdateWithoutReferralsInput = {
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referred_users?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
 }
@@ -1276,6 +1422,7 @@ export type ProfileUncheckedUpdateWithoutReferralsInput = {
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referred_users?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
 }
@@ -1306,6 +1453,7 @@ export type ProfileUpdateWithoutReferred_usersInput = {
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
 }
@@ -1325,6 +1473,7 @@ export type ProfileUncheckedUpdateWithoutReferred_usersInput = {
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
   mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutProfileNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutProfileNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutProfileNestedInput
   team_memberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutProfileNestedInput
   referrals?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
 }
@@ -1338,6 +1487,7 @@ export type ProfileCountOutputType = {
   mail_action_requests: number
   mail_items: number
   subscriptions: number
+  payment_transactions: number
   team_memberships: number
   referrals: number
   referred_users: number
@@ -1347,6 +1497,7 @@ export type ProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   mail_action_requests?: boolean | ProfileCountOutputTypeCountMail_action_requestsArgs
   mail_items?: boolean | ProfileCountOutputTypeCountMail_itemsArgs
   subscriptions?: boolean | ProfileCountOutputTypeCountSubscriptionsArgs
+  payment_transactions?: boolean | ProfileCountOutputTypeCountPayment_transactionsArgs
   team_memberships?: boolean | ProfileCountOutputTypeCountTeam_membershipsArgs
   referrals?: boolean | ProfileCountOutputTypeCountReferralsArgs
   referred_users?: boolean | ProfileCountOutputTypeCountReferred_usersArgs
@@ -1386,6 +1537,13 @@ export type ProfileCountOutputTypeCountSubscriptionsArgs<ExtArgs extends runtime
 /**
  * ProfileCountOutputType without action
  */
+export type ProfileCountOutputTypeCountPayment_transactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PaymentTransactionWhereInput
+}
+
+/**
+ * ProfileCountOutputType without action
+ */
 export type ProfileCountOutputTypeCountTeam_membershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.TeamMemberWhereInput
 }
@@ -1420,6 +1578,7 @@ export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   mail_action_requests?: boolean | Prisma.Profile$mail_action_requestsArgs<ExtArgs>
   mail_items?: boolean | Prisma.Profile$mail_itemsArgs<ExtArgs>
   subscriptions?: boolean | Prisma.Profile$subscriptionsArgs<ExtArgs>
+  payment_transactions?: boolean | Prisma.Profile$payment_transactionsArgs<ExtArgs>
   team_memberships?: boolean | Prisma.Profile$team_membershipsArgs<ExtArgs>
   referrals?: boolean | Prisma.Profile$referralsArgs<ExtArgs>
   referred_users?: boolean | Prisma.Profile$referred_usersArgs<ExtArgs>
@@ -1469,6 +1628,7 @@ export type ProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   mail_action_requests?: boolean | Prisma.Profile$mail_action_requestsArgs<ExtArgs>
   mail_items?: boolean | Prisma.Profile$mail_itemsArgs<ExtArgs>
   subscriptions?: boolean | Prisma.Profile$subscriptionsArgs<ExtArgs>
+  payment_transactions?: boolean | Prisma.Profile$payment_transactionsArgs<ExtArgs>
   team_memberships?: boolean | Prisma.Profile$team_membershipsArgs<ExtArgs>
   referrals?: boolean | Prisma.Profile$referralsArgs<ExtArgs>
   referred_users?: boolean | Prisma.Profile$referred_usersArgs<ExtArgs>
@@ -1485,6 +1645,7 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     mail_action_requests: Prisma.$MailActionRequestPayload<ExtArgs>[]
     mail_items: Prisma.$MailItemPayload<ExtArgs>[]
     subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
+    payment_transactions: Prisma.$PaymentTransactionPayload<ExtArgs>[]
     team_memberships: Prisma.$TeamMemberPayload<ExtArgs>[]
     referrals: Prisma.$ReferralPayload<ExtArgs>[]
     referred_users: Prisma.$ReferralPayload<ExtArgs>[]
@@ -1898,6 +2059,7 @@ export interface Prisma__ProfileClient<T, Null = never, ExtArgs extends runtime.
   mail_action_requests<T extends Prisma.Profile$mail_action_requestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$mail_action_requestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailActionRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mail_items<T extends Prisma.Profile$mail_itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$mail_itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   subscriptions<T extends Prisma.Profile$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  payment_transactions<T extends Prisma.Profile$payment_transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$payment_transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   team_memberships<T extends Prisma.Profile$team_membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$team_membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   referrals<T extends Prisma.Profile$referralsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$referralsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReferralPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   referred_users<T extends Prisma.Profile$referred_usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$referred_usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReferralPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2434,6 +2596,30 @@ export type Profile$subscriptionsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.SubscriptionScalarFieldEnum | Prisma.SubscriptionScalarFieldEnum[]
+}
+
+/**
+ * Profile.payment_transactions
+ */
+export type Profile$payment_transactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PaymentTransaction
+   */
+  select?: Prisma.PaymentTransactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PaymentTransaction
+   */
+  omit?: Prisma.PaymentTransactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentTransactionInclude<ExtArgs> | null
+  where?: Prisma.PaymentTransactionWhereInput
+  orderBy?: Prisma.PaymentTransactionOrderByWithRelationInput | Prisma.PaymentTransactionOrderByWithRelationInput[]
+  cursor?: Prisma.PaymentTransactionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PaymentTransactionScalarFieldEnum | Prisma.PaymentTransactionScalarFieldEnum[]
 }
 
 /**

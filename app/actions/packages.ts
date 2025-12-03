@@ -1,9 +1,8 @@
 "use server";
 
-import {verifySession} from "@/utils/supabase/dal";
 import {prisma} from "@/utils/prisma";
 import {revalidatePath} from "next/cache";
-import {UserRole} from "../generated/prisma/enums";
+import {verifyOperatorAccess} from "@/lib/packages";
 
 export type ActionResult<T = void> =
   | {success: true; message: string; data?: T}
@@ -22,37 +21,7 @@ export interface PackageFormData {
   isActive: boolean;
   isFeatured: boolean;
   displayOrder: number;
-}
-
-/**
- * Verifies that the current user is an operator or admin
- */
-async function verifyOperatorAccess(): Promise<
-  {success: true; userId: string} | {success: false; message: string}
-> {
-  const session = await verifySession();
-  const userId = session.userId;
-
-  const profile = await prisma.profile.findUnique({
-    where: {id: userId},
-    select: {role: true, user_type: true},
-  });
-
-  if (!profile) {
-    return {success: false, message: "User profile not found."};
-  }
-
-  const isOperator =
-    profile.role === UserRole.OPERATOR ||
-    profile.role === UserRole.SYSTEM_ADMIN;
-  const isAdmin =
-    profile.user_type === "OPERATOR" || profile.user_type === "ADMIN";
-
-  if (!isOperator && !isAdmin) {
-    return {success: false, message: "Unauthorized. Operator access required."};
-  }
-
-  return {success: true, userId};
+  cashbackPercentage?: number; // New field
 }
 
 /**
@@ -115,6 +84,7 @@ export async function createPackage(
         is_featured: formData.isFeatured,
         display_order: formData.displayOrder,
         created_by: access.userId,
+        cashback_percentage: formData.cashbackPercentage || 5.0, // Default 5%
       },
     });
 
@@ -208,6 +178,7 @@ export async function updatePackage(
         is_active: formData.isActive,
         is_featured: formData.isFeatured,
         display_order: formData.displayOrder,
+        cashback_percentage: formData.cashbackPercentage, // Update cashback
       },
     });
 
@@ -279,142 +250,5 @@ export async function deletePackage(packageId: string): Promise<ActionResult> {
       success: false,
       message: "Failed to delete package. Please try again.",
     };
-  }
-}
-
-/**
- * Gets all packages (public - for pricing page)
- */
-export async function getPublicPackages() {
-  try {
-    const packages = await prisma.package.findMany({
-      where: {
-        is_active: true,
-      },
-      orderBy: [{display_order: "asc"}, {created_at: "desc"}],
-    });
-
-    return packages.map((pkg) => ({
-      id: pkg.id,
-      name: pkg.name,
-      plan_type: pkg.plan_type,
-      description: pkg.description,
-      price_monthly: Number(pkg.price_monthly),
-      price_quarterly: pkg.price_quarterly ? Number(pkg.price_quarterly) : null,
-      price_yearly: pkg.price_yearly ? Number(pkg.price_yearly) : null,
-      features: pkg.features,
-      max_mail_items: pkg.max_mail_items,
-      max_team_members: pkg.max_team_members,
-      is_active: pkg.is_active,
-      is_featured: pkg.is_featured,
-      display_order: pkg.display_order,
-    }));
-  } catch (error) {
-    console.error("Error fetching packages:", error);
-    return [];
-  }
-}
-
-/**
- * Gets all packages (operator only)
- */
-export async function getPackages() {
-  const access = await verifyOperatorAccess();
-  if (!access.success) {
-    return [];
-  }
-
-  try {
-    const packages = await prisma.package.findMany({
-      orderBy: [{display_order: "asc"}, {created_at: "desc"}],
-    });
-
-    return packages.map((pkg) => ({
-      id: pkg.id,
-      name: pkg.name,
-      planType: pkg.plan_type,
-      description: pkg.description,
-      priceMonthly: Number(pkg.price_monthly),
-      priceQuarterly: pkg.price_quarterly ? Number(pkg.price_quarterly) : null,
-      priceYearly: pkg.price_yearly ? Number(pkg.price_yearly) : null,
-      features: pkg.features,
-      maxMailItems: pkg.max_mail_items,
-      maxTeamMembers: pkg.max_team_members,
-      isActive: pkg.is_active,
-      isFeatured: pkg.is_featured,
-      displayOrder: pkg.display_order,
-      createdAt: pkg.created_at,
-      updatedAt: pkg.updated_at,
-    }));
-  } catch (error) {
-    console.error("Error fetching packages:", error);
-    return [];
-  }
-}
-
-/**
- * Gets a single package by ID
- */
-export async function getPackage(packageId: string) {
-  const access = await verifyOperatorAccess();
-  if (!access.success) {
-    return null;
-  }
-
-  try {
-    const pkg = await prisma.package.findUnique({
-      where: {id: packageId},
-    });
-
-    if (!pkg) {
-      return null;
-    }
-
-    return {
-      id: pkg.id,
-      name: pkg.name,
-      planType: pkg.plan_type,
-      description: pkg.description,
-      priceMonthly: Number(pkg.price_monthly),
-      priceQuarterly: pkg.price_quarterly ? Number(pkg.price_quarterly) : null,
-      priceYearly: pkg.price_yearly ? Number(pkg.price_yearly) : null,
-      features: pkg.features,
-      maxMailItems: pkg.max_mail_items,
-      maxTeamMembers: pkg.max_team_members,
-      isActive: pkg.is_active,
-      isFeatured: pkg.is_featured,
-      displayOrder: pkg.display_order,
-      createdAt: pkg.created_at,
-      updatedAt: pkg.updated_at,
-    };
-  } catch (error) {
-    console.error("Error fetching package:", error);
-    return null;
-  }
-}
-
-/**
- * Gets the data (description + features) of the FREE plan
- */
-export async function getFreePlanData(): Promise<{
-  description: string | null;
-  features: string[];
-} | null> {
-  try {
-    const freePlan = await prisma.package.findUnique({
-      where: {plan_type: "FREE"},
-    });
-
-    if (!freePlan) {
-      return null;
-    }
-
-    return {
-      description: freePlan.description,
-      features: freePlan.features || [],
-    };
-  } catch (error) {
-    console.error("Error fetching free plan data:", error);
-    return null;
   }
 }

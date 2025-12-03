@@ -5,7 +5,6 @@ import {MailItemCard, MailItem} from "@/components/mail/MailItemCard";
 import {InboxFilters} from "@/components/inbox/InboxFilters";
 import {InboxViewToggle} from "@/components/inbox/InboxViewToggle";
 import {InboxPagination} from "@/components/inbox/InboxPagination";
-import {WelcomeContent} from "@/components/app/WelcomeContent";
 import {
   getCurrentUser,
   getKYCStatus,
@@ -241,15 +240,6 @@ export default async function InboxPage({searchParams}: InboxPageProps) {
   // Redirect free users to pricing page
   if (planType === "FREE") {
     redirect("/app/pricing");
-  }
-
-  // Show welcome content if KYC not started
-  if (kycStatus === "NOT_STARTED") {
-    return (
-      <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
-        <WelcomeContent planType={planType} />
-      </Stack>
-    );
   }
 
   // Await searchParams if it's a Promise (Next.js 15)
