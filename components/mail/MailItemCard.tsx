@@ -32,6 +32,8 @@ export interface MailItem {
   hasFullScan: boolean;
   tags?: string[];
   category?: string;
+  department?: string;
+  assignedTo?: string | null;
 }
 
 interface MailItemCardProps {
@@ -55,7 +57,7 @@ export function MailItemCard({item, onView}: MailItemCardProps) {
       radius="md"
       style={{cursor: "pointer", height: "100%"}}
       component={Link}
-      href={`/user/inbox/${item.id}`}
+      href={item.department ? `/business/inbox/${item.id}` : `/user/inbox/${item.id}`}
     >
       {/* Desktop Layout - Grid View */}
       <Stack gap="sm" visibleFrom="sm">
@@ -144,7 +146,10 @@ export function MailItemCard({item, onView}: MailItemCardProps) {
                 onClick={(e) => {
                   e.preventDefault();
                   if (onView) onView(item.id);
-                  else window.location.href = `/user/inbox/${item.id}`;
+                  else {
+                    const href = item.department ? `/business/inbox/${item.id}` : `/user/inbox/${item.id}`;
+                    window.location.href = href;
+                  }
                 }}
               >
                 <IconEye size={16} />
@@ -249,7 +254,10 @@ export function MailItemCard({item, onView}: MailItemCardProps) {
                 onClick={(e) => {
                   e.preventDefault();
                   if (onView) onView(item.id);
-                  else window.location.href = `/user/inbox/${item.id}`;
+                  else {
+                    const href = item.department ? `/business/inbox/${item.id}` : `/user/inbox/${item.id}`;
+                    window.location.href = href;
+                  }
                 }}
               >
                 <IconEye size={16} />

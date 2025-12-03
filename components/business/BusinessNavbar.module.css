@@ -1,0 +1,93 @@
+.navbar {
+  background-color: var(--mantine-color-body);
+  height: 100vh;
+  width: 256px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+}
+
+.userSection {
+  padding: var(--mantine-spacing-md);
+  border-bottom: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+}
+
+.section {
+  padding: var(--mantine-spacing-md);
+}
+
+.section:not(:last-of-type) {
+  border-bottom: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+}
+
+.mainLinksSection {
+  flex-grow: 1;
+}
+
+.inboxSelector {
+  padding: 0;
+}
+
+.mainLinks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-xs);
+}
+
+.mainLink {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-size: var(--mantine-font-size-sm);
+  padding: 10px 12px;
+  border-radius: var(--mantine-radius-md);
+  font-weight: 500;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
+  text-decoration: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.mainLink:hover {
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
+}
+
+.mainLink.active {
+  background-color: light-dark(var(--mantine-color-blue-0), var(--mantine-color-blue-9));
+  color: light-dark(var(--mantine-color-blue-7), var(--mantine-color-blue-0));
+  font-weight: 600;
+}
+
+.mainLinkInner {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.mainLinkIcon {
+  margin-right: var(--mantine-spacing-md);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.mainLink.active .mainLinkIcon {
+  color: light-dark(var(--mantine-color-blue-7), var(--mantine-color-blue-0));
+}
+
+.bottomSection {
+  padding: var(--mantine-spacing-md);
+  border-top: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-xs);
+}
+
