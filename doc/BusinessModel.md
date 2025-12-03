@@ -168,9 +168,11 @@
 
 ## 11. Regulatory & Compliance Considerations
 
-- Data privacy and protection laws (GDPR, HIPAA if healthcare mail)
-- Secure storage and shredding requirements
-- Postal regulations for mail handling
+- Mandatory KYC for all external users before mailbox assignment
+- Consent required for scanning, opening, forwarding, or shredding mail
+- PH Data Privacy Act compliance (handling personal documents)
+- Authorization rules for mail received from third-party senders
+- AMLC / anti-fraud considerations for virtual mailbox use
 
 ---
 

@@ -1,6 +1,7 @@
 "use client";
 
 import {useActionState, useEffect} from "react";
+import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {login, type ActionResult} from "../../actions/auth";
 import {
@@ -29,6 +30,7 @@ import {Header} from "@/components/header";
 import {Footer} from "@/components/footer";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [loginState, loginAction, loginPending] = useActionState<
     ActionResult | null,
     FormData
@@ -43,6 +45,8 @@ export default function LoginPage() {
           color: "green",
           icon: <IconCheck size={18} />,
         });
+        // Redirect to user inbox
+        router.push("/user/inbox");
       } else {
         notifications.show({
           title: "Error",
@@ -52,7 +56,7 @@ export default function LoginPage() {
         });
       }
     }
-  }, [loginState]);
+  }, [loginState, router]);
 
   return (
     <Box
