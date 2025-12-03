@@ -41,7 +41,7 @@ export default function HomePage() {
       icon: IconPackage,
       title: "Permanent Address",
       description:
-        "Moving frequently? Your Digital Mailroom address stays the same. Never update your mailing address again.",
+        "Moving frequently? Your Keep PH - Digital Mailbox address stays the same. Never update your mailing address again.",
       label: "Package delivery",
     },
     {
@@ -58,7 +58,7 @@ export default function HomePage() {
       step: "1",
       title: "Get Your Address",
       description:
-        "Sign up and receive your unique Digital Mailroom mailing address",
+        "Sign up and receive your unique Keep PH - Digital Mailbox mailing address",
     },
     {
       step: "2",
@@ -361,7 +361,7 @@ export default function HomePage() {
               </Button>
             </Group>
             <Text size="sm" c="dimmed">
-              Digital Mailroom launches soon.
+              Keep PH - Digital Mailbox launches soon.
             </Text>
           </Stack>
         </Paper>

@@ -1,8 +1,8 @@
-# Digital Mailroom Service Business Model
+# Keep PH - Digital Mailbox Business Model
 
 ## 1. Business Overview
 
-- **Business Name:** Digital Mailroom Service
+- **Business Name:** Keep PH - Digital Mailbox
 - **Industry / Sector:** Mail Digitization / Cloud Services / Document Management
 - **Summary of What the Business Does:** Converts incoming physical mail into digital format for online access, viewing, and management.
 - **Target Customers:** Remote workers, businesses, startups, individuals seeking digital access to their mail.
@@ -158,11 +158,10 @@
 
 ## 10. Competitive Landscape
 
-| Competitor        | What They Offer                  | Strengths               | Weaknesses                              | Notes     |
-| ----------------- | -------------------------------- | ----------------------- | --------------------------------------- | --------- |
-| Earth Class Mail  | Physical-to-digital mail service | Established, reliable   | May be expensive, limited customization | Benchmark |
-| Traveling Mailbox | Similar digital mail service     | Simple interface        | Fewer automation features               | Benchmark |
-| VirtualPostMail   | Digital mailbox service          | International addresses | Limited integrations                    | Benchmark |
+| Competitor          | What They Offer                            | Strengths                                            | Weaknesses                                              | Notes                                |
+| ------------------- | ------------------------------------------ | ---------------------------------------------------- | ------------------------------------------------------- | ------------------------------------ |
+| **Anytime Mailbox** | Virtual mailbox                            | Global platform, PH partner locations, mobile access | Service quality depends on local partners               | Main direct competitor               |
+| **MBE Philippines** | Mail handling, forwarding, virtual mailbox | Established brand, PH presence, multiple locations   | Focus on physical mail; virtual features may be limited | Direct competitor, partially digital |
 
 ---
 
@@ -172,7 +171,7 @@
 - Consent required for scanning, opening, forwarding, or shredding mail
 - PH Data Privacy Act compliance (handling personal documents)
 - Authorization rules for mail received from third-party senders
-- AMLC / anti-fraud considerations for virtual mailbox use
+- Anti-fraud considerations for virtual mailbox use
 
 ---
 

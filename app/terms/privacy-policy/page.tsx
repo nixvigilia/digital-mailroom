@@ -40,7 +40,7 @@ export default function PrivacyPolicyPage() {
                 1. Introduction
               </Title>
               <Text size="sm" c="dimmed">
-                Digital Mailroom Service ("we," "our," or "us") is committed to
+                Keep PH - Digital Mailbox ("we," "our," or "us") is committed to
                 protecting your privacy. This Privacy Policy explains how we
                 collect, use, disclose, and safeguard your information when you
                 use our digital mail management service.
@@ -375,7 +375,7 @@ export default function PrivacyPolicyPage() {
                 <strong>Email:</strong> privacy@digitalmailroom.com
               </Text>
               <Text size="sm">
-                <strong>Address:</strong> Digital Mailroom Service, Philippines
+                <strong>Address:</strong> Keep PH - Digital Mailbox, Philippines
               </Text>
               <Text size="sm" mt="sm" c="dimmed">
                 For data protection inquiries, you may also contact our Data

@@ -210,11 +210,11 @@ export default function SettingsPage() {
             />
             <Textarea
               label="Mailing Address"
-              placeholder="Your Digital Mailroom assigned address"
+              placeholder="Your Keep PH - Digital Mailbox assigned address"
               value={mailingAddress}
               onChange={(e) => setMailingAddress(e.target.value)}
               rows={3}
-              description="This is your assigned Digital Mailroom address where mail will be received"
+              description="This is your assigned Keep PH - Digital Mailbox address where mail will be received"
             />
           </Stack>
         </Stack>

@@ -40,7 +40,7 @@ export default function TermsOfServicePage() {
                 1. Acceptance of Terms
               </Title>
               <Text size="sm" c="dimmed">
-                By accessing and using Digital Mailroom Service ("the Service"),
+                By accessing and using Keep PH - Digital Mailbox ("the Service"),
                 you accept and agree to be bound by the terms and provision of
                 this agreement. If you do not agree to abide by the above, please
                 do not use this service.
@@ -54,7 +54,7 @@ export default function TermsOfServicePage() {
                 2. Description of Service
               </Title>
               <Text size="sm" c="dimmed" mb="sm">
-                Digital Mailroom Service provides a digital mail management
+                Keep PH - Digital Mailbox provides a digital mail management
                 platform that allows users to:
               </Text>
               <List
@@ -133,7 +133,7 @@ export default function TermsOfServicePage() {
                 }
               >
                 <List.Item>
-                  Digital Mailroom opening and scanning your physical mail
+                  Keep PH - Digital Mailbox opening and scanning your physical mail
                 </List.Item>
                 <List.Item>
                   Processing and storing digital copies of your mail
@@ -219,7 +219,7 @@ export default function TermsOfServicePage() {
                 8. Limitation of Liability
               </Title>
               <Text size="sm" c="dimmed">
-                Digital Mailroom Service shall not be liable for any indirect,
+                Keep PH - Digital Mailbox shall not be liable for any indirect,
                 incidental, special, consequential, or punitive damages,
                 including but not limited to loss of mail, delays in delivery,
                 or unauthorized access beyond our reasonable control. Our total
@@ -298,7 +298,7 @@ export default function TermsOfServicePage() {
                 <strong>Email:</strong> legal@digitalmailroom.com
               </Text>
               <Text size="sm">
-                <strong>Address:</strong> Digital Mailroom Service, Philippines
+                <strong>Address:</strong> Keep PH - Digital Mailbox, Philippines
               </Text>
             </Box>
           </Stack>
