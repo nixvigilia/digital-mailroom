@@ -17,6 +17,7 @@ import {
   IconAlertCircle,
   IconUserCheck,
   IconFileText,
+  IconBox,
 } from "@tabler/icons-react";
 import Link from "next/link";
 
@@ -176,6 +177,26 @@ export default function OperatorDashboardPage() {
               fullWidth
             >
               Start Scanning
+            </Button>
+            <Button
+              component={Link}
+              href="/operator/lockers"
+              leftSection={<IconInbox size={18} />}
+              variant="light"
+              size="lg"
+              fullWidth
+            >
+              Manage Lockers
+            </Button>
+            <Button
+              component={Link}
+              href="/operator/parcel-check"
+              leftSection={<IconBox size={18} />}
+              variant="light"
+              size="lg"
+              fullWidth
+            >
+              Parcel Fit Check
             </Button>
           </SimpleGrid>
         </Stack>

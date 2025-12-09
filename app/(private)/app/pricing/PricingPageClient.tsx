@@ -27,62 +27,50 @@ import {
 interface PricingPageClientProps {
   currentPlanType: string;
   packagesPromise: Promise<Package[]>;
+  locationsPromise: Promise<any>;
 }
 
-interface Package {
-  id: string;
-  name: string;
-  plan_type: string;
-  description: string | null;
-  price_monthly: number;
-  price_quarterly: number | null;
-  price_yearly: number | null;
-  features: string[];
-  is_featured: boolean;
-  display_order: number;
-}
+// ... existing code ...
 
 export function PricingPageClient({
   currentPlanType,
   packagesPromise,
+  locationsPromise,
 }: PricingPageClientProps) {
   const [billingCycle, setBillingCycle] = useState<
     "MONTHLY" | "QUARTERLY" | "YEARLY"
   >("MONTHLY");
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
 
   const data = use(packagesPromise);
+  const locationsData = use(locationsPromise);
+  const locations = locationsData.success ? locationsData.data : [];
+
   // Filter out FREE plan and sort by display_order
   const packages = data
     .filter((pkg) => pkg.plan_type !== "FREE")
     .sort((a, b) => a.display_order - b.display_order);
 
-  const getPrice = (pkg: Package) => {
-    switch (billingCycle) {
-      case "QUARTERLY":
-        return pkg.price_quarterly || pkg.price_monthly * 3;
-      case "YEARLY":
-        return pkg.price_yearly || pkg.price_monthly * 12;
-      default:
-        return pkg.price_monthly;
-    }
-  };
-
-  const getPeriod = () => {
-    switch (billingCycle) {
-      case "QUARTERLY":
-        return "/quarter";
-      case "YEARLY":
-        return "/year";
-      default:
-        return "/month";
-    }
-  };
+  // ... existing code ...
 
   const handleSelectPlan = async (planType: string) => {
+    if (!selectedLocation && planType !== "FREE") {
+      notifications.show({
+        title: "Location Required",
+        message: "Please select a mailing location before proceeding.",
+        color: "orange",
+      });
+      return;
+    }
+
     try {
       setLoadingPlan(planType);
-      const result = await createSubscriptionInvoice(planType, billingCycle);
+      const result = await createSubscriptionInvoice(
+        planType,
+        billingCycle,
+        selectedLocation || undefined
+      );
 
       if (result.success) {
         window.location.href = result.invoiceUrl;
@@ -116,7 +104,35 @@ export function PricingPageClient({
           include secure mail handling and digital access.
         </Text>
       </Stack>
-
+      {/* Mailing Location Selector */}
+      <Paper
+        withBorder
+        p="md"
+        radius="md"
+        style={{maxWidth: 400, margin: "0 auto"}}
+      >
+        <Stack gap="xs">
+          <Text size="sm" fw={500} ta="center">
+            Select Mailing Location:
+          </Text>
+          <Select
+            placeholder="Choose a location"
+            data={locations.map((l: any) => ({
+              value: l.id,
+              label: `${l.name} (${l.city})`,
+            }))}
+            value={selectedLocation}
+            onChange={setSelectedLocation}
+            searchable
+            clearable={false}
+          />
+          {!selectedLocation && (
+            <Text size="xs" c="orange" ta="center">
+              Please select a location to subscribe
+            </Text>
+          )}
+        </Stack>
+      </Paper>
       {/* Billing Cycle Selector */}
       <Paper
         withBorder
@@ -144,7 +160,6 @@ export function PricingPageClient({
           />
         </Group>
       </Paper>
-
       {/* Pricing Cards */}
       <SimpleGrid
         cols={{base: 1, sm: 2, lg: packages.length}}
@@ -265,7 +280,11 @@ export function PricingPageClient({
                   variant={isFeatured ? "filled" : "outline"}
                   color="blue"
                   leftSection={<IconCreditCard size={18} />}
-                  disabled={isCurrentPlan || !!loadingPlan}
+                  disabled={
+                    isCurrentPlan ||
+                    !!loadingPlan ||
+                    (!selectedLocation && !isCurrentPlan)
+                  }
                   loading={loadingPlan === pkg.plan_type}
                   onClick={() => handleSelectPlan(pkg.plan_type)}
                   mt="auto"
@@ -277,7 +296,7 @@ export function PricingPageClient({
           );
         })}
       </SimpleGrid>
-
+      // ... existing code ...
       {/* Current Plan Notice */}
       {currentPlanType !== "FREE" && (
         <Paper

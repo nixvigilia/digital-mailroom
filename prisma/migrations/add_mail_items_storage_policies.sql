@@ -24,3 +24,6 @@ USING (
   public.is_operator() = true
 );
 
+
+
+

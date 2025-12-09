@@ -36,6 +36,11 @@ export type ProfileMinAggregateOutputType = {
   role: $Enums.UserRole | null
   password_hint: string | null
   integration_email: string | null
+  notify_new_mail: boolean | null
+  notify_referrals: boolean | null
+  notify_marketing: boolean | null
+  default_forward_address: string | null
+  shredding_pin_hash: string | null
 }
 
 export type ProfileMaxAggregateOutputType = {
@@ -50,6 +55,11 @@ export type ProfileMaxAggregateOutputType = {
   role: $Enums.UserRole | null
   password_hint: string | null
   integration_email: string | null
+  notify_new_mail: boolean | null
+  notify_referrals: boolean | null
+  notify_marketing: boolean | null
+  default_forward_address: string | null
+  shredding_pin_hash: string | null
 }
 
 export type ProfileCountAggregateOutputType = {
@@ -64,6 +74,11 @@ export type ProfileCountAggregateOutputType = {
   role: number
   password_hint: number
   integration_email: number
+  notify_new_mail: number
+  notify_referrals: number
+  notify_marketing: number
+  default_forward_address: number
+  shredding_pin_hash: number
   _all: number
 }
 
@@ -80,6 +95,11 @@ export type ProfileMinAggregateInputType = {
   role?: true
   password_hint?: true
   integration_email?: true
+  notify_new_mail?: true
+  notify_referrals?: true
+  notify_marketing?: true
+  default_forward_address?: true
+  shredding_pin_hash?: true
 }
 
 export type ProfileMaxAggregateInputType = {
@@ -94,6 +114,11 @@ export type ProfileMaxAggregateInputType = {
   role?: true
   password_hint?: true
   integration_email?: true
+  notify_new_mail?: true
+  notify_referrals?: true
+  notify_marketing?: true
+  default_forward_address?: true
+  shredding_pin_hash?: true
 }
 
 export type ProfileCountAggregateInputType = {
@@ -108,6 +133,11 @@ export type ProfileCountAggregateInputType = {
   role?: true
   password_hint?: true
   integration_email?: true
+  notify_new_mail?: true
+  notify_referrals?: true
+  notify_marketing?: true
+  default_forward_address?: true
+  shredding_pin_hash?: true
   _all?: true
 }
 
@@ -195,6 +225,11 @@ export type ProfileGroupByOutputType = {
   role: $Enums.UserRole
   password_hint: string | null
   integration_email: string | null
+  notify_new_mail: boolean
+  notify_referrals: boolean
+  notify_marketing: boolean
+  default_forward_address: string | null
+  shredding_pin_hash: string | null
   _count: ProfileCountAggregateOutputType | null
   _min: ProfileMinAggregateOutputType | null
   _max: ProfileMaxAggregateOutputType | null
@@ -230,6 +265,11 @@ export type ProfileWhereInput = {
   role?: Prisma.EnumUserRoleFilter<"Profile"> | $Enums.UserRole
   password_hint?: Prisma.StringNullableFilter<"Profile"> | string | null
   integration_email?: Prisma.StringNullableFilter<"Profile"> | string | null
+  notify_new_mail?: Prisma.BoolFilter<"Profile"> | boolean
+  notify_referrals?: Prisma.BoolFilter<"Profile"> | boolean
+  notify_marketing?: Prisma.BoolFilter<"Profile"> | boolean
+  default_forward_address?: Prisma.StringNullableFilter<"Profile"> | string | null
+  shredding_pin_hash?: Prisma.StringNullableFilter<"Profile"> | string | null
   business_account?: Prisma.XOR<Prisma.BusinessAccountNullableScalarRelationFilter, Prisma.BusinessAccountWhereInput> | null
   kyc_verification?: Prisma.XOR<Prisma.KYCVerificationNullableScalarRelationFilter, Prisma.KYCVerificationWhereInput> | null
   backoffice_profile?: Prisma.XOR<Prisma.BackofficeProfileNullableScalarRelationFilter, Prisma.BackofficeProfileWhereInput> | null
@@ -255,6 +295,11 @@ export type ProfileOrderByWithRelationInput = {
   role?: Prisma.SortOrder
   password_hint?: Prisma.SortOrderInput | Prisma.SortOrder
   integration_email?: Prisma.SortOrderInput | Prisma.SortOrder
+  notify_new_mail?: Prisma.SortOrder
+  notify_referrals?: Prisma.SortOrder
+  notify_marketing?: Prisma.SortOrder
+  default_forward_address?: Prisma.SortOrderInput | Prisma.SortOrder
+  shredding_pin_hash?: Prisma.SortOrderInput | Prisma.SortOrder
   business_account?: Prisma.BusinessAccountOrderByWithRelationInput
   kyc_verification?: Prisma.KYCVerificationOrderByWithRelationInput
   backoffice_profile?: Prisma.BackofficeProfileOrderByWithRelationInput
@@ -283,6 +328,11 @@ export type ProfileWhereUniqueInput = Prisma.AtLeast<{
   role?: Prisma.EnumUserRoleFilter<"Profile"> | $Enums.UserRole
   password_hint?: Prisma.StringNullableFilter<"Profile"> | string | null
   integration_email?: Prisma.StringNullableFilter<"Profile"> | string | null
+  notify_new_mail?: Prisma.BoolFilter<"Profile"> | boolean
+  notify_referrals?: Prisma.BoolFilter<"Profile"> | boolean
+  notify_marketing?: Prisma.BoolFilter<"Profile"> | boolean
+  default_forward_address?: Prisma.StringNullableFilter<"Profile"> | string | null
+  shredding_pin_hash?: Prisma.StringNullableFilter<"Profile"> | string | null
   business_account?: Prisma.XOR<Prisma.BusinessAccountNullableScalarRelationFilter, Prisma.BusinessAccountWhereInput> | null
   kyc_verification?: Prisma.XOR<Prisma.KYCVerificationNullableScalarRelationFilter, Prisma.KYCVerificationWhereInput> | null
   backoffice_profile?: Prisma.XOR<Prisma.BackofficeProfileNullableScalarRelationFilter, Prisma.BackofficeProfileWhereInput> | null
@@ -308,6 +358,11 @@ export type ProfileOrderByWithAggregationInput = {
   role?: Prisma.SortOrder
   password_hint?: Prisma.SortOrderInput | Prisma.SortOrder
   integration_email?: Prisma.SortOrderInput | Prisma.SortOrder
+  notify_new_mail?: Prisma.SortOrder
+  notify_referrals?: Prisma.SortOrder
+  notify_marketing?: Prisma.SortOrder
+  default_forward_address?: Prisma.SortOrderInput | Prisma.SortOrder
+  shredding_pin_hash?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ProfileCountOrderByAggregateInput
   _max?: Prisma.ProfileMaxOrderByAggregateInput
   _min?: Prisma.ProfileMinOrderByAggregateInput
@@ -328,6 +383,11 @@ export type ProfileScalarWhereWithAggregatesInput = {
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"Profile"> | $Enums.UserRole
   password_hint?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
   integration_email?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
+  notify_new_mail?: Prisma.BoolWithAggregatesFilter<"Profile"> | boolean
+  notify_referrals?: Prisma.BoolWithAggregatesFilter<"Profile"> | boolean
+  notify_marketing?: Prisma.BoolWithAggregatesFilter<"Profile"> | boolean
+  default_forward_address?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
+  shredding_pin_hash?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
 }
 
 export type ProfileCreateInput = {
@@ -342,6 +402,11 @@ export type ProfileCreateInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
@@ -367,6 +432,11 @@ export type ProfileUncheckedCreateInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
@@ -392,6 +462,11 @@ export type ProfileUpdateInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
@@ -417,6 +492,11 @@ export type ProfileUncheckedUpdateInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
@@ -442,6 +522,11 @@ export type ProfileCreateManyInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
 }
 
 export type ProfileUpdateManyMutationInput = {
@@ -456,6 +541,11 @@ export type ProfileUpdateManyMutationInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProfileUncheckedUpdateManyInput = {
@@ -470,6 +560,11 @@ export type ProfileUncheckedUpdateManyInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProfileCountOrderByAggregateInput = {
@@ -484,6 +579,11 @@ export type ProfileCountOrderByAggregateInput = {
   role?: Prisma.SortOrder
   password_hint?: Prisma.SortOrder
   integration_email?: Prisma.SortOrder
+  notify_new_mail?: Prisma.SortOrder
+  notify_referrals?: Prisma.SortOrder
+  notify_marketing?: Prisma.SortOrder
+  default_forward_address?: Prisma.SortOrder
+  shredding_pin_hash?: Prisma.SortOrder
 }
 
 export type ProfileMaxOrderByAggregateInput = {
@@ -498,6 +598,11 @@ export type ProfileMaxOrderByAggregateInput = {
   role?: Prisma.SortOrder
   password_hint?: Prisma.SortOrder
   integration_email?: Prisma.SortOrder
+  notify_new_mail?: Prisma.SortOrder
+  notify_referrals?: Prisma.SortOrder
+  notify_marketing?: Prisma.SortOrder
+  default_forward_address?: Prisma.SortOrder
+  shredding_pin_hash?: Prisma.SortOrder
 }
 
 export type ProfileMinOrderByAggregateInput = {
@@ -512,6 +617,11 @@ export type ProfileMinOrderByAggregateInput = {
   role?: Prisma.SortOrder
   password_hint?: Prisma.SortOrder
   integration_email?: Prisma.SortOrder
+  notify_new_mail?: Prisma.SortOrder
+  notify_referrals?: Prisma.SortOrder
+  notify_marketing?: Prisma.SortOrder
+  default_forward_address?: Prisma.SortOrder
+  shredding_pin_hash?: Prisma.SortOrder
 }
 
 export type ProfileScalarRelationFilter = {
@@ -542,6 +652,10 @@ export type EnumUserTypeFieldUpdateOperationsInput = {
 
 export type EnumUserRoleFieldUpdateOperationsInput = {
   set?: $Enums.UserRole
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type ProfileCreateNestedOneWithoutBackoffice_profileInput = {
@@ -712,6 +826,11 @@ export type ProfileCreateWithoutBackoffice_profileInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
@@ -736,6 +855,11 @@ export type ProfileUncheckedCreateWithoutBackoffice_profileInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
@@ -776,6 +900,11 @@ export type ProfileUpdateWithoutBackoffice_profileInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
@@ -800,6 +929,11 @@ export type ProfileUncheckedUpdateWithoutBackoffice_profileInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
@@ -824,6 +958,11 @@ export type ProfileCreateWithoutActivity_logsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
@@ -848,6 +987,11 @@ export type ProfileUncheckedCreateWithoutActivity_logsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
@@ -888,6 +1032,11 @@ export type ProfileUpdateWithoutActivity_logsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
@@ -912,6 +1061,11 @@ export type ProfileUncheckedUpdateWithoutActivity_logsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
@@ -936,6 +1090,11 @@ export type ProfileCreateWithoutKyc_verificationInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
@@ -960,6 +1119,11 @@ export type ProfileUncheckedCreateWithoutKyc_verificationInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
@@ -1000,6 +1164,11 @@ export type ProfileUpdateWithoutKyc_verificationInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
@@ -1024,6 +1193,11 @@ export type ProfileUncheckedUpdateWithoutKyc_verificationInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
@@ -1048,6 +1222,11 @@ export type ProfileCreateWithoutBusiness_accountInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutProfileInput
@@ -1072,6 +1251,11 @@ export type ProfileUncheckedCreateWithoutBusiness_accountInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutProfileInput
@@ -1112,6 +1296,11 @@ export type ProfileUpdateWithoutBusiness_accountInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUpdateManyWithoutProfileNestedInput
@@ -1136,6 +1325,11 @@ export type ProfileUncheckedUpdateWithoutBusiness_accountInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
   mail_action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutProfileNestedInput
@@ -1160,6 +1354,11 @@ export type ProfileCreateWithoutTeam_membershipsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
@@ -1184,6 +1383,11 @@ export type ProfileUncheckedCreateWithoutTeam_membershipsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
@@ -1224,6 +1428,11 @@ export type ProfileUpdateWithoutTeam_membershipsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
@@ -1248,6 +1457,11 @@ export type ProfileUncheckedUpdateWithoutTeam_membershipsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
@@ -1272,6 +1486,11 @@ export type ProfileCreateWithoutSubscriptionsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
@@ -1296,6 +1515,11 @@ export type ProfileUncheckedCreateWithoutSubscriptionsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
@@ -1336,6 +1560,11 @@ export type ProfileUpdateWithoutSubscriptionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
@@ -1360,6 +1589,11 @@ export type ProfileUncheckedUpdateWithoutSubscriptionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
@@ -1384,6 +1618,11 @@ export type ProfileCreateWithoutPayment_transactionsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
@@ -1408,6 +1647,11 @@ export type ProfileUncheckedCreateWithoutPayment_transactionsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
@@ -1448,6 +1692,11 @@ export type ProfileUpdateWithoutPayment_transactionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
@@ -1472,6 +1721,11 @@ export type ProfileUncheckedUpdateWithoutPayment_transactionsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
@@ -1496,6 +1750,11 @@ export type ProfileCreateWithoutMail_itemsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
@@ -1520,6 +1779,11 @@ export type ProfileUncheckedCreateWithoutMail_itemsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
@@ -1560,6 +1824,11 @@ export type ProfileUpdateWithoutMail_itemsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
@@ -1584,6 +1853,11 @@ export type ProfileUncheckedUpdateWithoutMail_itemsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
@@ -1608,6 +1882,11 @@ export type ProfileCreateWithoutMail_action_requestsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
@@ -1632,6 +1911,11 @@ export type ProfileUncheckedCreateWithoutMail_action_requestsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
@@ -1672,6 +1956,11 @@ export type ProfileUpdateWithoutMail_action_requestsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
@@ -1696,6 +1985,11 @@ export type ProfileUncheckedUpdateWithoutMail_action_requestsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
@@ -1720,6 +2014,11 @@ export type ProfileCreateWithoutReferralsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
@@ -1744,6 +2043,11 @@ export type ProfileUncheckedCreateWithoutReferralsInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
@@ -1773,6 +2077,11 @@ export type ProfileCreateWithoutReferred_usersInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileCreateNestedOneWithoutProfileInput
@@ -1797,6 +2106,11 @@ export type ProfileUncheckedCreateWithoutReferred_usersInput = {
   role?: $Enums.UserRole
   password_hint?: string | null
   integration_email?: string | null
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: string | null
+  shredding_pin_hash?: string | null
   business_account?: Prisma.BusinessAccountUncheckedCreateNestedOneWithoutProfileInput
   kyc_verification?: Prisma.KYCVerificationUncheckedCreateNestedOneWithoutProfileInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedCreateNestedOneWithoutProfileInput
@@ -1837,6 +2151,11 @@ export type ProfileUpdateWithoutReferralsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
@@ -1861,6 +2180,11 @@ export type ProfileUncheckedUpdateWithoutReferralsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
@@ -1896,6 +2220,11 @@ export type ProfileUpdateWithoutReferred_usersInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUpdateOneWithoutProfileNestedInput
@@ -1920,6 +2249,11 @@ export type ProfileUncheckedUpdateWithoutReferred_usersInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   password_hint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   integration_email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notify_new_mail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_referrals?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notify_marketing?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shredding_pin_hash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account?: Prisma.BusinessAccountUncheckedUpdateOneWithoutProfileNestedInput
   kyc_verification?: Prisma.KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput
   backoffice_profile?: Prisma.BackofficeProfileUncheckedUpdateOneWithoutProfileNestedInput
@@ -2038,6 +2372,11 @@ export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   role?: boolean
   password_hint?: boolean
   integration_email?: boolean
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: boolean
+  shredding_pin_hash?: boolean
   business_account?: boolean | Prisma.Profile$business_accountArgs<ExtArgs>
   kyc_verification?: boolean | Prisma.Profile$kyc_verificationArgs<ExtArgs>
   backoffice_profile?: boolean | Prisma.Profile$backoffice_profileArgs<ExtArgs>
@@ -2064,6 +2403,11 @@ export type ProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   role?: boolean
   password_hint?: boolean
   integration_email?: boolean
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: boolean
+  shredding_pin_hash?: boolean
 }, ExtArgs["result"]["profile"]>
 
 export type ProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2078,6 +2422,11 @@ export type ProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   role?: boolean
   password_hint?: boolean
   integration_email?: boolean
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: boolean
+  shredding_pin_hash?: boolean
 }, ExtArgs["result"]["profile"]>
 
 export type ProfileSelectScalar = {
@@ -2092,9 +2441,14 @@ export type ProfileSelectScalar = {
   role?: boolean
   password_hint?: boolean
   integration_email?: boolean
+  notify_new_mail?: boolean
+  notify_referrals?: boolean
+  notify_marketing?: boolean
+  default_forward_address?: boolean
+  shredding_pin_hash?: boolean
 }
 
-export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "avatar_url" | "email" | "referral_code" | "referred_by" | "updated_at" | "created_at" | "user_type" | "role" | "password_hint" | "integration_email", ExtArgs["result"]["profile"]>
+export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "avatar_url" | "email" | "referral_code" | "referred_by" | "updated_at" | "created_at" | "user_type" | "role" | "password_hint" | "integration_email" | "notify_new_mail" | "notify_referrals" | "notify_marketing" | "default_forward_address" | "shredding_pin_hash", ExtArgs["result"]["profile"]>
 export type ProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   business_account?: boolean | Prisma.Profile$business_accountArgs<ExtArgs>
   kyc_verification?: boolean | Prisma.Profile$kyc_verificationArgs<ExtArgs>
@@ -2139,6 +2493,11 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     role: $Enums.UserRole
     password_hint: string | null
     integration_email: string | null
+    notify_new_mail: boolean
+    notify_referrals: boolean
+    notify_marketing: boolean
+    default_forward_address: string | null
+    shredding_pin_hash: string | null
   }, ExtArgs["result"]["profile"]>
   composites: {}
 }
@@ -2584,6 +2943,11 @@ export interface ProfileFieldRefs {
   readonly role: Prisma.FieldRef<"Profile", 'UserRole'>
   readonly password_hint: Prisma.FieldRef<"Profile", 'String'>
   readonly integration_email: Prisma.FieldRef<"Profile", 'String'>
+  readonly notify_new_mail: Prisma.FieldRef<"Profile", 'Boolean'>
+  readonly notify_referrals: Prisma.FieldRef<"Profile", 'Boolean'>
+  readonly notify_marketing: Prisma.FieldRef<"Profile", 'Boolean'>
+  readonly default_forward_address: Prisma.FieldRef<"Profile", 'String'>
+  readonly shredding_pin_hash: Prisma.FieldRef<"Profile", 'String'>
 }
     
 

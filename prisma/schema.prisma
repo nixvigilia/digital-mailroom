@@ -9,17 +9,27 @@ datasource db {
 }
 
 model Profile {
-  id                   String               @id @default(uuid()) @db.Uuid
-  avatar_url           String?
-  email                String               @unique
-  referral_code        String?              @unique
-  referred_by          String?              @db.Uuid
-  updated_at           DateTime             @updatedAt
-  created_at           DateTime             @default(now())
-  user_type            UserType             @default(INDIVIDUAL)
-  role                 UserRole             @default(USER)
-  password_hint        String?
-  integration_email    String?
+  id                String   @id @default(uuid()) @db.Uuid
+  avatar_url        String?
+  email             String   @unique
+  referral_code     String?  @unique
+  referred_by       String?  @db.Uuid
+  updated_at        DateTime @updatedAt
+  created_at        DateTime @default(now())
+  user_type         UserType @default(INDIVIDUAL)
+  role              UserRole @default(USER)
+  password_hint     String?
+  integration_email String?
+
+  // Notification settings
+  notify_new_mail  Boolean @default(true)
+  notify_referrals Boolean @default(true)
+  notify_marketing Boolean @default(false)
+
+  // Mail settings
+  default_forward_address String?
+  shredding_pin_hash      String?
+
   business_account     BusinessAccount?
   kyc_verification     KYCVerification?
   backoffice_profile   BackofficeProfile?
@@ -186,6 +196,13 @@ model Subscription {
   package              Package?             @relation(fields: [package_id], references: [id], onDelete: SetNull)
   payment_transactions PaymentTransaction[]
 
+  // Mailing Location and Mailbox
+  mailing_location_id String?          @db.Uuid
+  mailing_location    MailingLocation? @relation(fields: [mailing_location_id], references: [id])
+
+  mailbox_id String?  @db.Uuid
+  mailbox    Mailbox? @relation(fields: [mailbox_id], references: [id])
+
   @@map("subscription")
 }
 
@@ -262,6 +279,97 @@ model MailActionRequest {
   profile                 Profile      @relation(fields: [profile_id], references: [id], onDelete: Cascade)
 
   @@map("mail_action_request")
+}
+
+model MailingLocation {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String
+  address     String
+  city        String
+  province    String
+  postal_code String
+  country     String  @default("Philippines")
+  image_url   String?
+  map_url     String?
+  is_active   Boolean @default(true)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  clusters      MailboxCluster[]
+  subscriptions Subscription[]
+
+  @@map("mailing_location")
+}
+
+model MailboxCluster {
+  id                  String  @id @default(uuid()) @db.Uuid
+  mailing_location_id String  @db.Uuid
+  name                String // e.g. "Cluster A", "CBU-1"
+  description         String?
+
+  mailing_location MailingLocation @relation(fields: [mailing_location_id], references: [id], onDelete: Cascade)
+  mailboxes        Mailbox[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([mailing_location_id, name])
+  @@map("mailbox_cluster")
+}
+
+model Mailbox {
+  id             String        @id @default(uuid()) @db.Uuid
+  cluster_id     String        @db.Uuid
+  box_number     String
+  type           MailboxType   @default(STANDARD)
+  width          Decimal       @db.Decimal(10, 2)
+  height         Decimal       @db.Decimal(10, 2)
+  depth          Decimal       @db.Decimal(10, 2)
+  dimension_unit DimensionUnit @default(CM)
+  is_occupied    Boolean       @default(false)
+
+  cluster MailboxCluster @relation(fields: [cluster_id], references: [id], onDelete: Cascade)
+
+  // Inverse relation if we want to track which subscription owns this box
+  subscriptions Subscription[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([cluster_id, box_number])
+  @@map("mailbox")
+}
+
+model Referral {
+  id                String                @id @default(uuid()) @db.Uuid
+  referrer_id       String                @db.Uuid
+  referred_id       String                @unique @db.Uuid
+  referral_code     String
+  subscription_plan String?
+  created_at        DateTime              @default(now())
+  updated_at        DateTime              @updatedAt
+  referrer          Profile               @relation("Referrer", fields: [referrer_id], references: [id], onDelete: Cascade)
+  referred          Profile               @relation("Referred", fields: [referred_id], references: [id], onDelete: Cascade)
+  transactions      ReferralTransaction[]
+
+  @@index([referrer_id])
+  @@index([referral_code])
+  @@map("referral")
+}
+
+model ReferralTransaction {
+  id          String   @id @default(uuid()) @db.Uuid
+  referral_id String   @db.Uuid
+  amount      Decimal  @db.Decimal(10, 2)
+  currency    String   @default("PHP")
+  status      String   @default("paid") // paid, pending, void
+  invoice_id  String? // payment invoice id
+  description String?
+  created_at  DateTime @default(now())
+  referral    Referral @relation(fields: [referral_id], references: [id], onDelete: Cascade)
+
+  @@map("referral_transaction")
 }
 
 enum UserType {
@@ -356,33 +464,13 @@ enum ActionStatus {
   CANCELLED
 }
 
-model Referral {
-  id                String                @id @default(uuid()) @db.Uuid
-  referrer_id       String                @db.Uuid
-  referred_id       String                @unique @db.Uuid
-  referral_code     String
-  subscription_plan String?
-  created_at        DateTime              @default(now())
-  updated_at        DateTime              @updatedAt
-  referrer          Profile               @relation("Referrer", fields: [referrer_id], references: [id], onDelete: Cascade)
-  referred          Profile               @relation("Referred", fields: [referred_id], references: [id], onDelete: Cascade)
-  transactions      ReferralTransaction[]
-
-  @@index([referrer_id])
-  @@index([referral_code])
-  @@map("referral")
+enum MailboxType {
+  STANDARD
+  LARGE
+  PARCEL_LOCKER
 }
 
-model ReferralTransaction {
-  id          String   @id @default(uuid()) @db.Uuid
-  referral_id String   @db.Uuid
-  amount      Decimal  @db.Decimal(10, 2)
-  currency    String   @default("PHP")
-  status      String   @default("paid") // paid, pending, void
-  invoice_id  String? // payment invoice id
-  description String?
-  created_at  DateTime @default(now())
-  referral    Referral @relation(fields: [referral_id], references: [id], onDelete: Cascade)
-
-  @@map("referral_transaction")
+enum DimensionUnit {
+  CM
+  INCH
 }

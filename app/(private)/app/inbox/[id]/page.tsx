@@ -20,7 +20,11 @@ import {
 } from "@/utils/supabase/dal";
 import {prisma} from "@/utils/prisma";
 import {redirect} from "next/navigation";
-import {MailStatus} from "@/app/generated/prisma/enums";
+import {
+  MailStatus,
+  ActionType,
+  ActionStatus,
+} from "@/app/generated/prisma/enums";
 import {createClient} from "@/utils/supabase/server";
 
 interface MailDetailPageProps {
@@ -51,12 +55,30 @@ function mapStatusToComponentStatus(
 // Cache the mail item query
 const getMailItem = cache(async (mailId: string, userId: string) => {
   try {
-    // First check if mail item exists and user owns it
-    const mailItem = await prisma.mailItem.findUnique({
-      where: {
-        id: mailId,
-      },
-    });
+    // Fetch mail item and profile in parallel
+    const [mailItem, profile] = await Promise.all([
+      prisma.mailItem.findUnique({
+        where: {
+          id: mailId,
+        },
+        include: {
+          action_requests: {
+            where: {
+              action_type: ActionType.OPEN_AND_SCAN,
+              status: {
+                in: [ActionStatus.PENDING, ActionStatus.IN_PROGRESS],
+              },
+            },
+            orderBy: {created_at: "desc"},
+            take: 1,
+          },
+        },
+      }),
+      prisma.profile.findUnique({
+        where: {id: userId},
+        select: {shredding_pin_hash: true, default_forward_address: true},
+      }),
+    ]);
 
     // Security check: Ensure user owns this mail item
     if (!mailItem || mailItem.profile_id !== userId) {
@@ -127,6 +149,8 @@ const getMailItem = cache(async (mailId: string, userId: string) => {
       }
     }
 
+    const pendingScanRequest = mailItem.action_requests[0] || null;
+
     return {
       id: mailItem.id,
       receivedAt: mailItem.received_at,
@@ -139,6 +163,14 @@ const getMailItem = cache(async (mailId: string, userId: string) => {
       tags: mailItem.tags || [],
       category: mailItem.category || undefined,
       notes: mailItem.notes || undefined,
+      defaultForwardAddress: profile?.default_forward_address || null,
+      hasShreddingPin: !!profile?.shredding_pin_hash,
+      pendingScanRequest: pendingScanRequest
+        ? {
+            status: pendingScanRequest.status,
+            requestedAt: pendingScanRequest.created_at,
+          }
+        : null,
     };
   } catch (error) {
     console.error("Error fetching mail item:", error);

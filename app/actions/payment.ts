@@ -10,7 +10,8 @@ export type PaymentResult =
 
 export async function createSubscriptionInvoice(
   planType: string,
-  billingCycle: "MONTHLY" | "QUARTERLY" | "YEARLY"
+  billingCycle: "MONTHLY" | "QUARTERLY" | "YEARLY",
+  mailingLocationId?: string
 ): Promise<PaymentResult> {
   try {
     const supabase = await createClient();
@@ -20,6 +21,19 @@ export async function createSubscriptionInvoice(
 
     if (!user || !user.email) {
       return {success: false, message: "User not authenticated"};
+    }
+
+    // Validate mailing location if provided
+    if (mailingLocationId) {
+      const location = await prisma.mailingLocation.findUnique({
+        where: {id: mailingLocationId, is_active: true},
+      });
+      if (!location) {
+        return {
+          success: false,
+          message: "Invalid or inactive mailing location",
+        };
+      }
     }
 
     const profile = await prisma.profile.findUnique({
@@ -96,6 +110,9 @@ export async function createSubscriptionInvoice(
         invoice_url: invoice.invoice_url,
         description: description,
         payment_channel: "XENDIT_INVOICE",
+        metadata: mailingLocationId
+          ? {mailing_location_id: mailingLocationId}
+          : undefined,
       },
     });
 
@@ -103,5 +120,25 @@ export async function createSubscriptionInvoice(
   } catch (error) {
     console.error("Error creating subscription invoice:", error);
     return {success: false, message: "Failed to create invoice"};
+  }
+}
+
+export async function getPublicMailingLocations() {
+  try {
+    const locations = await prisma.mailingLocation.findMany({
+      where: {is_active: true},
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        city: true,
+        province: true,
+      },
+      orderBy: {name: "asc"},
+    });
+    return {success: true, data: locations};
+  } catch (error) {
+    console.error("Error fetching locations:", error);
+    return {success: false, error: "Failed to fetch locations"};
   }
 }

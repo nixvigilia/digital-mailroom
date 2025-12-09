@@ -2,6 +2,7 @@ import {
   getCurrentUserPlanType,
   getCurrentUser,
   getKYCData,
+  getUserMailboxDetails,
 } from "@/utils/supabase/dal";
 import {getReferralData} from "@/lib/referrals";
 import {getFreePlanData} from "@/lib/packages";
@@ -21,6 +22,9 @@ export default async function UserDashboardPage() {
   const kycData = currentUser ? await getKYCData(currentUser.userId) : null;
   const kycStatus = kycData?.status || "NOT_STARTED";
   const rejectionReason = kycData?.rejection_reason || null;
+  const mailboxDetails = currentUser
+    ? await getUserMailboxDetails(currentUser.userId)
+    : null;
 
   // Start fetching referral data but don't await it
   // This creates a Promise we can pass to the client component
@@ -35,6 +39,7 @@ export default async function UserDashboardPage() {
         rejectionReason={rejectionReason}
         referralDataPromise={referralDataPromise}
         freePlanDataPromise={freePlanDataPromise}
+        mailboxDetails={mailboxDetails}
       />
     </Suspense>
   );

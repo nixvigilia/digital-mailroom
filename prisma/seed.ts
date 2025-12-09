@@ -112,119 +112,286 @@ async function createAdminUser() {
   }
 }
 
-async function main() {
-  console.log("Starting seed...");
-
-  const plans = [
+async function createLocationsAndMailboxes() {
+  console.log("Seeding locations and mailboxes...");
+  const locations = [
     {
-      name: "Free",
-      plan_type: "FREE",
-      intended_for: "Perfect for affiliates",
-      description: "Perfect for affiliates",
-      price_monthly: 0.0,
-      price_quarterly: null,
-      price_yearly: null,
-      features: [
-        "Earn while you refer",
-        "Affiliate link access",
-        "5% cash back per subscriber",
-        "Track your referrals",
-        "No mail services",
-        "Perfect for affiliates",
-      ],
-      not_included: ["No mail services"],
-      max_mail_items: 0,
-      max_team_members: null,
+      name: "Makati Central",
+      address: "123 Ayala Avenue",
+      city: "Makati",
+      province: "Metro Manila",
+      postal_code: "1200",
+      country: "Philippines",
+      image_url: "https://placehold.co/600x400?text=Makati+Branch",
+      map_url: "https://maps.google.com/?q=Makati",
       is_active: true,
-      is_featured: false,
-      display_order: 0,
-      cashback_percentage: 5.0,
     },
     {
-      name: "Digital",
-      plan_type: "BASIC",
-      intended_for: "For personal use only",
-      description: "For individuals who just need their mail digitized",
-      price_monthly: 299.0,
-      price_quarterly: 850.0, // ~5% discount
-      price_yearly: 3200.0, // ~11% discount
-      features: [
-        "Mail scanning & digitization",
-        "5GB digital storage",
-        "7-day physical retention",
-        "~5,000 scanned pages",
-        "Access via web app",
-        "Standard quality scans",
-        "No parcel handling",
-      ],
-      not_included: ["No parcel handling"],
-      max_mail_items: 50,
-      max_team_members: null,
+      name: "BGC Hub",
+      address: "456 Bonifacio High Street",
+      city: "Taguig",
+      province: "Metro Manila",
+      postal_code: "1634",
+      country: "Philippines",
+      image_url: "https://placehold.co/600x400?text=BGC+Branch",
+      map_url: "https://maps.google.com/?q=BGC",
       is_active: true,
-      is_featured: false,
-      display_order: 1,
-      cashback_percentage: 5.0,
     },
     {
-      name: "Personal",
-      plan_type: "PREMIUM",
-      intended_for: "For personal use only",
-      description: "Complete mail management solution",
-      price_monthly: 499.0,
-      price_quarterly: 1420.0, // ~5% discount
-      price_yearly: 5300.0, // ~11% discount
-      features: [
-        "Everything in Digital",
-        "20GB digital storage",
-        "Parcel handling",
-        "~20,000 scanned pages",
-        "90-day physical retention",
-        "High quality scans",
-        "Starter kit included",
-      ],
-      not_included: [],
-      max_mail_items: 200,
-      max_team_members: null,
+      name: "Cebu IT Park",
+      address: "789 IT Park",
+      city: "Cebu City",
+      province: "Cebu",
+      postal_code: "6000",
+      country: "Philippines",
+      image_url: "https://placehold.co/600x400?text=Cebu+Branch",
+      map_url: "https://maps.google.com/?q=Cebu",
       is_active: true,
-      is_featured: true,
-      display_order: 2,
-      cashback_percentage: 5.0,
     },
     {
-      name: "Business",
-      plan_type: "BUSINESS",
-      intended_for: "For business use",
-      description: "Professional virtual office solution",
-      price_monthly: 2999.0,
-      price_quarterly: 8500.0, // ~5% discount
-      price_yearly: 32000.0, // ~11% discount
-      features: [
-        "Everything in Personal",
-        "200GB digital storage",
-        "Virtual office address",
-        "~200,000 scanned pages",
-        "365-day physical retention",
-        "Business registration use",
-        "Professional business address",
-        "Team collaboration",
-      ],
-      not_included: [],
-      max_mail_items: 2000,
-      max_team_members: 10,
+      name: "Davao Center",
+      address: "101 Roxas Avenue",
+      city: "Davao City",
+      province: "Davao del Sur",
+      postal_code: "8000",
+      country: "Philippines",
+      image_url: "https://placehold.co/600x400?text=Davao+Branch",
+      map_url: "https://maps.google.com/?q=Davao",
       is_active: true,
-      is_featured: false,
-      display_order: 3,
-      cashback_percentage: 5.0,
     },
   ];
 
-  for (const plan of plans) {
-    const created = await prisma.package.upsert({
-      where: {plan_type: plan.plan_type},
-      update: plan,
-      create: plan,
+  for (const loc of locations) {
+    const existing = await prisma.mailingLocation.findFirst({
+      where: {name: loc.name},
     });
-    console.log(`Created/Updated ${plan.name} plan:`, created.id);
+
+    let locationId = existing?.id;
+
+    if (!existing) {
+      const created = await prisma.mailingLocation.create({
+        data: loc,
+      });
+      locationId = created.id;
+      console.log(`Created location: ${loc.name}`);
+    } else {
+      console.log(`Location exists: ${loc.name}`);
+      await prisma.mailingLocation.update({
+        where: {id: locationId},
+        data: loc,
+      });
+    }
+
+    if (locationId) {
+      // Create Clusters
+      const clusters = ["Cluster A", "Cluster B", "Cluster C"];
+
+      for (const clusterName of clusters) {
+        const cluster = await prisma.mailboxCluster.upsert({
+          where: {
+            mailing_location_id_name: {
+              mailing_location_id: locationId,
+              name: clusterName,
+            },
+          },
+          create: {
+            mailing_location_id: locationId,
+            name: clusterName,
+            description: `Standard CBU Cluster ${clusterName}`,
+          },
+          update: {},
+        });
+
+        // Updated dimensions based on USPS standards / user request (in Inches)
+        // Standard: 12" W x 3" H x 15" D
+        // Parcel Locker: 12" W x 15" H x 15" D
+        // Ratio: 1 parcel locker per 5 mail compartments
+
+        const mailboxConfigs = [
+          // 15 Standard + 5 Large = 20 Mail Compartments
+          // We need 20 / 5 = 4 Parcel Lockers
+          {
+            type: "STANDARD",
+            count: 15,
+            width: 12,
+            height: 3,
+            depth: 15,
+          },
+          {
+            type: "LARGE",
+            count: 5,
+            width: 12,
+            height: 6, // Double the height of standard
+            depth: 15,
+          },
+          {
+            type: "PARCEL_LOCKER",
+            count: 4,
+            width: 12,
+            height: 15,
+            depth: 15,
+          },
+        ];
+
+        for (const config of mailboxConfigs) {
+          for (let i = 1; i <= config.count; i++) {
+            // Box number format: [Cluster]-[Type]-[Num] -> A-S-001
+            // Or simply 1, 2, 3... unique within cluster
+            const boxNumber = `${config.type.substring(0, 1)}-${i
+              .toString()
+              .padStart(3, "0")}`;
+
+            await prisma.mailbox.upsert({
+              where: {
+                cluster_id_box_number: {
+                  cluster_id: cluster.id,
+                  box_number: boxNumber,
+                },
+              },
+              create: {
+                cluster_id: cluster.id,
+                box_number: boxNumber,
+                type: config.type as any,
+                width: config.width,
+                height: config.height,
+                depth: config.depth,
+                dimension_unit: "INCH",
+                is_occupied: false,
+              },
+              update: {
+                width: config.width,
+                height: config.height,
+                depth: config.depth,
+                dimension_unit: "INCH",
+              },
+            });
+          }
+        }
+        console.log(`Seeded mailboxes for ${loc.name} - ${clusterName}`);
+      }
+    }
+  }
+}
+
+async function main() {
+  console.log("Starting seed...");
+  await createLocationsAndMailboxes();
+
+  // Check if plans exist
+  const existingPlansCount = await prisma.package.count();
+
+  if (existingPlansCount === 0) {
+    const plans = [
+      {
+        name: "Free",
+        plan_type: "FREE",
+        intended_for: "Perfect for affiliates",
+        description: "Perfect for affiliates",
+        price_monthly: 0.0,
+        price_quarterly: null,
+        price_yearly: null,
+        features: [
+          "Earn while you refer",
+          "Affiliate link access",
+          "5% cash back per subscriber",
+          "Track your referrals",
+          "No mail services",
+          "Perfect for affiliates",
+        ],
+        not_included: ["No mail services"],
+        max_mail_items: 0,
+        max_team_members: null,
+        is_active: true,
+        is_featured: false,
+        display_order: 0,
+        cashback_percentage: 5.0,
+      },
+      {
+        name: "Digital",
+        plan_type: "BASIC",
+        intended_for: "For personal use only",
+        description: "For individuals who just need their mail digitized",
+        price_monthly: 299.0,
+        price_quarterly: 850.0, // ~5% discount
+        price_yearly: 3200.0, // ~11% discount
+        features: [
+          "Mail scanning & digitization",
+          "5GB digital storage",
+          "7-day physical retention",
+          "~5,000 scanned pages",
+          "Access via web app",
+          "Standard quality scans",
+          "No parcel handling",
+        ],
+        not_included: ["No parcel handling"],
+        max_mail_items: 50,
+        max_team_members: null,
+        is_active: true,
+        is_featured: false,
+        display_order: 1,
+        cashback_percentage: 5.0,
+      },
+      {
+        name: "Personal",
+        plan_type: "PREMIUM",
+        intended_for: "For personal use only",
+        description: "Complete mail management solution",
+        price_monthly: 499.0,
+        price_quarterly: 1420.0, // ~5% discount
+        price_yearly: 5300.0, // ~11% discount
+        features: [
+          "Everything in Digital",
+          "20GB digital storage",
+          "Parcel handling",
+          "~20,000 scanned pages",
+          "90-day physical retention",
+          "High quality scans",
+          "Starter kit included",
+        ],
+        not_included: [],
+        max_mail_items: 200,
+        max_team_members: null,
+        is_active: true,
+        is_featured: true,
+        display_order: 2,
+        cashback_percentage: 5.0,
+      },
+      {
+        name: "Business",
+        plan_type: "BUSINESS",
+        intended_for: "For business use",
+        description: "Professional virtual office solution",
+        price_monthly: 2999.0,
+        price_quarterly: 8500.0, // ~5% discount
+        price_yearly: 32000.0, // ~11% discount
+        features: [
+          "Everything in Personal",
+          "200GB digital storage",
+          "Virtual office address",
+          "~200,000 scanned pages",
+          "365-day physical retention",
+          "Business registration use",
+          "Professional business address",
+          "Team collaboration",
+        ],
+        not_included: [],
+        max_mail_items: 2000,
+        max_team_members: 10,
+        is_active: true,
+        is_featured: false,
+        display_order: 3,
+        cashback_percentage: 5.0,
+      },
+    ];
+
+    for (const plan of plans) {
+      const created = await prisma.package.create({
+        data: plan,
+      });
+      console.log(`Created ${plan.name} plan:`, created.id);
+    }
+  } else {
+    console.log("Plans already exist, skipping creation.");
   }
 
   await createAdminUser();

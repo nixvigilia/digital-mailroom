@@ -183,6 +183,37 @@ async function handleInvoicePaid(invoice: any) {
     // Get Package details first
     const pkg = await prisma.package.findUnique({where: {plan_type: planType}});
 
+    // Get mailing location from transaction metadata
+    const mailingLocationId = (transaction?.metadata as any)
+      ?.mailing_location_id;
+    let mailboxId = null;
+
+    // If location selected, try to assign a mailbox
+    if (mailingLocationId) {
+      // Logic: Find a cluster in this location, then an available mailbox
+      // Prefer STANDARD boxes for now, or match plan type if we had logic for that
+      // For MVP, just find ANY available mailbox in the location
+
+      const availableMailbox = await prisma.mailbox.findFirst({
+        where: {
+          cluster: {
+            mailing_location_id: mailingLocationId,
+          },
+          is_occupied: false,
+        },
+        select: {id: true},
+      });
+
+      if (availableMailbox) {
+        mailboxId = availableMailbox.id;
+        // Mark occupied
+        await prisma.mailbox.update({
+          where: {id: mailboxId},
+          data: {is_occupied: true},
+        });
+      }
+    }
+
     // Improved Logic:
     // Check for existing active subscription
     const existingSub = await prisma.subscription.findFirst({
@@ -216,6 +247,9 @@ async function handleInvoicePaid(invoice: any) {
           expires_at: expiresAt,
           payment_method_id: "XENDIT_INVOICE",
           package_id: pkg?.id,
+          mailing_location_id:
+            mailingLocationId || existingSub.mailing_location_id,
+          mailbox_id: mailboxId || existingSub.mailbox_id,
         },
       });
       subscriptionId = updatedSub.id;
@@ -233,6 +267,8 @@ async function handleInvoicePaid(invoice: any) {
           expires_at: expiresAt,
           payment_method_id: "XENDIT_INVOICE",
           package_id: pkg?.id,
+          mailing_location_id: mailingLocationId,
+          mailbox_id: mailboxId,
         },
       });
       subscriptionId = newSub.id;

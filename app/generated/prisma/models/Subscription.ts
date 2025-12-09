@@ -39,6 +39,8 @@ export type SubscriptionMinAggregateOutputType = {
   cancelled_at: Date | null
   created_at: Date | null
   updated_at: Date | null
+  mailing_location_id: string | null
+  mailbox_id: string | null
 }
 
 export type SubscriptionMaxAggregateOutputType = {
@@ -56,6 +58,8 @@ export type SubscriptionMaxAggregateOutputType = {
   cancelled_at: Date | null
   created_at: Date | null
   updated_at: Date | null
+  mailing_location_id: string | null
+  mailbox_id: string | null
 }
 
 export type SubscriptionCountAggregateOutputType = {
@@ -73,6 +77,8 @@ export type SubscriptionCountAggregateOutputType = {
   cancelled_at: number
   created_at: number
   updated_at: number
+  mailing_location_id: number
+  mailbox_id: number
   _all: number
 }
 
@@ -92,6 +98,8 @@ export type SubscriptionMinAggregateInputType = {
   cancelled_at?: true
   created_at?: true
   updated_at?: true
+  mailing_location_id?: true
+  mailbox_id?: true
 }
 
 export type SubscriptionMaxAggregateInputType = {
@@ -109,6 +117,8 @@ export type SubscriptionMaxAggregateInputType = {
   cancelled_at?: true
   created_at?: true
   updated_at?: true
+  mailing_location_id?: true
+  mailbox_id?: true
 }
 
 export type SubscriptionCountAggregateInputType = {
@@ -126,6 +136,8 @@ export type SubscriptionCountAggregateInputType = {
   cancelled_at?: true
   created_at?: true
   updated_at?: true
+  mailing_location_id?: true
+  mailbox_id?: true
   _all?: true
 }
 
@@ -216,6 +228,8 @@ export type SubscriptionGroupByOutputType = {
   cancelled_at: Date | null
   created_at: Date
   updated_at: Date
+  mailing_location_id: string | null
+  mailbox_id: string | null
   _count: SubscriptionCountAggregateOutputType | null
   _min: SubscriptionMinAggregateOutputType | null
   _max: SubscriptionMaxAggregateOutputType | null
@@ -254,9 +268,13 @@ export type SubscriptionWhereInput = {
   cancelled_at?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Subscription"> | Date | string
+  mailing_location_id?: Prisma.UuidNullableFilter<"Subscription"> | string | null
+  mailbox_id?: Prisma.UuidNullableFilter<"Subscription"> | string | null
   profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
   package?: Prisma.XOR<Prisma.PackageNullableScalarRelationFilter, Prisma.PackageWhereInput> | null
   payment_transactions?: Prisma.PaymentTransactionListRelationFilter
+  mailing_location?: Prisma.XOR<Prisma.MailingLocationNullableScalarRelationFilter, Prisma.MailingLocationWhereInput> | null
+  mailbox?: Prisma.XOR<Prisma.MailboxNullableScalarRelationFilter, Prisma.MailboxWhereInput> | null
 }
 
 export type SubscriptionOrderByWithRelationInput = {
@@ -274,9 +292,13 @@ export type SubscriptionOrderByWithRelationInput = {
   cancelled_at?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  mailing_location_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  mailbox_id?: Prisma.SortOrderInput | Prisma.SortOrder
   profile?: Prisma.ProfileOrderByWithRelationInput
   package?: Prisma.PackageOrderByWithRelationInput
   payment_transactions?: Prisma.PaymentTransactionOrderByRelationAggregateInput
+  mailing_location?: Prisma.MailingLocationOrderByWithRelationInput
+  mailbox?: Prisma.MailboxOrderByWithRelationInput
 }
 
 export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
@@ -297,9 +319,13 @@ export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
   cancelled_at?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Subscription"> | Date | string
+  mailing_location_id?: Prisma.UuidNullableFilter<"Subscription"> | string | null
+  mailbox_id?: Prisma.UuidNullableFilter<"Subscription"> | string | null
   profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
   package?: Prisma.XOR<Prisma.PackageNullableScalarRelationFilter, Prisma.PackageWhereInput> | null
   payment_transactions?: Prisma.PaymentTransactionListRelationFilter
+  mailing_location?: Prisma.XOR<Prisma.MailingLocationNullableScalarRelationFilter, Prisma.MailingLocationWhereInput> | null
+  mailbox?: Prisma.XOR<Prisma.MailboxNullableScalarRelationFilter, Prisma.MailboxWhereInput> | null
 }, "id">
 
 export type SubscriptionOrderByWithAggregationInput = {
@@ -317,6 +343,8 @@ export type SubscriptionOrderByWithAggregationInput = {
   cancelled_at?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  mailing_location_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  mailbox_id?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.SubscriptionCountOrderByAggregateInput
   _max?: Prisma.SubscriptionMaxOrderByAggregateInput
   _min?: Prisma.SubscriptionMinOrderByAggregateInput
@@ -340,6 +368,8 @@ export type SubscriptionScalarWhereWithAggregatesInput = {
   cancelled_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
+  mailing_location_id?: Prisma.UuidNullableWithAggregatesFilter<"Subscription"> | string | null
+  mailbox_id?: Prisma.UuidNullableWithAggregatesFilter<"Subscription"> | string | null
 }
 
 export type SubscriptionCreateInput = {
@@ -358,6 +388,8 @@ export type SubscriptionCreateInput = {
   profile: Prisma.ProfileCreateNestedOneWithoutSubscriptionsInput
   package?: Prisma.PackageCreateNestedOneWithoutSubscriptionsInput
   payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutSubscriptionInput
+  mailing_location?: Prisma.MailingLocationCreateNestedOneWithoutSubscriptionsInput
+  mailbox?: Prisma.MailboxCreateNestedOneWithoutSubscriptionsInput
 }
 
 export type SubscriptionUncheckedCreateInput = {
@@ -375,6 +407,8 @@ export type SubscriptionUncheckedCreateInput = {
   cancelled_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  mailing_location_id?: string | null
+  mailbox_id?: string | null
   payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutSubscriptionInput
 }
 
@@ -394,6 +428,8 @@ export type SubscriptionUpdateInput = {
   profile?: Prisma.ProfileUpdateOneRequiredWithoutSubscriptionsNestedInput
   package?: Prisma.PackageUpdateOneWithoutSubscriptionsNestedInput
   payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutSubscriptionNestedInput
+  mailing_location?: Prisma.MailingLocationUpdateOneWithoutSubscriptionsNestedInput
+  mailbox?: Prisma.MailboxUpdateOneWithoutSubscriptionsNestedInput
 }
 
 export type SubscriptionUncheckedUpdateInput = {
@@ -411,6 +447,8 @@ export type SubscriptionUncheckedUpdateInput = {
   cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailing_location_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutSubscriptionNestedInput
 }
 
@@ -429,6 +467,8 @@ export type SubscriptionCreateManyInput = {
   cancelled_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  mailing_location_id?: string | null
+  mailbox_id?: string | null
 }
 
 export type SubscriptionUpdateManyMutationInput = {
@@ -461,6 +501,8 @@ export type SubscriptionUncheckedUpdateManyInput = {
   cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailing_location_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SubscriptionListRelationFilter = {
@@ -488,6 +530,8 @@ export type SubscriptionCountOrderByAggregateInput = {
   cancelled_at?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  mailing_location_id?: Prisma.SortOrder
+  mailbox_id?: Prisma.SortOrder
 }
 
 export type SubscriptionMaxOrderByAggregateInput = {
@@ -505,6 +549,8 @@ export type SubscriptionMaxOrderByAggregateInput = {
   cancelled_at?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  mailing_location_id?: Prisma.SortOrder
+  mailbox_id?: Prisma.SortOrder
 }
 
 export type SubscriptionMinOrderByAggregateInput = {
@@ -522,6 +568,8 @@ export type SubscriptionMinOrderByAggregateInput = {
   cancelled_at?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  mailing_location_id?: Prisma.SortOrder
+  mailbox_id?: Prisma.SortOrder
 }
 
 export type SubscriptionNullableScalarRelationFilter = {
@@ -637,6 +685,90 @@ export type SubscriptionUpdateOneWithoutPayment_transactionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SubscriptionUpdateToOneWithWhereWithoutPayment_transactionsInput, Prisma.SubscriptionUpdateWithoutPayment_transactionsInput>, Prisma.SubscriptionUncheckedUpdateWithoutPayment_transactionsInput>
 }
 
+export type SubscriptionCreateNestedManyWithoutMailing_locationInput = {
+  create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutMailing_locationInput, Prisma.SubscriptionUncheckedCreateWithoutMailing_locationInput> | Prisma.SubscriptionCreateWithoutMailing_locationInput[] | Prisma.SubscriptionUncheckedCreateWithoutMailing_locationInput[]
+  connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutMailing_locationInput | Prisma.SubscriptionCreateOrConnectWithoutMailing_locationInput[]
+  createMany?: Prisma.SubscriptionCreateManyMailing_locationInputEnvelope
+  connect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+}
+
+export type SubscriptionUncheckedCreateNestedManyWithoutMailing_locationInput = {
+  create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutMailing_locationInput, Prisma.SubscriptionUncheckedCreateWithoutMailing_locationInput> | Prisma.SubscriptionCreateWithoutMailing_locationInput[] | Prisma.SubscriptionUncheckedCreateWithoutMailing_locationInput[]
+  connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutMailing_locationInput | Prisma.SubscriptionCreateOrConnectWithoutMailing_locationInput[]
+  createMany?: Prisma.SubscriptionCreateManyMailing_locationInputEnvelope
+  connect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+}
+
+export type SubscriptionUpdateManyWithoutMailing_locationNestedInput = {
+  create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutMailing_locationInput, Prisma.SubscriptionUncheckedCreateWithoutMailing_locationInput> | Prisma.SubscriptionCreateWithoutMailing_locationInput[] | Prisma.SubscriptionUncheckedCreateWithoutMailing_locationInput[]
+  connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutMailing_locationInput | Prisma.SubscriptionCreateOrConnectWithoutMailing_locationInput[]
+  upsert?: Prisma.SubscriptionUpsertWithWhereUniqueWithoutMailing_locationInput | Prisma.SubscriptionUpsertWithWhereUniqueWithoutMailing_locationInput[]
+  createMany?: Prisma.SubscriptionCreateManyMailing_locationInputEnvelope
+  set?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  disconnect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  delete?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  connect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  update?: Prisma.SubscriptionUpdateWithWhereUniqueWithoutMailing_locationInput | Prisma.SubscriptionUpdateWithWhereUniqueWithoutMailing_locationInput[]
+  updateMany?: Prisma.SubscriptionUpdateManyWithWhereWithoutMailing_locationInput | Prisma.SubscriptionUpdateManyWithWhereWithoutMailing_locationInput[]
+  deleteMany?: Prisma.SubscriptionScalarWhereInput | Prisma.SubscriptionScalarWhereInput[]
+}
+
+export type SubscriptionUncheckedUpdateManyWithoutMailing_locationNestedInput = {
+  create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutMailing_locationInput, Prisma.SubscriptionUncheckedCreateWithoutMailing_locationInput> | Prisma.SubscriptionCreateWithoutMailing_locationInput[] | Prisma.SubscriptionUncheckedCreateWithoutMailing_locationInput[]
+  connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutMailing_locationInput | Prisma.SubscriptionCreateOrConnectWithoutMailing_locationInput[]
+  upsert?: Prisma.SubscriptionUpsertWithWhereUniqueWithoutMailing_locationInput | Prisma.SubscriptionUpsertWithWhereUniqueWithoutMailing_locationInput[]
+  createMany?: Prisma.SubscriptionCreateManyMailing_locationInputEnvelope
+  set?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  disconnect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  delete?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  connect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  update?: Prisma.SubscriptionUpdateWithWhereUniqueWithoutMailing_locationInput | Prisma.SubscriptionUpdateWithWhereUniqueWithoutMailing_locationInput[]
+  updateMany?: Prisma.SubscriptionUpdateManyWithWhereWithoutMailing_locationInput | Prisma.SubscriptionUpdateManyWithWhereWithoutMailing_locationInput[]
+  deleteMany?: Prisma.SubscriptionScalarWhereInput | Prisma.SubscriptionScalarWhereInput[]
+}
+
+export type SubscriptionCreateNestedManyWithoutMailboxInput = {
+  create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutMailboxInput, Prisma.SubscriptionUncheckedCreateWithoutMailboxInput> | Prisma.SubscriptionCreateWithoutMailboxInput[] | Prisma.SubscriptionUncheckedCreateWithoutMailboxInput[]
+  connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutMailboxInput | Prisma.SubscriptionCreateOrConnectWithoutMailboxInput[]
+  createMany?: Prisma.SubscriptionCreateManyMailboxInputEnvelope
+  connect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+}
+
+export type SubscriptionUncheckedCreateNestedManyWithoutMailboxInput = {
+  create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutMailboxInput, Prisma.SubscriptionUncheckedCreateWithoutMailboxInput> | Prisma.SubscriptionCreateWithoutMailboxInput[] | Prisma.SubscriptionUncheckedCreateWithoutMailboxInput[]
+  connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutMailboxInput | Prisma.SubscriptionCreateOrConnectWithoutMailboxInput[]
+  createMany?: Prisma.SubscriptionCreateManyMailboxInputEnvelope
+  connect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+}
+
+export type SubscriptionUpdateManyWithoutMailboxNestedInput = {
+  create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutMailboxInput, Prisma.SubscriptionUncheckedCreateWithoutMailboxInput> | Prisma.SubscriptionCreateWithoutMailboxInput[] | Prisma.SubscriptionUncheckedCreateWithoutMailboxInput[]
+  connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutMailboxInput | Prisma.SubscriptionCreateOrConnectWithoutMailboxInput[]
+  upsert?: Prisma.SubscriptionUpsertWithWhereUniqueWithoutMailboxInput | Prisma.SubscriptionUpsertWithWhereUniqueWithoutMailboxInput[]
+  createMany?: Prisma.SubscriptionCreateManyMailboxInputEnvelope
+  set?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  disconnect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  delete?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  connect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  update?: Prisma.SubscriptionUpdateWithWhereUniqueWithoutMailboxInput | Prisma.SubscriptionUpdateWithWhereUniqueWithoutMailboxInput[]
+  updateMany?: Prisma.SubscriptionUpdateManyWithWhereWithoutMailboxInput | Prisma.SubscriptionUpdateManyWithWhereWithoutMailboxInput[]
+  deleteMany?: Prisma.SubscriptionScalarWhereInput | Prisma.SubscriptionScalarWhereInput[]
+}
+
+export type SubscriptionUncheckedUpdateManyWithoutMailboxNestedInput = {
+  create?: Prisma.XOR<Prisma.SubscriptionCreateWithoutMailboxInput, Prisma.SubscriptionUncheckedCreateWithoutMailboxInput> | Prisma.SubscriptionCreateWithoutMailboxInput[] | Prisma.SubscriptionUncheckedCreateWithoutMailboxInput[]
+  connectOrCreate?: Prisma.SubscriptionCreateOrConnectWithoutMailboxInput | Prisma.SubscriptionCreateOrConnectWithoutMailboxInput[]
+  upsert?: Prisma.SubscriptionUpsertWithWhereUniqueWithoutMailboxInput | Prisma.SubscriptionUpsertWithWhereUniqueWithoutMailboxInput[]
+  createMany?: Prisma.SubscriptionCreateManyMailboxInputEnvelope
+  set?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  disconnect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  delete?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  connect?: Prisma.SubscriptionWhereUniqueInput | Prisma.SubscriptionWhereUniqueInput[]
+  update?: Prisma.SubscriptionUpdateWithWhereUniqueWithoutMailboxInput | Prisma.SubscriptionUpdateWithWhereUniqueWithoutMailboxInput[]
+  updateMany?: Prisma.SubscriptionUpdateManyWithWhereWithoutMailboxInput | Prisma.SubscriptionUpdateManyWithWhereWithoutMailboxInput[]
+  deleteMany?: Prisma.SubscriptionScalarWhereInput | Prisma.SubscriptionScalarWhereInput[]
+}
+
 export type SubscriptionCreateWithoutProfileInput = {
   id?: string
   plan_type: string
@@ -652,6 +784,8 @@ export type SubscriptionCreateWithoutProfileInput = {
   updated_at?: Date | string
   package?: Prisma.PackageCreateNestedOneWithoutSubscriptionsInput
   payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutSubscriptionInput
+  mailing_location?: Prisma.MailingLocationCreateNestedOneWithoutSubscriptionsInput
+  mailbox?: Prisma.MailboxCreateNestedOneWithoutSubscriptionsInput
 }
 
 export type SubscriptionUncheckedCreateWithoutProfileInput = {
@@ -668,6 +802,8 @@ export type SubscriptionUncheckedCreateWithoutProfileInput = {
   cancelled_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  mailing_location_id?: string | null
+  mailbox_id?: string | null
   payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutSubscriptionInput
 }
 
@@ -715,6 +851,8 @@ export type SubscriptionScalarWhereInput = {
   cancelled_at?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Subscription"> | Date | string
+  mailing_location_id?: Prisma.UuidNullableFilter<"Subscription"> | string | null
+  mailbox_id?: Prisma.UuidNullableFilter<"Subscription"> | string | null
 }
 
 export type SubscriptionCreateWithoutPackageInput = {
@@ -732,6 +870,8 @@ export type SubscriptionCreateWithoutPackageInput = {
   updated_at?: Date | string
   profile: Prisma.ProfileCreateNestedOneWithoutSubscriptionsInput
   payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutSubscriptionInput
+  mailing_location?: Prisma.MailingLocationCreateNestedOneWithoutSubscriptionsInput
+  mailbox?: Prisma.MailboxCreateNestedOneWithoutSubscriptionsInput
 }
 
 export type SubscriptionUncheckedCreateWithoutPackageInput = {
@@ -748,6 +888,8 @@ export type SubscriptionUncheckedCreateWithoutPackageInput = {
   cancelled_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  mailing_location_id?: string | null
+  mailbox_id?: string | null
   payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutSubscriptionInput
 }
 
@@ -792,6 +934,8 @@ export type SubscriptionCreateWithoutPayment_transactionsInput = {
   updated_at?: Date | string
   profile: Prisma.ProfileCreateNestedOneWithoutSubscriptionsInput
   package?: Prisma.PackageCreateNestedOneWithoutSubscriptionsInput
+  mailing_location?: Prisma.MailingLocationCreateNestedOneWithoutSubscriptionsInput
+  mailbox?: Prisma.MailboxCreateNestedOneWithoutSubscriptionsInput
 }
 
 export type SubscriptionUncheckedCreateWithoutPayment_transactionsInput = {
@@ -809,6 +953,8 @@ export type SubscriptionUncheckedCreateWithoutPayment_transactionsInput = {
   cancelled_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  mailing_location_id?: string | null
+  mailbox_id?: string | null
 }
 
 export type SubscriptionCreateOrConnectWithoutPayment_transactionsInput = {
@@ -842,6 +988,8 @@ export type SubscriptionUpdateWithoutPayment_transactionsInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.ProfileUpdateOneRequiredWithoutSubscriptionsNestedInput
   package?: Prisma.PackageUpdateOneWithoutSubscriptionsNestedInput
+  mailing_location?: Prisma.MailingLocationUpdateOneWithoutSubscriptionsNestedInput
+  mailbox?: Prisma.MailboxUpdateOneWithoutSubscriptionsNestedInput
 }
 
 export type SubscriptionUncheckedUpdateWithoutPayment_transactionsInput = {
@@ -859,6 +1007,136 @@ export type SubscriptionUncheckedUpdateWithoutPayment_transactionsInput = {
   cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailing_location_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type SubscriptionCreateWithoutMailing_locationInput = {
+  id?: string
+  plan_type: string
+  status?: $Enums.SubscriptionStatus
+  billing_cycle?: $Enums.BillingCycle
+  payment_method_id?: string | null
+  next_billing_date?: Date | string | null
+  last_payment_date?: Date | string | null
+  started_at?: Date | string
+  expires_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  profile: Prisma.ProfileCreateNestedOneWithoutSubscriptionsInput
+  package?: Prisma.PackageCreateNestedOneWithoutSubscriptionsInput
+  payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutSubscriptionInput
+  mailbox?: Prisma.MailboxCreateNestedOneWithoutSubscriptionsInput
+}
+
+export type SubscriptionUncheckedCreateWithoutMailing_locationInput = {
+  id?: string
+  profile_id: string
+  package_id?: string | null
+  plan_type: string
+  status?: $Enums.SubscriptionStatus
+  billing_cycle?: $Enums.BillingCycle
+  payment_method_id?: string | null
+  next_billing_date?: Date | string | null
+  last_payment_date?: Date | string | null
+  started_at?: Date | string
+  expires_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  mailbox_id?: string | null
+  payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutSubscriptionInput
+}
+
+export type SubscriptionCreateOrConnectWithoutMailing_locationInput = {
+  where: Prisma.SubscriptionWhereUniqueInput
+  create: Prisma.XOR<Prisma.SubscriptionCreateWithoutMailing_locationInput, Prisma.SubscriptionUncheckedCreateWithoutMailing_locationInput>
+}
+
+export type SubscriptionCreateManyMailing_locationInputEnvelope = {
+  data: Prisma.SubscriptionCreateManyMailing_locationInput | Prisma.SubscriptionCreateManyMailing_locationInput[]
+  skipDuplicates?: boolean
+}
+
+export type SubscriptionUpsertWithWhereUniqueWithoutMailing_locationInput = {
+  where: Prisma.SubscriptionWhereUniqueInput
+  update: Prisma.XOR<Prisma.SubscriptionUpdateWithoutMailing_locationInput, Prisma.SubscriptionUncheckedUpdateWithoutMailing_locationInput>
+  create: Prisma.XOR<Prisma.SubscriptionCreateWithoutMailing_locationInput, Prisma.SubscriptionUncheckedCreateWithoutMailing_locationInput>
+}
+
+export type SubscriptionUpdateWithWhereUniqueWithoutMailing_locationInput = {
+  where: Prisma.SubscriptionWhereUniqueInput
+  data: Prisma.XOR<Prisma.SubscriptionUpdateWithoutMailing_locationInput, Prisma.SubscriptionUncheckedUpdateWithoutMailing_locationInput>
+}
+
+export type SubscriptionUpdateManyWithWhereWithoutMailing_locationInput = {
+  where: Prisma.SubscriptionScalarWhereInput
+  data: Prisma.XOR<Prisma.SubscriptionUpdateManyMutationInput, Prisma.SubscriptionUncheckedUpdateManyWithoutMailing_locationInput>
+}
+
+export type SubscriptionCreateWithoutMailboxInput = {
+  id?: string
+  plan_type: string
+  status?: $Enums.SubscriptionStatus
+  billing_cycle?: $Enums.BillingCycle
+  payment_method_id?: string | null
+  next_billing_date?: Date | string | null
+  last_payment_date?: Date | string | null
+  started_at?: Date | string
+  expires_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  profile: Prisma.ProfileCreateNestedOneWithoutSubscriptionsInput
+  package?: Prisma.PackageCreateNestedOneWithoutSubscriptionsInput
+  payment_transactions?: Prisma.PaymentTransactionCreateNestedManyWithoutSubscriptionInput
+  mailing_location?: Prisma.MailingLocationCreateNestedOneWithoutSubscriptionsInput
+}
+
+export type SubscriptionUncheckedCreateWithoutMailboxInput = {
+  id?: string
+  profile_id: string
+  package_id?: string | null
+  plan_type: string
+  status?: $Enums.SubscriptionStatus
+  billing_cycle?: $Enums.BillingCycle
+  payment_method_id?: string | null
+  next_billing_date?: Date | string | null
+  last_payment_date?: Date | string | null
+  started_at?: Date | string
+  expires_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  mailing_location_id?: string | null
+  payment_transactions?: Prisma.PaymentTransactionUncheckedCreateNestedManyWithoutSubscriptionInput
+}
+
+export type SubscriptionCreateOrConnectWithoutMailboxInput = {
+  where: Prisma.SubscriptionWhereUniqueInput
+  create: Prisma.XOR<Prisma.SubscriptionCreateWithoutMailboxInput, Prisma.SubscriptionUncheckedCreateWithoutMailboxInput>
+}
+
+export type SubscriptionCreateManyMailboxInputEnvelope = {
+  data: Prisma.SubscriptionCreateManyMailboxInput | Prisma.SubscriptionCreateManyMailboxInput[]
+  skipDuplicates?: boolean
+}
+
+export type SubscriptionUpsertWithWhereUniqueWithoutMailboxInput = {
+  where: Prisma.SubscriptionWhereUniqueInput
+  update: Prisma.XOR<Prisma.SubscriptionUpdateWithoutMailboxInput, Prisma.SubscriptionUncheckedUpdateWithoutMailboxInput>
+  create: Prisma.XOR<Prisma.SubscriptionCreateWithoutMailboxInput, Prisma.SubscriptionUncheckedCreateWithoutMailboxInput>
+}
+
+export type SubscriptionUpdateWithWhereUniqueWithoutMailboxInput = {
+  where: Prisma.SubscriptionWhereUniqueInput
+  data: Prisma.XOR<Prisma.SubscriptionUpdateWithoutMailboxInput, Prisma.SubscriptionUncheckedUpdateWithoutMailboxInput>
+}
+
+export type SubscriptionUpdateManyWithWhereWithoutMailboxInput = {
+  where: Prisma.SubscriptionScalarWhereInput
+  data: Prisma.XOR<Prisma.SubscriptionUpdateManyMutationInput, Prisma.SubscriptionUncheckedUpdateManyWithoutMailboxInput>
 }
 
 export type SubscriptionCreateManyProfileInput = {
@@ -875,6 +1153,8 @@ export type SubscriptionCreateManyProfileInput = {
   cancelled_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  mailing_location_id?: string | null
+  mailbox_id?: string | null
 }
 
 export type SubscriptionUpdateWithoutProfileInput = {
@@ -892,6 +1172,8 @@ export type SubscriptionUpdateWithoutProfileInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   package?: Prisma.PackageUpdateOneWithoutSubscriptionsNestedInput
   payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutSubscriptionNestedInput
+  mailing_location?: Prisma.MailingLocationUpdateOneWithoutSubscriptionsNestedInput
+  mailbox?: Prisma.MailboxUpdateOneWithoutSubscriptionsNestedInput
 }
 
 export type SubscriptionUncheckedUpdateWithoutProfileInput = {
@@ -908,6 +1190,8 @@ export type SubscriptionUncheckedUpdateWithoutProfileInput = {
   cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailing_location_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutSubscriptionNestedInput
 }
 
@@ -925,6 +1209,8 @@ export type SubscriptionUncheckedUpdateManyWithoutProfileInput = {
   cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailing_location_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SubscriptionCreateManyPackageInput = {
@@ -941,6 +1227,8 @@ export type SubscriptionCreateManyPackageInput = {
   cancelled_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  mailing_location_id?: string | null
+  mailbox_id?: string | null
 }
 
 export type SubscriptionUpdateWithoutPackageInput = {
@@ -958,6 +1246,8 @@ export type SubscriptionUpdateWithoutPackageInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.ProfileUpdateOneRequiredWithoutSubscriptionsNestedInput
   payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutSubscriptionNestedInput
+  mailing_location?: Prisma.MailingLocationUpdateOneWithoutSubscriptionsNestedInput
+  mailbox?: Prisma.MailboxUpdateOneWithoutSubscriptionsNestedInput
 }
 
 export type SubscriptionUncheckedUpdateWithoutPackageInput = {
@@ -974,6 +1264,8 @@ export type SubscriptionUncheckedUpdateWithoutPackageInput = {
   cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailing_location_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutSubscriptionNestedInput
 }
 
@@ -991,6 +1283,156 @@ export type SubscriptionUncheckedUpdateManyWithoutPackageInput = {
   cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailing_location_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type SubscriptionCreateManyMailing_locationInput = {
+  id?: string
+  profile_id: string
+  package_id?: string | null
+  plan_type: string
+  status?: $Enums.SubscriptionStatus
+  billing_cycle?: $Enums.BillingCycle
+  payment_method_id?: string | null
+  next_billing_date?: Date | string | null
+  last_payment_date?: Date | string | null
+  started_at?: Date | string
+  expires_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  mailbox_id?: string | null
+}
+
+export type SubscriptionUpdateWithoutMailing_locationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  plan_type?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  billing_cycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  payment_method_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  next_billing_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  last_payment_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  started_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expires_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.ProfileUpdateOneRequiredWithoutSubscriptionsNestedInput
+  package?: Prisma.PackageUpdateOneWithoutSubscriptionsNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutSubscriptionNestedInput
+  mailbox?: Prisma.MailboxUpdateOneWithoutSubscriptionsNestedInput
+}
+
+export type SubscriptionUncheckedUpdateWithoutMailing_locationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profile_id?: Prisma.StringFieldUpdateOperationsInput | string
+  package_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plan_type?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  billing_cycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  payment_method_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  next_billing_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  last_payment_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  started_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expires_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutSubscriptionNestedInput
+}
+
+export type SubscriptionUncheckedUpdateManyWithoutMailing_locationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profile_id?: Prisma.StringFieldUpdateOperationsInput | string
+  package_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plan_type?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  billing_cycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  payment_method_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  next_billing_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  last_payment_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  started_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expires_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type SubscriptionCreateManyMailboxInput = {
+  id?: string
+  profile_id: string
+  package_id?: string | null
+  plan_type: string
+  status?: $Enums.SubscriptionStatus
+  billing_cycle?: $Enums.BillingCycle
+  payment_method_id?: string | null
+  next_billing_date?: Date | string | null
+  last_payment_date?: Date | string | null
+  started_at?: Date | string
+  expires_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  mailing_location_id?: string | null
+}
+
+export type SubscriptionUpdateWithoutMailboxInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  plan_type?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  billing_cycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  payment_method_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  next_billing_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  last_payment_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  started_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expires_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.ProfileUpdateOneRequiredWithoutSubscriptionsNestedInput
+  package?: Prisma.PackageUpdateOneWithoutSubscriptionsNestedInput
+  payment_transactions?: Prisma.PaymentTransactionUpdateManyWithoutSubscriptionNestedInput
+  mailing_location?: Prisma.MailingLocationUpdateOneWithoutSubscriptionsNestedInput
+}
+
+export type SubscriptionUncheckedUpdateWithoutMailboxInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profile_id?: Prisma.StringFieldUpdateOperationsInput | string
+  package_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plan_type?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  billing_cycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  payment_method_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  next_billing_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  last_payment_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  started_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expires_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailing_location_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  payment_transactions?: Prisma.PaymentTransactionUncheckedUpdateManyWithoutSubscriptionNestedInput
+}
+
+export type SubscriptionUncheckedUpdateManyWithoutMailboxInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profile_id?: Prisma.StringFieldUpdateOperationsInput | string
+  package_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plan_type?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
+  billing_cycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  payment_method_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  next_billing_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  last_payment_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  started_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expires_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailing_location_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -1039,9 +1481,13 @@ export type SubscriptionSelect<ExtArgs extends runtime.Types.Extensions.Internal
   cancelled_at?: boolean
   created_at?: boolean
   updated_at?: boolean
+  mailing_location_id?: boolean
+  mailbox_id?: boolean
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   package?: boolean | Prisma.Subscription$packageArgs<ExtArgs>
   payment_transactions?: boolean | Prisma.Subscription$payment_transactionsArgs<ExtArgs>
+  mailing_location?: boolean | Prisma.Subscription$mailing_locationArgs<ExtArgs>
+  mailbox?: boolean | Prisma.Subscription$mailboxArgs<ExtArgs>
   _count?: boolean | Prisma.SubscriptionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["subscription"]>
 
@@ -1060,8 +1506,12 @@ export type SubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   cancelled_at?: boolean
   created_at?: boolean
   updated_at?: boolean
+  mailing_location_id?: boolean
+  mailbox_id?: boolean
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   package?: boolean | Prisma.Subscription$packageArgs<ExtArgs>
+  mailing_location?: boolean | Prisma.Subscription$mailing_locationArgs<ExtArgs>
+  mailbox?: boolean | Prisma.Subscription$mailboxArgs<ExtArgs>
 }, ExtArgs["result"]["subscription"]>
 
 export type SubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1079,8 +1529,12 @@ export type SubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   cancelled_at?: boolean
   created_at?: boolean
   updated_at?: boolean
+  mailing_location_id?: boolean
+  mailbox_id?: boolean
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   package?: boolean | Prisma.Subscription$packageArgs<ExtArgs>
+  mailing_location?: boolean | Prisma.Subscription$mailing_locationArgs<ExtArgs>
+  mailbox?: boolean | Prisma.Subscription$mailboxArgs<ExtArgs>
 }, ExtArgs["result"]["subscription"]>
 
 export type SubscriptionSelectScalar = {
@@ -1098,22 +1552,30 @@ export type SubscriptionSelectScalar = {
   cancelled_at?: boolean
   created_at?: boolean
   updated_at?: boolean
+  mailing_location_id?: boolean
+  mailbox_id?: boolean
 }
 
-export type SubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profile_id" | "package_id" | "plan_type" | "status" | "billing_cycle" | "payment_method_id" | "next_billing_date" | "last_payment_date" | "started_at" | "expires_at" | "cancelled_at" | "created_at" | "updated_at", ExtArgs["result"]["subscription"]>
+export type SubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profile_id" | "package_id" | "plan_type" | "status" | "billing_cycle" | "payment_method_id" | "next_billing_date" | "last_payment_date" | "started_at" | "expires_at" | "cancelled_at" | "created_at" | "updated_at" | "mailing_location_id" | "mailbox_id", ExtArgs["result"]["subscription"]>
 export type SubscriptionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   package?: boolean | Prisma.Subscription$packageArgs<ExtArgs>
   payment_transactions?: boolean | Prisma.Subscription$payment_transactionsArgs<ExtArgs>
+  mailing_location?: boolean | Prisma.Subscription$mailing_locationArgs<ExtArgs>
+  mailbox?: boolean | Prisma.Subscription$mailboxArgs<ExtArgs>
   _count?: boolean | Prisma.SubscriptionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SubscriptionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   package?: boolean | Prisma.Subscription$packageArgs<ExtArgs>
+  mailing_location?: boolean | Prisma.Subscription$mailing_locationArgs<ExtArgs>
+  mailbox?: boolean | Prisma.Subscription$mailboxArgs<ExtArgs>
 }
 export type SubscriptionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   package?: boolean | Prisma.Subscription$packageArgs<ExtArgs>
+  mailing_location?: boolean | Prisma.Subscription$mailing_locationArgs<ExtArgs>
+  mailbox?: boolean | Prisma.Subscription$mailboxArgs<ExtArgs>
 }
 
 export type $SubscriptionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1122,6 +1584,8 @@ export type $SubscriptionPayload<ExtArgs extends runtime.Types.Extensions.Intern
     profile: Prisma.$ProfilePayload<ExtArgs>
     package: Prisma.$PackagePayload<ExtArgs> | null
     payment_transactions: Prisma.$PaymentTransactionPayload<ExtArgs>[]
+    mailing_location: Prisma.$MailingLocationPayload<ExtArgs> | null
+    mailbox: Prisma.$MailboxPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1138,6 +1602,8 @@ export type $SubscriptionPayload<ExtArgs extends runtime.Types.Extensions.Intern
     cancelled_at: Date | null
     created_at: Date
     updated_at: Date
+    mailing_location_id: string | null
+    mailbox_id: string | null
   }, ExtArgs["result"]["subscription"]>
   composites: {}
 }
@@ -1535,6 +2001,8 @@ export interface Prisma__SubscriptionClient<T, Null = never, ExtArgs extends run
   profile<T extends Prisma.ProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   package<T extends Prisma.Subscription$packageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Subscription$packageArgs<ExtArgs>>): Prisma.Prisma__PackageClient<runtime.Types.Result.GetResult<Prisma.$PackagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   payment_transactions<T extends Prisma.Subscription$payment_transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Subscription$payment_transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  mailing_location<T extends Prisma.Subscription$mailing_locationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Subscription$mailing_locationArgs<ExtArgs>>): Prisma.Prisma__MailingLocationClient<runtime.Types.Result.GetResult<Prisma.$MailingLocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  mailbox<T extends Prisma.Subscription$mailboxArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Subscription$mailboxArgs<ExtArgs>>): Prisma.Prisma__MailboxClient<runtime.Types.Result.GetResult<Prisma.$MailboxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1578,6 +2046,8 @@ export interface SubscriptionFieldRefs {
   readonly cancelled_at: Prisma.FieldRef<"Subscription", 'DateTime'>
   readonly created_at: Prisma.FieldRef<"Subscription", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"Subscription", 'DateTime'>
+  readonly mailing_location_id: Prisma.FieldRef<"Subscription", 'String'>
+  readonly mailbox_id: Prisma.FieldRef<"Subscription", 'String'>
 }
     
 
@@ -2014,6 +2484,44 @@ export type Subscription$payment_transactionsArgs<ExtArgs extends runtime.Types.
   take?: number
   skip?: number
   distinct?: Prisma.PaymentTransactionScalarFieldEnum | Prisma.PaymentTransactionScalarFieldEnum[]
+}
+
+/**
+ * Subscription.mailing_location
+ */
+export type Subscription$mailing_locationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailingLocation
+   */
+  select?: Prisma.MailingLocationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailingLocation
+   */
+  omit?: Prisma.MailingLocationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailingLocationInclude<ExtArgs> | null
+  where?: Prisma.MailingLocationWhereInput
+}
+
+/**
+ * Subscription.mailbox
+ */
+export type Subscription$mailboxArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Mailbox
+   */
+  select?: Prisma.MailboxSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Mailbox
+   */
+  omit?: Prisma.MailboxOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailboxInclude<ExtArgs> | null
+  where?: Prisma.MailboxWhereInput
 }
 
 /**

@@ -180,3 +180,39 @@ export const getCurrentUserPlanType = cache(async (): Promise<string> => {
   const session = await verifySession();
   return await getUserPlanType(session.userId);
 });
+
+export const getUserMailboxDetails = cache(async (userId: string) => {
+  try {
+    // Find the active subscription that has a mailbox assigned
+    const subscription = await prisma.subscription.findFirst({
+      where: {
+        profile_id: userId,
+        status: SubscriptionStatus.ACTIVE,
+        mailbox_id: {not: null},
+      },
+      include: {
+        mailbox: {
+          include: {
+            cluster: {
+              include: {
+                mailing_location: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+    });
+
+    if (!subscription?.mailbox) {
+      return null;
+    }
+
+    return subscription.mailbox;
+  } catch (error) {
+    console.error("Error fetching user mailbox:", error);
+    return null;
+  }
+});

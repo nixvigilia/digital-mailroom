@@ -135,3 +135,20 @@ export const ActionStatus = {
 } as const
 
 export type ActionStatus = (typeof ActionStatus)[keyof typeof ActionStatus]
+
+
+export const MailboxType = {
+  STANDARD: 'STANDARD',
+  LARGE: 'LARGE',
+  PARCEL_LOCKER: 'PARCEL_LOCKER'
+} as const
+
+export type MailboxType = (typeof MailboxType)[keyof typeof MailboxType]
+
+
+export const DimensionUnit = {
+  CM: 'CM',
+  INCH: 'INCH'
+} as const
+
+export type DimensionUnit = (typeof DimensionUnit)[keyof typeof DimensionUnit]

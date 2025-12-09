@@ -62,6 +62,9 @@ export const ModelName = {
   PaymentTransaction: 'PaymentTransaction',
   MailItem: 'MailItem',
   MailActionRequest: 'MailActionRequest',
+  MailingLocation: 'MailingLocation',
+  MailboxCluster: 'MailboxCluster',
+  Mailbox: 'Mailbox',
   Referral: 'Referral',
   ReferralTransaction: 'ReferralTransaction'
 } as const
@@ -93,7 +96,12 @@ export const ProfileScalarFieldEnum = {
   user_type: 'user_type',
   role: 'role',
   password_hint: 'password_hint',
-  integration_email: 'integration_email'
+  integration_email: 'integration_email',
+  notify_new_mail: 'notify_new_mail',
+  notify_referrals: 'notify_referrals',
+  notify_marketing: 'notify_marketing',
+  default_forward_address: 'default_forward_address',
+  shredding_pin_hash: 'shredding_pin_hash'
 } as const
 
 export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
@@ -239,7 +247,9 @@ export const SubscriptionScalarFieldEnum = {
   expires_at: 'expires_at',
   cancelled_at: 'cancelled_at',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  mailing_location_id: 'mailing_location_id',
+  mailbox_id: 'mailbox_id'
 } as const
 
 export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
@@ -314,6 +324,53 @@ export const MailActionRequestScalarFieldEnum = {
 } as const
 
 export type MailActionRequestScalarFieldEnum = (typeof MailActionRequestScalarFieldEnum)[keyof typeof MailActionRequestScalarFieldEnum]
+
+
+export const MailingLocationScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  address: 'address',
+  city: 'city',
+  province: 'province',
+  postal_code: 'postal_code',
+  country: 'country',
+  image_url: 'image_url',
+  map_url: 'map_url',
+  is_active: 'is_active',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type MailingLocationScalarFieldEnum = (typeof MailingLocationScalarFieldEnum)[keyof typeof MailingLocationScalarFieldEnum]
+
+
+export const MailboxClusterScalarFieldEnum = {
+  id: 'id',
+  mailing_location_id: 'mailing_location_id',
+  name: 'name',
+  description: 'description',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type MailboxClusterScalarFieldEnum = (typeof MailboxClusterScalarFieldEnum)[keyof typeof MailboxClusterScalarFieldEnum]
+
+
+export const MailboxScalarFieldEnum = {
+  id: 'id',
+  cluster_id: 'cluster_id',
+  box_number: 'box_number',
+  type: 'type',
+  width: 'width',
+  height: 'height',
+  depth: 'depth',
+  dimension_unit: 'dimension_unit',
+  is_occupied: 'is_occupied',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type MailboxScalarFieldEnum = (typeof MailboxScalarFieldEnum)[keyof typeof MailboxScalarFieldEnum]
 
 
 export const ReferralScalarFieldEnum = {

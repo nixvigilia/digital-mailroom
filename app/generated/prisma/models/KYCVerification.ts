@@ -784,10 +784,6 @@ export type KYCVerificationUncheckedUpdateOneWithoutProfileNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.KYCVerificationUpdateToOneWithWhereWithoutProfileInput, Prisma.KYCVerificationUpdateWithoutProfileInput>, Prisma.KYCVerificationUncheckedUpdateWithoutProfileInput>
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type EnumKYCStatusFieldUpdateOperationsInput = {
   set?: $Enums.KYCStatus
 }

@@ -73,6 +73,21 @@ export type MailItem = Prisma.MailItemModel
  */
 export type MailActionRequest = Prisma.MailActionRequestModel
 /**
+ * Model MailingLocation
+ * 
+ */
+export type MailingLocation = Prisma.MailingLocationModel
+/**
+ * Model MailboxCluster
+ * 
+ */
+export type MailboxCluster = Prisma.MailboxClusterModel
+/**
+ * Model Mailbox
+ * 
+ */
+export type Mailbox = Prisma.MailboxModel
+/**
  * Model Referral
  * 
  */

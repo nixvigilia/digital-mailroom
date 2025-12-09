@@ -23,6 +23,7 @@ import {
   IconPhoto,
 } from "@tabler/icons-react";
 import {MailActions} from "@/components/mail/MailActions";
+import {PDFViewer} from "@/components/mail/PDFViewer";
 
 interface MailDetailClientProps {
   mailItem: {
@@ -37,6 +38,12 @@ interface MailDetailClientProps {
     tags: string[];
     category?: string;
     notes?: string;
+    defaultForwardAddress?: string | null;
+    hasShreddingPin?: boolean;
+    pendingScanRequest?: {
+      status: string;
+      requestedAt: Date;
+    } | null;
   };
   mailId: string;
 }
@@ -62,13 +69,8 @@ export function MailDetailClient({mailItem, mailId}: MailDetailClientProps) {
     const url =
       type === "envelope" ? mailItem.envelopeScanUrl : mailItem.fullScanUrl;
     if (url) {
-      // Create a temporary anchor element to trigger download
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${type}-scan-${mailId}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Open in a new tab
+      window.open(url, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -177,7 +179,13 @@ export function MailDetailClient({mailItem, mailId}: MailDetailClientProps) {
           </Card>
 
           {/* Physical Actions */}
-          <MailActions mailId={mailId} status={mailItem.status} />
+          <MailActions
+            mailId={mailId}
+            status={mailItem.status}
+            defaultForwardAddress={mailItem.defaultForwardAddress || ""}
+            hasShreddingPin={mailItem.hasShreddingPin || false}
+            pendingScanRequest={mailItem.pendingScanRequest}
+          />
         </Stack>
       </Tabs.Panel>
 
@@ -265,25 +273,11 @@ export function MailDetailClient({mailItem, mailId}: MailDetailClientProps) {
                 </Group>
                 <Divider />
                 {mailItem.fullScanUrl ? (
-                  <Box
-                    style={{
-                      borderRadius: "var(--mantine-radius-md)",
-                      overflow: "hidden",
-                      backgroundColor: "var(--mantine-color-gray-1)",
-                      height: 600,
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Image
-                      src={mailItem.fullScanUrl}
-                      alt="Full document scan"
-                      fit="contain"
-                      style={{maxHeight: "100%", maxWidth: "100%"}}
-                    />
-                  </Box>
+                  <PDFViewer
+                    url={mailItem.fullScanUrl}
+                    alt="Full document scan"
+                    height={600}
+                  />
                 ) : (
                   <Box
                     style={{

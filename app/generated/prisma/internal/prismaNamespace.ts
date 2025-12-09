@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.0.1
- * Query Engine version: f09f2815f091dbba658cdcd2264306d88bb5bda6
+ * Prisma Client JS version: 7.1.0
+ * Query Engine version: ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.0.1",
-  engine: "f09f2815f091dbba658cdcd2264306d88bb5bda6"
+  client: "7.1.0",
+  engine: "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba"
 }
 
 /**
@@ -395,6 +395,9 @@ export const ModelName = {
   PaymentTransaction: 'PaymentTransaction',
   MailItem: 'MailItem',
   MailActionRequest: 'MailActionRequest',
+  MailingLocation: 'MailingLocation',
+  MailboxCluster: 'MailboxCluster',
+  Mailbox: 'Mailbox',
   Referral: 'Referral',
   ReferralTransaction: 'ReferralTransaction'
 } as const
@@ -412,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "profile" | "backofficeProfile" | "activityLog" | "kYCVerification" | "businessAccount" | "teamMember" | "package" | "subscription" | "paymentTransaction" | "mailItem" | "mailActionRequest" | "referral" | "referralTransaction"
+    modelProps: "profile" | "backofficeProfile" | "activityLog" | "kYCVerification" | "businessAccount" | "teamMember" | "package" | "subscription" | "paymentTransaction" | "mailItem" | "mailActionRequest" | "mailingLocation" | "mailboxCluster" | "mailbox" | "referral" | "referralTransaction"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1230,6 +1233,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MailingLocation: {
+      payload: Prisma.$MailingLocationPayload<ExtArgs>
+      fields: Prisma.MailingLocationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MailingLocationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailingLocationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MailingLocationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailingLocationPayload>
+        }
+        findFirst: {
+          args: Prisma.MailingLocationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailingLocationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MailingLocationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailingLocationPayload>
+        }
+        findMany: {
+          args: Prisma.MailingLocationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailingLocationPayload>[]
+        }
+        create: {
+          args: Prisma.MailingLocationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailingLocationPayload>
+        }
+        createMany: {
+          args: Prisma.MailingLocationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MailingLocationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailingLocationPayload>[]
+        }
+        delete: {
+          args: Prisma.MailingLocationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailingLocationPayload>
+        }
+        update: {
+          args: Prisma.MailingLocationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailingLocationPayload>
+        }
+        deleteMany: {
+          args: Prisma.MailingLocationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MailingLocationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MailingLocationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailingLocationPayload>[]
+        }
+        upsert: {
+          args: Prisma.MailingLocationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailingLocationPayload>
+        }
+        aggregate: {
+          args: Prisma.MailingLocationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMailingLocation>
+        }
+        groupBy: {
+          args: Prisma.MailingLocationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailingLocationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MailingLocationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailingLocationCountAggregateOutputType> | number
+        }
+      }
+    }
+    MailboxCluster: {
+      payload: Prisma.$MailboxClusterPayload<ExtArgs>
+      fields: Prisma.MailboxClusterFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MailboxClusterFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxClusterPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MailboxClusterFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxClusterPayload>
+        }
+        findFirst: {
+          args: Prisma.MailboxClusterFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxClusterPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MailboxClusterFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxClusterPayload>
+        }
+        findMany: {
+          args: Prisma.MailboxClusterFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxClusterPayload>[]
+        }
+        create: {
+          args: Prisma.MailboxClusterCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxClusterPayload>
+        }
+        createMany: {
+          args: Prisma.MailboxClusterCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MailboxClusterCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxClusterPayload>[]
+        }
+        delete: {
+          args: Prisma.MailboxClusterDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxClusterPayload>
+        }
+        update: {
+          args: Prisma.MailboxClusterUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxClusterPayload>
+        }
+        deleteMany: {
+          args: Prisma.MailboxClusterDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MailboxClusterUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MailboxClusterUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxClusterPayload>[]
+        }
+        upsert: {
+          args: Prisma.MailboxClusterUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxClusterPayload>
+        }
+        aggregate: {
+          args: Prisma.MailboxClusterAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMailboxCluster>
+        }
+        groupBy: {
+          args: Prisma.MailboxClusterGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailboxClusterGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MailboxClusterCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailboxClusterCountAggregateOutputType> | number
+        }
+      }
+    }
+    Mailbox: {
+      payload: Prisma.$MailboxPayload<ExtArgs>
+      fields: Prisma.MailboxFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MailboxFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MailboxFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxPayload>
+        }
+        findFirst: {
+          args: Prisma.MailboxFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MailboxFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxPayload>
+        }
+        findMany: {
+          args: Prisma.MailboxFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxPayload>[]
+        }
+        create: {
+          args: Prisma.MailboxCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxPayload>
+        }
+        createMany: {
+          args: Prisma.MailboxCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MailboxCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxPayload>[]
+        }
+        delete: {
+          args: Prisma.MailboxDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxPayload>
+        }
+        update: {
+          args: Prisma.MailboxUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxPayload>
+        }
+        deleteMany: {
+          args: Prisma.MailboxDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MailboxUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MailboxUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxPayload>[]
+        }
+        upsert: {
+          args: Prisma.MailboxUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailboxPayload>
+        }
+        aggregate: {
+          args: Prisma.MailboxAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMailbox>
+        }
+        groupBy: {
+          args: Prisma.MailboxGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailboxGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MailboxCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailboxCountAggregateOutputType> | number
+        }
+      }
+    }
     Referral: {
       payload: Prisma.$ReferralPayload<ExtArgs>
       fields: Prisma.ReferralFieldRefs
@@ -1428,7 +1653,12 @@ export const ProfileScalarFieldEnum = {
   user_type: 'user_type',
   role: 'role',
   password_hint: 'password_hint',
-  integration_email: 'integration_email'
+  integration_email: 'integration_email',
+  notify_new_mail: 'notify_new_mail',
+  notify_referrals: 'notify_referrals',
+  notify_marketing: 'notify_marketing',
+  default_forward_address: 'default_forward_address',
+  shredding_pin_hash: 'shredding_pin_hash'
 } as const
 
 export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
@@ -1574,7 +1804,9 @@ export const SubscriptionScalarFieldEnum = {
   expires_at: 'expires_at',
   cancelled_at: 'cancelled_at',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  mailing_location_id: 'mailing_location_id',
+  mailbox_id: 'mailbox_id'
 } as const
 
 export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
@@ -1649,6 +1881,53 @@ export const MailActionRequestScalarFieldEnum = {
 } as const
 
 export type MailActionRequestScalarFieldEnum = (typeof MailActionRequestScalarFieldEnum)[keyof typeof MailActionRequestScalarFieldEnum]
+
+
+export const MailingLocationScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  address: 'address',
+  city: 'city',
+  province: 'province',
+  postal_code: 'postal_code',
+  country: 'country',
+  image_url: 'image_url',
+  map_url: 'map_url',
+  is_active: 'is_active',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type MailingLocationScalarFieldEnum = (typeof MailingLocationScalarFieldEnum)[keyof typeof MailingLocationScalarFieldEnum]
+
+
+export const MailboxClusterScalarFieldEnum = {
+  id: 'id',
+  mailing_location_id: 'mailing_location_id',
+  name: 'name',
+  description: 'description',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type MailboxClusterScalarFieldEnum = (typeof MailboxClusterScalarFieldEnum)[keyof typeof MailboxClusterScalarFieldEnum]
+
+
+export const MailboxScalarFieldEnum = {
+  id: 'id',
+  cluster_id: 'cluster_id',
+  box_number: 'box_number',
+  type: 'type',
+  width: 'width',
+  height: 'height',
+  depth: 'depth',
+  dimension_unit: 'dimension_unit',
+  is_occupied: 'is_occupied',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type MailboxScalarFieldEnum = (typeof MailboxScalarFieldEnum)[keyof typeof MailboxScalarFieldEnum]
 
 
 export const ReferralScalarFieldEnum = {
@@ -1782,6 +2061,13 @@ export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
 
 
 /**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
  * Reference to a field of type 'Json'
  */
 export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -1792,13 +2078,6 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  * Reference to a field of type 'QueryMode'
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
-    
-
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -1957,6 +2236,34 @@ export type ListEnumActionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
+ * Reference to a field of type 'MailboxType'
+ */
+export type EnumMailboxTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailboxType'>
+    
+
+
+/**
+ * Reference to a field of type 'MailboxType[]'
+ */
+export type ListEnumMailboxTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailboxType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DimensionUnit'
+ */
+export type EnumDimensionUnitFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DimensionUnit'>
+    
+
+
+/**
+ * Reference to a field of type 'DimensionUnit[]'
+ */
+export type ListEnumDimensionUnitFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DimensionUnit[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -2018,7 +2325,7 @@ export type PrismaClientOptions = ({
    *  { emit: 'stdout', level: 'error' }
    * 
    * ```
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/logging#the-log-option).
+   * Read more in our [docs](https://pris.ly/d/logging).
    */
   log?: (LogLevel | LogDefinition)[]
   /**
@@ -2046,6 +2353,22 @@ export type PrismaClientOptions = ({
    * ```
    */
   omit?: GlobalOmitConfig
+  /**
+   * SQL commenter plugins that add metadata to SQL queries as comments.
+   * Comments follow the sqlcommenter format: https://google.github.io/sqlcommenter/
+   * 
+   * @example
+   * ```
+   * const prisma = new PrismaClient({
+   *   adapter,
+   *   comments: [
+   *     traceContext(),
+   *     queryInsights(),
+   *   ],
+   * })
+   * ```
+   */
+  comments?: runtime.SqlCommenterPlugin[]
 }
 export type GlobalOmitConfig = {
   profile?: Prisma.ProfileOmit
@@ -2059,6 +2382,9 @@ export type GlobalOmitConfig = {
   paymentTransaction?: Prisma.PaymentTransactionOmit
   mailItem?: Prisma.MailItemOmit
   mailActionRequest?: Prisma.MailActionRequestOmit
+  mailingLocation?: Prisma.MailingLocationOmit
+  mailboxCluster?: Prisma.MailboxClusterOmit
+  mailbox?: Prisma.MailboxOmit
   referral?: Prisma.ReferralOmit
   referralTransaction?: Prisma.ReferralTransactionOmit
 }
