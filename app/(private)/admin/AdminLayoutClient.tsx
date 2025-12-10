@@ -17,6 +17,7 @@ import {
   IconLogout,
   IconHistory,
   IconArrowLeft,
+  IconPackage,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
@@ -88,6 +89,15 @@ export default function AdminLayoutClient({
             leftSection={<IconUsers size={20} />}
             active={pathname.startsWith("/admin/users")}
           />
+          {!isOperator && (
+            <NavLink
+              component={Link}
+              href="/admin/packages"
+              label="Packages"
+              leftSection={<IconPackage size={20} />}
+              active={pathname.startsWith("/admin/packages")}
+            />
+          )}
           <NavLink
             component={Link}
             href="/admin/logs"

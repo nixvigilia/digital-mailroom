@@ -85,7 +85,6 @@ export default function HomePage() {
         "~5,000 scanned pages",
         "Access via web app",
         "Standard quality scans",
-        "No parcel handling",
       ],
       cta: "I'm interested!",
       popular: false,

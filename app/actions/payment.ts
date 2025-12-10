@@ -2,7 +2,14 @@
 
 import {createClient} from "@/utils/supabase/server";
 import {prisma} from "@/utils/prisma";
+import {createCheckoutSession} from "@/lib/paymongo";
 import {createInvoice} from "@/lib/xendit";
+
+// Payment gateway selection - default to PayMongo
+// Set PAYMENT_GATEWAY=xendit to use Xendit instead
+const PAYMENT_GATEWAY = (
+  process.env.PAYMENT_GATEWAY || "paymongo"
+).toLowerCase();
 
 export type PaymentResult =
   | {success: true; invoiceUrl: string}
@@ -75,28 +82,83 @@ export async function createSubscriptionInvoice(
       profile.id
     }_${planType}_${billingCycle}_${Date.now()}`;
 
-    // Create invoice in Xendit
-    const invoice = await createInvoice({
-      external_id: externalId,
-      amount: amount,
-      payer_email: user.email,
-      description: description,
-      should_send_email: true,
-      success_redirect_url: `${
-        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-      }/app/billing?success=true`,
-      failure_redirect_url: `${
-        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-      }/app/pricing?error=true`,
-      items: [
-        {
-          name: `${pkg.name} Plan (${billingCycle})`,
-          quantity: 1,
-          price: amount,
-          category: "Subscription",
-        },
-      ],
+    // Get user's name from basic info (KYC) if available
+    const kycData = await prisma.kYCVerification.findUnique({
+      where: {profile_id: profile.id},
+      select: {first_name: true, last_name: true, phone_number: true},
     });
+
+    let invoiceUrl: string;
+    let paymentChannel: string;
+
+    // Use PayMongo as default, Xendit as fallback (hidden for now)
+    if (PAYMENT_GATEWAY === "xendit") {
+      // Xendit integration (kept for future use)
+      const invoice = await createInvoice({
+        external_id: externalId,
+        amount: amount,
+        payer_email: user.email,
+        description: description,
+        should_send_email: true,
+        success_redirect_url: `${
+          process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+        }/app/billing?success=true`,
+        failure_redirect_url: `${
+          process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+        }/app/pricing?error=true`,
+        items: [
+          {
+            name: `${pkg.name} Plan (${billingCycle})`,
+            quantity: 1,
+            price: amount,
+            category: "Subscription",
+          },
+        ],
+        customer: kycData
+          ? {
+              given_names: kycData.first_name,
+              surname: kycData.last_name,
+              email: user.email,
+              mobile_number: kycData.phone_number,
+            }
+          : undefined,
+      });
+      invoiceUrl = invoice.invoice_url;
+      paymentChannel = "XENDIT_INVOICE";
+    } else {
+      // PayMongo integration (default)
+      const checkoutSession = await createCheckoutSession({
+        external_id: externalId,
+        amount: amount,
+        payer_email: user.email,
+        description: description,
+        success_url: `${
+          process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+        }/app/billing?success=true`,
+        failure_url: `${
+          process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+        }/app/pricing?error=true`,
+        line_items: [
+          {
+            name: `${pkg.name} Plan (${billingCycle})`,
+            quantity: 1,
+            amount: amount,
+            currency: "PHP",
+          },
+        ],
+        billing: kycData
+          ? {
+              name: `${kycData.first_name} ${kycData.last_name}`,
+              email: user.email,
+              phone: kycData.phone_number,
+            }
+          : {
+              email: user.email,
+            },
+      });
+      invoiceUrl = checkoutSession.attributes.checkout_url;
+      paymentChannel = "PAYMONGO_CHECKOUT";
+    }
 
     // Create Payment Transaction History
     // @ts-ignore - Prisma client might be stale in editor
@@ -107,16 +169,16 @@ export async function createSubscriptionInvoice(
         currency: "PHP",
         status: "PENDING", // Using string literal
         external_id: externalId,
-        invoice_url: invoice.invoice_url,
+        invoice_url: invoiceUrl,
         description: description,
-        payment_channel: "XENDIT_INVOICE",
+        payment_channel: paymentChannel,
         metadata: mailingLocationId
           ? {mailing_location_id: mailingLocationId}
           : undefined,
       },
     });
 
-    return {success: true, invoiceUrl: invoice.invoice_url};
+    return {success: true, invoiceUrl};
   } catch (error) {
     console.error("Error creating subscription invoice:", error);
     return {success: false, message: "Failed to create invoice"};

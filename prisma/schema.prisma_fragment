@@ -1,0 +1,10 @@
+model AllowedIP {
+  id          String   @id @default(uuid()) @db.Uuid
+  ip_address  String   @unique
+  description String?
+  created_at  DateTime @default(now())
+  created_by  String?  @db.Uuid // Optional reference to the admin who added it
+
+  @@map("allowed_ip")
+}
+

@@ -17,6 +17,14 @@ export type ActivityLogAction =
   | "KYC_SUBMIT"
   | "KYC_REVIEW"
   | "MAIL_ACTION"
+  | "PAYMENT_RECEIVED"
+  | "PAYMENT_FAILED"
+  | "PAYMENT_EXPIRED"
+  | "SUBSCRIPTION_CREATED"
+  | "SUBSCRIPTION_UPDATED"
+  | "SUBSCRIPTION_RENEWED"
+  | "MAILBOX_ASSIGNED"
+  | "REFERRAL_COMMISSION"
   | "OTHER";
 
 export type ActivityLogData = {
@@ -55,7 +63,14 @@ export async function logActivity(
         // We'll leave them null for now or handle them if we pass request context
       },
     });
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === "P2003") {
+      // P2003: Foreign key constraint violated
+      console.warn(
+        `Skipping activity log: Profile not found for user ${userId}. This is expected if the user was just deleted or not fully created.`
+      );
+      return;
+    }
     console.error("Failed to log activity:", error);
     // Don't throw, logging failure shouldn't block the main action
   }
@@ -157,15 +172,15 @@ export async function getActivityLogs(
       }
 
       return {
-      id: log.id,
-      profileId: log.profile_id,
-      action: log.action,
-      entityType: log.entity_type,
-      entityId: log.entity_id,
-      details: log.details,
-      ipAddress: log.ip_address,
-      createdAt: log.created_at,
-      userEmail: log.profile.email,
+        id: log.id,
+        profileId: log.profile_id,
+        action: log.action,
+        entityType: log.entity_type,
+        entityId: log.entity_id,
+        details: log.details,
+        ipAddress: log.ip_address,
+        createdAt: log.created_at,
+        userEmail: log.profile.email,
         userName: userName,
       };
     });

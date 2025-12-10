@@ -1,10 +1,10 @@
 "use client";
 
-import {Box, Drawer, Burger, Group, ActionIcon, Tooltip} from "@mantine/core";
+import {Box, Drawer} from "@mantine/core";
 import {useDisclosure} from "@mantine/hooks";
-import {useMantineColorScheme} from "@mantine/core";
-import {IconSun, IconMoon} from "@tabler/icons-react";
 import {NavbarSearch} from "@/components/user/NavbarSearch";
+import {UserMobileNav} from "@/components/user/UserMobileNav";
+import {MobileAccountMenu} from "@/components/user/MobileAccountMenu";
 
 interface UserLayoutClientProps {
   children: React.ReactNode;
@@ -20,7 +20,6 @@ export function UserLayoutClient({
   kycStatus,
 }: UserLayoutClientProps) {
   const [opened, {toggle, close}] = useDisclosure(false);
-  const {colorScheme, toggleColorScheme} = useMantineColorScheme();
 
   return (
     <Box style={{display: "flex", minHeight: "100vh"}}>
@@ -33,48 +32,41 @@ export function UserLayoutClient({
       <Box
         style={{flex: 1, minWidth: 0, display: "flex", flexDirection: "column"}}
       >
-        {/* Mobile Burger Menu and Dark Mode Toggle */}
-        <Group justify="space-between" p="md" hiddenFrom="md">
-          <Tooltip label="Toggle color scheme (Ctrl+J)" withArrow>
-            <ActionIcon
-              variant="default"
-              size="lg"
-              onClick={() => toggleColorScheme()}
-              aria-label="Toggle color scheme"
-            >
-              {colorScheme === "dark" ? (
-                <IconSun size={18} />
-              ) : (
-                <IconMoon size={18} />
-              )}
-            </ActionIcon>
-          </Tooltip>
-          <Burger opened={opened} onClick={toggle} size="sm" />
-        </Group>
-
-        {/* Mobile Drawer */}
+        {/* Mobile Drawer - Account Settings */}
         <Drawer
           opened={opened}
           onClose={close}
-          title="Navigation"
+          title="Account"
           hiddenFrom="md"
           size="300px"
           styles={{body: {padding: 0}}}
+          zIndex={300}
         >
-          <NavbarSearch planType={planType} user={user} kycStatus={kycStatus} />
+          <MobileAccountMenu
+            planType={planType}
+            user={user}
+            kycStatus={kycStatus}
+            onClose={close}
+          />
         </Drawer>
 
         {/* Page Content */}
         <Box
+          p="xl"
+          pb={{base: 100, md: "xl"}}
           style={{
             flex: 1,
-            padding: "var(--mantine-spacing-xl)",
             width: "100%",
             maxWidth: "100%",
             minWidth: 0,
           }}
         >
           {children}
+        </Box>
+
+        {/* Mobile Bottom Navigation */}
+        <Box hiddenFrom="md">
+          <UserMobileNav planType={planType} onOpenMenu={toggle} />
         </Box>
       </Box>
     </Box>

@@ -214,3 +214,83 @@ export async function submitKYC(formData: FormData): Promise<ActionResult> {
     };
   }
 }
+
+/**
+ * Saves basic information (name and phone) for payment gateway purposes
+ * This is a simplified version that saves initial data before full KYC
+ */
+export async function saveBasicInfo(
+  firstName: string,
+  lastName: string,
+  phoneNumber: string
+): Promise<ActionResult> {
+  const session = await verifySession();
+  const userId = session.userId;
+
+  try {
+    // Validate required fields
+    if (!firstName || !lastName || !phoneNumber) {
+      return {
+        success: false,
+        message: "Please fill in all required fields (name and phone).",
+      };
+    }
+
+    // Ensure profile exists
+    await prisma.profile.upsert({
+      where: {id: userId},
+      update: {},
+      create: {
+        id: userId,
+        email: session.user.email || "",
+        user_type: "INDIVIDUAL",
+        role: "USER",
+      },
+    });
+
+    // Create or update KYC verification with basic info only
+    // Using placeholder values for required fields that aren't collected yet
+    await prisma.kYCVerification.upsert({
+      where: {profile_id: userId},
+      update: {
+        first_name: firstName,
+        last_name: lastName,
+        phone_number: phoneNumber,
+        // Keep existing values for other fields if they exist, otherwise use placeholders
+        date_of_birth: new Date("1900-01-01"), // Placeholder date
+        address: "Not provided",
+        city: "Not provided",
+        province: "Not provided",
+        postal_code: "0000",
+        country: "Philippines",
+        id_type: "Not provided",
+        status: "NOT_STARTED", // Mark as not started since it's incomplete
+      },
+      create: {
+        profile_id: userId,
+        first_name: firstName,
+        last_name: lastName,
+        phone_number: phoneNumber,
+        date_of_birth: new Date("1900-01-01"), // Placeholder date
+        address: "Not provided",
+        city: "Not provided",
+        province: "Not provided",
+        postal_code: "0000",
+        country: "Philippines",
+        id_type: "Not provided",
+        status: "NOT_STARTED",
+      },
+    });
+
+    return {
+      success: true,
+      message: "Basic information saved successfully.",
+    };
+  } catch (error) {
+    console.error("Error saving basic info:", error);
+    return {
+      success: false,
+      message: "Failed to save basic information. Please try again.",
+    };
+  }
+}

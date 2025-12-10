@@ -22,6 +22,22 @@ async function createAdminUser() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+  // User's specific IP from Env
+  const mainIp = process.env.MAIN_IP_ADDRESS;
+  if (mainIp) {
+    await prisma.allowedIP.upsert({
+      where: {ip_address: mainIp},
+      update: {},
+      create: {
+        ip_address: mainIp,
+        description: "Main Admin IP",
+      },
+    });
+    console.log(`Seeded allowed IP: ${mainIp}`);
+  }
+
+  console.log("Seeded allowed IPs");
+
   if (!supabaseUrl || !supabaseServiceKey) {
     console.warn(
       "Supabase credentials not found, skipping admin auth creation"
@@ -76,6 +92,21 @@ async function createAdminUser() {
           role: "SYSTEM_ADMIN",
           user_type: "ADMIN",
           password_hint: "Default admin password",
+          kyc_verification: {
+            create: {
+              first_name: "System",
+              last_name: "Admin",
+              status: "APPROVED",
+              date_of_birth: new Date(),
+              phone_number: "N/A",
+              address: "HQ",
+              city: "HQ",
+              province: "HQ",
+              postal_code: "0000",
+              country: "Philippines",
+              id_type: "INTERNAL",
+            },
+          },
         },
       });
     }
@@ -84,31 +115,48 @@ async function createAdminUser() {
 
   if (authUser.user) {
     // 2. Create Database Profile
-    await prisma.profile.create({
-      data: {
-        id: authUser.user.id,
-        email: adminEmail,
-        role: "SYSTEM_ADMIN",
-        user_type: "ADMIN",
-        password_hint: "Default admin password",
-        kyc_verification: {
-          create: {
-            first_name: "System",
-            last_name: "Admin",
-            status: "APPROVED",
-            date_of_birth: new Date(),
-            phone_number: "N/A",
-            address: "HQ",
-            city: "HQ",
-            province: "HQ",
-            postal_code: "0000",
-            country: "Philippines",
-            id_type: "INTERNAL",
+    // Check if profile exists first to avoid unique constraint error
+    const existingProfile = await prisma.profile.findUnique({
+      where: {id: authUser.user.id},
+    });
+
+    if (existingProfile) {
+      console.log("Admin profile already exists, updating...");
+      await prisma.profile.update({
+        where: {id: authUser.user.id},
+        data: {
+          role: "SYSTEM_ADMIN",
+          user_type: "ADMIN",
+          password_hint: "Default admin password",
+        },
+      });
+    } else {
+      await prisma.profile.create({
+        data: {
+          id: authUser.user.id,
+          email: adminEmail,
+          role: "SYSTEM_ADMIN",
+          user_type: "ADMIN",
+          password_hint: "Default admin password",
+          kyc_verification: {
+            create: {
+              first_name: "System",
+              last_name: "Admin",
+              status: "APPROVED",
+              date_of_birth: new Date(),
+              phone_number: "N/A",
+              address: "HQ",
+              city: "HQ",
+              province: "HQ",
+              postal_code: "0000",
+              country: "Philippines",
+              id_type: "INTERNAL",
+            },
           },
         },
-      },
-    });
-    console.log("Admin user created successfully");
+      });
+    }
+    console.log("Admin user created/updated successfully");
   }
 }
 
@@ -207,6 +255,9 @@ async function createLocationsAndMailboxes() {
         // Parcel Locker: 12" W x 15" H x 15" D
         // Ratio: 1 parcel locker per 5 mail compartments
 
+        // Extract cluster letter from cluster name (e.g., "Cluster A" -> "A")
+        const clusterLetter = clusterName.replace("Cluster ", "").trim();
+
         const mailboxConfigs = [
           // 15 Standard + 5 Large = 20 Mail Compartments
           // We need 20 / 5 = 4 Parcel Lockers
@@ -233,13 +284,13 @@ async function createLocationsAndMailboxes() {
           },
         ];
 
+        // Sequential numbering across all mailbox types within a cluster
+        let boxCounter = 1;
+
         for (const config of mailboxConfigs) {
           for (let i = 1; i <= config.count; i++) {
-            // Box number format: [Cluster]-[Type]-[Num] -> A-S-001
-            // Or simply 1, 2, 3... unique within cluster
-            const boxNumber = `${config.type.substring(0, 1)}-${i
-              .toString()
-              .padStart(3, "0")}`;
+            // Box number format: [Cluster]-[Num] -> A-1, A-2, A-3 (no zero padding)
+            const boxNumber = `${clusterLetter}-${boxCounter}`;
 
             await prisma.mailbox.upsert({
               where: {
@@ -265,6 +316,8 @@ async function createLocationsAndMailboxes() {
                 dimension_unit: "INCH",
               },
             });
+
+            boxCounter++;
           }
         }
         console.log(`Seeded mailboxes for ${loc.name} - ${clusterName}`);
@@ -277,121 +330,114 @@ async function main() {
   console.log("Starting seed...");
   await createLocationsAndMailboxes();
 
-  // Check if plans exist
-  const existingPlansCount = await prisma.package.count();
+  // Update or Create Plans
+  const plans = [
+    {
+      name: "Free",
+      plan_type: "FREE",
+      intended_for: "Perfect for affiliates",
+      description: "Perfect for affiliates",
+      price_monthly: 0.0,
+      price_quarterly: null,
+      price_yearly: null,
+      features: [
+        "Earn while you refer",
+        "Affiliate link access",
+        "Track your referrals",
+        "No mail services",
+      ],
+      not_included: ["No mail services"],
+      max_scanned_pages: 0,
+      retention_days: 0,
+      digital_storage_mb: 0,
+      max_team_members: null,
+      is_active: true,
+      is_featured: false,
+      display_order: 0,
+      cashback_percentage: 5.0,
+    },
+    {
+      name: "Digital",
+      plan_type: "BASIC",
+      intended_for: "For personal use only",
+      description: "For individuals who just need their mail digitized",
+      price_monthly: 299.0,
+      price_quarterly: 850.0, // ~5% discount
+      price_yearly: 3200.0, // ~11% discount
+      features: [
+        "Mail scanning & digitization",
+        "Access via web app",
+        "Standard quality scans",
+      ],
+      not_included: ["No parcel handling"],
+      max_scanned_pages: 5000,
+      retention_days: 7,
+      digital_storage_mb: 5120, // 5GB
+      max_team_members: null,
+      is_active: true,
+      is_featured: false,
+      display_order: 1,
+      cashback_percentage: 5.0,
+    },
+    {
+      name: "Personal",
+      plan_type: "PREMIUM",
+      intended_for: "For personal use only",
+      description: "Complete mail management solution",
+      price_monthly: 499.0,
+      price_quarterly: 1420.0, // ~5% discount
+      price_yearly: 5300.0, // ~11% discount
+      features: [
+        "Everything in Digital",
+        "Parcel handling",
+        "High quality scans",
+        "Starter kit included",
+      ],
+      not_included: [],
+      max_scanned_pages: 20000,
+      retention_days: 90,
+      digital_storage_mb: 20480, // 20GB
+      max_team_members: null,
+      is_active: true,
+      is_featured: true,
+      display_order: 2,
+      cashback_percentage: 5.0,
+    },
+    {
+      name: "Business",
+      plan_type: "BUSINESS",
+      intended_for: "For business use",
+      description: "Professional virtual office solution",
+      price_monthly: 2999.0,
+      price_quarterly: 8500.0, // ~5% discount
+      price_yearly: 32000.0, // ~11% discount
+      features: [
+        "Everything in Personal",
+        "Virtual office address",
+        "Business registration use",
+        "Professional business address",
+        "Team collaboration",
+      ],
+      not_included: [],
+      max_scanned_pages: 200000,
+      retention_days: 365,
+      digital_storage_mb: 204800, // 200GB
+      max_team_members: 10,
+      is_active: true,
+      is_featured: false,
+      display_order: 3,
+      cashback_percentage: 5.0,
+    },
+  ];
 
-  if (existingPlansCount === 0) {
-    const plans = [
-      {
-        name: "Free",
-        plan_type: "FREE",
-        intended_for: "Perfect for affiliates",
-        description: "Perfect for affiliates",
-        price_monthly: 0.0,
-        price_quarterly: null,
-        price_yearly: null,
-        features: [
-          "Earn while you refer",
-          "Affiliate link access",
-          "5% cash back per subscriber",
-          "Track your referrals",
-          "No mail services",
-          "Perfect for affiliates",
-        ],
-        not_included: ["No mail services"],
-        max_mail_items: 0,
-        max_team_members: null,
-        is_active: true,
-        is_featured: false,
-        display_order: 0,
-        cashback_percentage: 5.0,
-      },
-      {
-        name: "Digital",
-        plan_type: "BASIC",
-        intended_for: "For personal use only",
-        description: "For individuals who just need their mail digitized",
-        price_monthly: 299.0,
-        price_quarterly: 850.0, // ~5% discount
-        price_yearly: 3200.0, // ~11% discount
-        features: [
-          "Mail scanning & digitization",
-          "5GB digital storage",
-          "7-day physical retention",
-          "~5,000 scanned pages",
-          "Access via web app",
-          "Standard quality scans",
-          "No parcel handling",
-        ],
-        not_included: ["No parcel handling"],
-        max_mail_items: 50,
-        max_team_members: null,
-        is_active: true,
-        is_featured: false,
-        display_order: 1,
-        cashback_percentage: 5.0,
-      },
-      {
-        name: "Personal",
-        plan_type: "PREMIUM",
-        intended_for: "For personal use only",
-        description: "Complete mail management solution",
-        price_monthly: 499.0,
-        price_quarterly: 1420.0, // ~5% discount
-        price_yearly: 5300.0, // ~11% discount
-        features: [
-          "Everything in Digital",
-          "20GB digital storage",
-          "Parcel handling",
-          "~20,000 scanned pages",
-          "90-day physical retention",
-          "High quality scans",
-          "Starter kit included",
-        ],
-        not_included: [],
-        max_mail_items: 200,
-        max_team_members: null,
-        is_active: true,
-        is_featured: true,
-        display_order: 2,
-        cashback_percentage: 5.0,
-      },
-      {
-        name: "Business",
-        plan_type: "BUSINESS",
-        intended_for: "For business use",
-        description: "Professional virtual office solution",
-        price_monthly: 2999.0,
-        price_quarterly: 8500.0, // ~5% discount
-        price_yearly: 32000.0, // ~11% discount
-        features: [
-          "Everything in Personal",
-          "200GB digital storage",
-          "Virtual office address",
-          "~200,000 scanned pages",
-          "365-day physical retention",
-          "Business registration use",
-          "Professional business address",
-          "Team collaboration",
-        ],
-        not_included: [],
-        max_mail_items: 2000,
-        max_team_members: 10,
-        is_active: true,
-        is_featured: false,
-        display_order: 3,
-        cashback_percentage: 5.0,
-      },
-    ];
-
-    for (const plan of plans) {
-      const created = await prisma.package.create({
-        data: plan,
-      });
-      console.log(`Created ${plan.name} plan:`, created.id);
-    }
-  } else {
-    console.log("Plans already exist, skipping creation.");
+  for (const plan of plans) {
+    // Upsert instead of create only if it doesn't exist
+    await prisma.package.upsert({
+      where: {plan_type: plan.plan_type},
+      update: plan,
+      create: plan,
+    });
+    console.log(`Upserted ${plan.name} plan`);
   }
 
   await createAdminUser();

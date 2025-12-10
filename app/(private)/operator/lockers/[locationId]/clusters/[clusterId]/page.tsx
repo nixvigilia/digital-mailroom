@@ -15,6 +15,9 @@ import {
   NumberInput,
   Select,
   Badge,
+  Switch,
+  Divider,
+  Alert,
 } from "@mantine/core";
 import {IconPlus, IconEdit, IconTrash, IconBox} from "@tabler/icons-react";
 import Link from "next/link";
@@ -23,6 +26,7 @@ import {useEffect, useState} from "react";
 import {
   getMailboxes,
   createMailbox,
+  createMailboxesBatch,
   updateMailbox,
   deleteMailbox,
 } from "@/app/actions/operator-lockers";
@@ -39,10 +43,14 @@ export default function MailboxesPage() {
   const [loading, setLoading] = useState(true);
   const [opened, {open, close}] = useDisclosure(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [batchMode, setBatchMode] = useState(false);
 
   const form = useForm({
     initialValues: {
       box_number: "",
+      prefix: "A",
+      start_number: 1,
+      count: 1,
       type: "STANDARD",
       width: 12,
       height: 3,
@@ -50,8 +58,16 @@ export default function MailboxesPage() {
       dimension_unit: "INCH",
     },
     validate: {
-      box_number: (value) =>
-        value.length < 1 ? "Box number is required" : null,
+      box_number: (value, values) =>
+        !batchMode && value.length < 1 ? "Box number is required" : null,
+      prefix: (value, values) =>
+        batchMode && value.length < 1 ? "Prefix is required" : null,
+      start_number: (value, values) =>
+        batchMode && value <= 0 ? "Start number must be positive" : null,
+      count: (value, values) =>
+        batchMode && (value <= 0 || value > 100)
+          ? "Count must be between 1 and 100"
+          : null,
       width: (value) => (value <= 0 ? "Width must be positive" : null),
       height: (value) => (value <= 0 ? "Height must be positive" : null),
       depth: (value) => (value <= 0 ? "Depth must be positive" : null),
@@ -73,28 +89,56 @@ export default function MailboxesPage() {
 
   const handleSubmit = async (values: typeof form.values) => {
     let res;
-    const payload = {
-      ...values,
-      cluster_id: clusterId,
-      // Convert strings to numbers if necessary (NumberInput usually handles this but good to be safe)
-      width: Number(values.width),
-      height: Number(values.height),
-      depth: Number(values.depth),
-    };
 
     if (editingId) {
+      // Edit mode - single mailbox only
+      const payload = {
+        ...values,
+        cluster_id: clusterId,
+        width: Number(values.width),
+        height: Number(values.height),
+        depth: Number(values.depth),
+      };
       res = await updateMailbox(editingId, payload as any);
+    } else if (batchMode) {
+      // Batch creation mode
+      const payload = {
+        cluster_id: clusterId,
+        prefix: values.prefix,
+        start_number: Number(values.start_number),
+        count: Number(values.count),
+        type: values.type,
+        width: Number(values.width),
+        height: Number(values.height),
+        depth: Number(values.depth),
+        dimension_unit: values.dimension_unit,
+      };
+      res = await createMailboxesBatch(payload);
     } else {
+      // Single creation mode
+      const payload = {
+        ...values,
+        cluster_id: clusterId,
+        width: Number(values.width),
+        height: Number(values.height),
+        depth: Number(values.depth),
+      };
       res = await createMailbox(payload as any);
     }
 
     if (res.success) {
       notifications.show({
         title: "Success",
-        message: `Mailbox ${editingId ? "updated" : "created"} successfully`,
+        message:
+          editingId
+            ? "Mailbox updated successfully"
+            : batchMode
+            ? res.message || `Successfully created ${values.count} mailboxes`
+            : "Mailbox created successfully",
         color: "green",
       });
       close();
+      setBatchMode(false);
       fetchMailboxes();
     } else {
       notifications.show({
@@ -120,6 +164,7 @@ export default function MailboxesPage() {
 
   const handleCreate = () => {
     setEditingId(null);
+    setBatchMode(false);
     form.reset();
     open();
   };
@@ -244,18 +289,79 @@ export default function MailboxesPage() {
 
       <Modal
         opened={opened}
-        onClose={close}
+        onClose={() => {
+          close();
+          setBatchMode(false);
+        }}
         title={editingId ? "Edit Mailbox" : "New Mailbox"}
         size="lg"
       >
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
-            <TextInput
-              label="Box Number"
-              placeholder="A-001"
-              required
-              {...form.getInputProps("box_number")}
-            />
+            {!editingId && (
+              <>
+                <Switch
+                  label="Create Multiple Mailboxes"
+                  description="Enable to create multiple mailboxes with sequential numbering"
+                  checked={batchMode}
+                  onChange={(e) => {
+                    setBatchMode(e.currentTarget.checked);
+                    if (e.currentTarget.checked) {
+                      form.setFieldValue("box_number", "");
+                    } else {
+                      form.setFieldValue("prefix", "A");
+                      form.setFieldValue("start_number", 1);
+                      form.setFieldValue("count", 1);
+                    }
+                  }}
+                />
+                <Divider />
+              </>
+            )}
+
+            {batchMode && !editingId ? (
+              <>
+                <Alert color="blue" title="Batch Creation Mode">
+                  Mailboxes will be created with sequential numbers:{" "}
+                  {form.values.prefix}-{form.values.start_number},{" "}
+                  {form.values.prefix}-{form.values.start_number + 1}, etc.
+                </Alert>
+                <Group grow>
+                  <TextInput
+                    label="Prefix"
+                    placeholder="A"
+                    required
+                    description="Letter or text prefix (e.g., 'A' for A-1, A-2, etc.)"
+                    {...form.getInputProps("prefix")}
+                  />
+                  <NumberInput
+                    label="Start Number"
+                    placeholder="1"
+                    min={1}
+                    required
+                    description="Starting number"
+                    {...form.getInputProps("start_number")}
+                  />
+                  <NumberInput
+                    label="Count"
+                    placeholder="10"
+                    min={1}
+                    max={100}
+                    required
+                    description="Number of mailboxes to create"
+                    {...form.getInputProps("count")}
+                  />
+                </Group>
+              </>
+            ) : (
+              <TextInput
+                label="Box Number"
+                placeholder="A-001"
+                required={!batchMode}
+                disabled={batchMode}
+                {...form.getInputProps("box_number")}
+              />
+            )}
 
             <Select
               label="Type"

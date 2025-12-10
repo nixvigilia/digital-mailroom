@@ -97,3 +97,8 @@ export type Referral = Prisma.ReferralModel
  * 
  */
 export type ReferralTransaction = Prisma.ReferralTransactionModel
+/**
+ * Model AllowedIP
+ * 
+ */
+export type AllowedIP = Prisma.AllowedIPModel

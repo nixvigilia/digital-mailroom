@@ -210,9 +210,77 @@ export const getUserMailboxDetails = cache(async (userId: string) => {
       return null;
     }
 
-    return subscription.mailbox;
+    // Convert Decimal fields to numbers for client component compatibility
+    const mailbox = subscription.mailbox;
+    return {
+      ...mailbox,
+      width: Number(mailbox.width),
+      height: Number(mailbox.height),
+      depth: Number(mailbox.depth),
+    };
   } catch (error) {
     console.error("Error fetching user mailbox:", error);
     return null;
+  }
+});
+
+/**
+ * Get all active subscriptions with assigned mailboxes for a user
+ * Returns an array of subscriptions with their mailbox and location details
+ */
+export const getUserAllMailboxes = cache(async (userId: string) => {
+  try {
+    const subscriptions = await prisma.subscription.findMany({
+      where: {
+        profile_id: userId,
+        status: SubscriptionStatus.ACTIVE,
+        mailbox_id: {not: null},
+      },
+      include: {
+        mailbox: {
+          include: {
+            cluster: {
+              include: {
+                mailing_location: true,
+              },
+            },
+          },
+        },
+        package: {
+          select: {
+            name: true,
+            plan_type: true,
+          },
+        },
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+    });
+
+    // Convert Decimal fields to numbers and format the data
+    return subscriptions
+      .filter((sub) => sub.mailbox !== null)
+      .map((sub) => ({
+        subscriptionId: sub.id,
+        planType: sub.plan_type,
+        planName: sub.package?.name || sub.plan_type,
+        billingCycle: sub.billing_cycle,
+        mailbox: {
+          ...sub.mailbox!,
+          width: Number(sub.mailbox!.width),
+          height: Number(sub.mailbox!.height),
+          depth: Number(sub.mailbox!.depth),
+        },
+        location: sub.mailbox!.cluster.mailing_location,
+        cluster: {
+          id: sub.mailbox!.cluster.id,
+          name: sub.mailbox!.cluster.name,
+          description: sub.mailbox!.cluster.description,
+        },
+      }));
+  } catch (error) {
+    console.error("Error fetching user mailboxes:", error);
+    return [];
   }
 });

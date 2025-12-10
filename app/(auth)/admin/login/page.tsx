@@ -25,8 +25,6 @@ import {
   IconMail,
   IconShieldLock,
 } from "@tabler/icons-react";
-import {Header} from "@/components/header";
-import {Footer} from "@/components/footer";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -65,7 +63,6 @@ export default function AdminLoginPage() {
         flexDirection: "column",
       }}
     >
-      <Header />
       <Box
         style={{
           flex: 1,
@@ -162,7 +159,6 @@ export default function AdminLoginPage() {
           </Stack>
         </Container>
       </Box>
-      <Footer />
     </Box>
   );
 }

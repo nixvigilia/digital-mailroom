@@ -24,6 +24,7 @@ import {
   IconArrowRight,
   IconGift,
   IconAlertCircle,
+  IconBox,
 } from "@tabler/icons-react";
 import {ReferralLinkCard} from "@/components/free/ReferralLinkCard";
 import {ReferralStatsCard} from "@/components/free/ReferralStatsCard";
@@ -60,6 +61,63 @@ interface UserDashboardClientProps {
     intended_for: string | null;
     cashback_percentage: number;
   } | null>;
+  mailboxDetails?: {
+    id: string;
+    cluster_id: string;
+    box_number: string;
+    type: string;
+    width: number;
+    height: number;
+    depth: number;
+    dimension_unit: string;
+    is_occupied: boolean;
+    created_at: Date;
+    updated_at: Date;
+    cluster: {
+      id: string;
+      mailing_location_id: string;
+      name: string;
+      description: string | null;
+      mailing_location: {
+        id: string;
+        name: string;
+        address: string;
+        city: string;
+        province: string;
+      };
+    };
+  } | null;
+  allMailboxes?: Array<{
+    subscriptionId: string;
+    planType: string;
+    planName: string;
+    billingCycle: string;
+    mailbox: {
+      id: string;
+      box_number: string;
+      type: string;
+      width: number;
+      height: number;
+      depth: number;
+      dimension_unit: string;
+      is_occupied: boolean;
+    };
+    location: {
+      id: string;
+      name: string;
+      address: string;
+      city: string;
+      province: string;
+      postal_code: string;
+      country: string;
+      map_url: string | null;
+    };
+    cluster: {
+      id: string;
+      name: string;
+      description: string | null;
+    };
+  }>;
 }
 
 export function UserDashboardClient({
@@ -68,6 +126,8 @@ export function UserDashboardClient({
   rejectionReason,
   referralDataPromise,
   freePlanDataPromise,
+  mailboxDetails,
+  allMailboxes = [],
 }: UserDashboardClientProps) {
   const referralData = use(referralDataPromise);
   const freePlanData = use(freePlanDataPromise);
@@ -281,7 +341,72 @@ export function UserDashboardClient({
               </Button>
             </Stack>
           </Card>
+          {allMailboxes.length > 0 && (
+            <Card shadow="sm" padding="lg" radius="md" withBorder={false}>
+              <Stack gap="xs">
+                <Group justify="space-between">
+                  <Text size="xs" c="dimmed" fw={600} tt="uppercase">
+                    My Mailbox
+                  </Text>
+                  <ThemeIcon size="md" radius="md" variant="light" color="orange">
+                    <IconBox size={16} />
+                  </ThemeIcon>
+                </Group>
+                <Text size="xl" fw={700}>
+                  Box {allMailboxes[0].mailbox.box_number}
+                </Text>
+                <Text size="xs" c="dimmed" lineClamp={1}>
+                  {allMailboxes[0].location.name}
+                </Text>
+                <Button
+                  component={Link}
+                  href="/app/mailboxes"
+                  variant="subtle"
+                  size="compact-xs"
+                  rightSection={<IconArrowRight size={12} />}
+                  style={{justifyContent: "flex-start", paddingLeft: 0}}
+                >
+                  View Details
+                </Button>
+              </Stack>
+            </Card>
+          )}
         </SimpleGrid>
+      )}
+
+      {/* Free Plan Upgrade Prompt */}
+      {isFreePlan && (
+        <Card
+          padding="xl"
+          radius="lg"
+          withBorder
+          style={{
+            textAlign: "center",
+            backgroundColor: "var(--mantine-color-blue-0)",
+            borderColor: "var(--mantine-color-blue-2)",
+          }}
+        >
+          <Stack gap="md" align="center">
+            <Title order={3} size="h4" fw={700}>
+              Unlock Mail Services
+            </Title>
+            <Text size="sm" c="dimmed" maw={500} lh={1.5}>
+              Upgrade to a paid plan to access digital mailroom services,
+              including scanning, forwarding, and shredding.
+            </Text>
+            <Button
+              component={Link}
+              href="/app/pricing"
+              size="md"
+              variant="filled"
+              color="blue"
+              rightSection={<IconArrowRight size={18} />}
+              mt="xs"
+            >
+              View Plans
+            </Button>
+          </Stack>
+        </Card>
       )}
 
       {/* Referral Section */}
@@ -352,41 +477,6 @@ export function UserDashboardClient({
           </>
         )}
       </Stack>
-
-      {/* Free Plan Upgrade Prompt */}
-      {isFreePlan && (
-        <Card
-          padding="xl"
-          radius="lg"
-          withBorder
-          style={{
-            textAlign: "center",
-            backgroundColor: "var(--mantine-color-blue-0)",
-            borderColor: "var(--mantine-color-blue-2)",
-          }}
-        >
-          <Stack gap="md" align="center">
-            <Title order={3} size="h4" fw={700}>
-              Unlock Mail Services
-            </Title>
-            <Text size="sm" c="dimmed" maw={500} lh={1.5}>
-              Upgrade to a paid plan to access digital mailroom services,
-              including scanning, forwarding, and shredding.
-            </Text>
-            <Button
-              component={Link}
-              href="/app/pricing"
-              size="md"
-              variant="filled"
-              color="blue"
-              rightSection={<IconArrowRight size={18} />}
-              mt="xs"
-            >
-              View Plans
-            </Button>
-          </Stack>
-        </Card>
-      )}
     </Stack>
   );
 }

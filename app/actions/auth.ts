@@ -204,25 +204,7 @@ export async function signup(
   // Assuming email confirmation is required, we can't log "LOGIN" yet.
   // We can log "SIGNUP" if we have a user ID, but often signUp returns a user even if unconfirmed.
   if (data.user) {
-    // Log signup activity - passing user ID even if not fully active yet
-    // But we need to be careful as Profile might not be created yet by the trigger?
-    // Triggers run AFTER insert. So it should be fine if the trigger is fast.
-    // However, this is async.
-    // Since we can't await the trigger, we might just log it.
-    // Actually, logActivity requires a profile in DB due to FK.
-    // The trigger creates the profile. It might be a race condition here.
-    // Safer to let the user log in first? Or just try/catch.
     try {
-      // Delay slightly to allow trigger? No, that's bad.
-      // If profile doesn't exist, this will fail due to FK.
-      // We can try to log it, if it fails, it fails.
-      // Better: The trigger should handle profile creation.
-      // Let's just skip logging here or use a retry mechanism if we really need it.
-      // OR: We can rely on the first LOGIN to establish "activity".
-      // But "SIGNUP" is an important event.
-      // Let's try to log it.
-      // Wait, logActivity imports prisma which is server-side.
-      // We can try to insert into ActivityLog.
     } catch (e) {
       console.error("Failed to log signup:", e);
     }

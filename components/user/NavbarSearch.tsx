@@ -17,6 +17,7 @@ import {
   IconMoon,
   IconLayoutDashboard,
   IconHistory,
+  IconBox,
 } from "@tabler/icons-react";
 import {UserButton} from "@/components/user/UserButton";
 import {usePathname} from "next/navigation";
@@ -32,6 +33,7 @@ export interface NavbarSearchRef {
 
 const mainLinks = [
   {icon: IconLayoutDashboard, label: "Dashboard", href: "/app"},
+  {icon: IconBox, label: "My Mailboxes", href: "/app/mailboxes"},
   {icon: IconInbox, label: "Inbox", href: "/app/inbox"},
   {icon: IconArchive, label: "Archived", href: "/app/archived"},
   {icon: IconTag, label: "Tags & Categories", href: "/app/tags"},
@@ -75,7 +77,9 @@ export function NavbarSearch({
 
   const mainLinksElements = visibleLinks.map((link) => {
     const Icon = link.icon;
-    const isActive = pathname === link.href;
+    const isActive =
+      pathname === link.href ||
+      (link.href !== "/app" && pathname?.startsWith(link.href));
     return (
       <UnstyledButton
         key={link.label}

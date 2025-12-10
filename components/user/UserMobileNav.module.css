@@ -1,0 +1,52 @@
+.mobileNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px; /* Slightly taller for better touch targets */
+  background-color: var(--mantine-color-body);
+  border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 200;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.navItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+  text-decoration: none;
+  font-size: 11px;
+  gap: 4px;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+.navItem:active {
+  transform: scale(0.95);
+}
+
+.navItem.active {
+  color: var(--mantine-color-blue-6);
+  font-weight: 500;
+}
+
+/* Optional: Add a small indicator for active state */
+.navItem.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 40%;
+  height: 3px;
+  background-color: var(--mantine-color-blue-6);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+

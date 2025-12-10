@@ -66,7 +66,8 @@ export const ModelName = {
   MailboxCluster: 'MailboxCluster',
   Mailbox: 'Mailbox',
   Referral: 'Referral',
-  ReferralTransaction: 'ReferralTransaction'
+  ReferralTransaction: 'ReferralTransaction',
+  AllowedIP: 'AllowedIP'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -220,7 +221,10 @@ export const PackageScalarFieldEnum = {
   price_yearly: 'price_yearly',
   features: 'features',
   not_included: 'not_included',
-  max_mail_items: 'max_mail_items',
+  max_scanned_pages: 'max_scanned_pages',
+  retention_days: 'retention_days',
+  max_storage_items: 'max_storage_items',
+  digital_storage_mb: 'digital_storage_mb',
   max_team_members: 'max_team_members',
   is_active: 'is_active',
   is_featured: 'is_featured',
@@ -398,6 +402,17 @@ export const ReferralTransactionScalarFieldEnum = {
 } as const
 
 export type ReferralTransactionScalarFieldEnum = (typeof ReferralTransactionScalarFieldEnum)[keyof typeof ReferralTransactionScalarFieldEnum]
+
+
+export const AllowedIPScalarFieldEnum = {
+  id: 'id',
+  ip_address: 'ip_address',
+  description: 'description',
+  created_at: 'created_at',
+  created_by: 'created_by'
+} as const
+
+export type AllowedIPScalarFieldEnum = (typeof AllowedIPScalarFieldEnum)[keyof typeof AllowedIPScalarFieldEnum]
 
 
 export const SortOrder = {

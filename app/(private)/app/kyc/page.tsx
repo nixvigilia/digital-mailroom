@@ -141,7 +141,7 @@ export default function KYCPage() {
       if (status === "APPROVED") {
         router.push("/app");
       } else if (status === "PENDING") {
-        setActive(3); // Show review step if pending
+        router.push("/app/inbox");
       }
     };
     checkStatus();

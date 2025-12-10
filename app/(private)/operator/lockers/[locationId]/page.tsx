@@ -13,6 +13,7 @@ import {
   Modal,
   TextInput,
   Textarea,
+  Alert,
 } from "@mantine/core";
 import {IconPlus, IconEdit, IconTrash} from "@tabler/icons-react";
 import Link from "next/link";
@@ -102,6 +103,17 @@ export default function ClustersPage() {
   };
 
   const handleDelete = async (id: string) => {
+    // Check if this is the last cluster
+    if (clusters.length <= 1) {
+      notifications.show({
+        title: "Error",
+        message:
+          "Cannot delete the last cluster. Each mailing location must have at least one cluster assigned.",
+        color: "red",
+      });
+      return;
+    }
+
     if (confirm("Are you sure you want to delete this cluster?")) {
       const res = await deleteCluster(id, locationId);
       if (res.success) {
@@ -142,6 +154,13 @@ export default function ClustersPage() {
         </Button>
       </Group>
 
+      {clusters.length === 1 && (
+        <Alert color="yellow" title="Minimum Cluster Requirement">
+          This location has only one cluster. Each mailing location must have at
+          least one cluster assigned, so this cluster cannot be deleted.
+        </Alert>
+      )}
+
       <Paper withBorder radius="md">
         <Table>
           <Table.Thead>
@@ -179,6 +198,12 @@ export default function ClustersPage() {
                       color="red"
                       size="xs"
                       onClick={() => handleDelete(cluster.id)}
+                      disabled={clusters.length === 1}
+                      title={
+                        clusters.length === 1
+                          ? "Cannot delete the last cluster"
+                          : "Delete cluster"
+                      }
                     >
                       <IconTrash size={16} />
                     </Button>

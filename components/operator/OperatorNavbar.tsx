@@ -12,10 +12,12 @@ import {
   IconScan,
   IconTruck,
   IconTrash,
-  IconPackage,
   IconUsers,
   IconHistory,
   IconMail,
+  IconBox,
+  IconMapPin,
+  IconRuler,
 } from "@tabler/icons-react";
 import {UserButton} from "@/components/user/UserButton";
 import {usePathname} from "next/navigation";
@@ -32,10 +34,11 @@ const mainLinks = [
   {icon: IconMail, label: "Receive Mail", href: "/operator/receive"},
   {icon: IconInbox, label: "Action Queue", href: "/operator/queue"},
   {icon: IconChecklist, label: "KYC/KYB Review", href: "/operator/approvals"},
-  // {icon: IconPackage, label: "Packages & Pricing", href: "/operator/packages"},
   {icon: IconScan, label: "Scanning", href: "/operator/scanning"},
   {icon: IconTruck, label: "Forwarding", href: "/operator/forwarding"},
   {icon: IconTrash, label: "Shredding", href: "/operator/shredding"},
+  {icon: IconRuler, label: "Parcel Check", href: "/operator/parcel-check"},
+  {icon: IconMapPin, label: "Lockers", href: "/operator/lockers"},
 ];
 
 export function OperatorNavbar({

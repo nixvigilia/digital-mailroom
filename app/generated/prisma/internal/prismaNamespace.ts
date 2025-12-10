@@ -399,7 +399,8 @@ export const ModelName = {
   MailboxCluster: 'MailboxCluster',
   Mailbox: 'Mailbox',
   Referral: 'Referral',
-  ReferralTransaction: 'ReferralTransaction'
+  ReferralTransaction: 'ReferralTransaction',
+  AllowedIP: 'AllowedIP'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -415,7 +416,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "profile" | "backofficeProfile" | "activityLog" | "kYCVerification" | "businessAccount" | "teamMember" | "package" | "subscription" | "paymentTransaction" | "mailItem" | "mailActionRequest" | "mailingLocation" | "mailboxCluster" | "mailbox" | "referral" | "referralTransaction"
+    modelProps: "profile" | "backofficeProfile" | "activityLog" | "kYCVerification" | "businessAccount" | "teamMember" | "package" | "subscription" | "paymentTransaction" | "mailItem" | "mailActionRequest" | "mailingLocation" | "mailboxCluster" | "mailbox" | "referral" | "referralTransaction" | "allowedIP"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1603,6 +1604,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AllowedIP: {
+      payload: Prisma.$AllowedIPPayload<ExtArgs>
+      fields: Prisma.AllowedIPFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AllowedIPFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedIPPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AllowedIPFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedIPPayload>
+        }
+        findFirst: {
+          args: Prisma.AllowedIPFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedIPPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AllowedIPFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedIPPayload>
+        }
+        findMany: {
+          args: Prisma.AllowedIPFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedIPPayload>[]
+        }
+        create: {
+          args: Prisma.AllowedIPCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedIPPayload>
+        }
+        createMany: {
+          args: Prisma.AllowedIPCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AllowedIPCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedIPPayload>[]
+        }
+        delete: {
+          args: Prisma.AllowedIPDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedIPPayload>
+        }
+        update: {
+          args: Prisma.AllowedIPUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedIPPayload>
+        }
+        deleteMany: {
+          args: Prisma.AllowedIPDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AllowedIPUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AllowedIPUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedIPPayload>[]
+        }
+        upsert: {
+          args: Prisma.AllowedIPUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedIPPayload>
+        }
+        aggregate: {
+          args: Prisma.AllowedIPAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAllowedIP>
+        }
+        groupBy: {
+          args: Prisma.AllowedIPGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AllowedIPGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AllowedIPCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AllowedIPCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1777,7 +1852,10 @@ export const PackageScalarFieldEnum = {
   price_yearly: 'price_yearly',
   features: 'features',
   not_included: 'not_included',
-  max_mail_items: 'max_mail_items',
+  max_scanned_pages: 'max_scanned_pages',
+  retention_days: 'retention_days',
+  max_storage_items: 'max_storage_items',
+  digital_storage_mb: 'digital_storage_mb',
   max_team_members: 'max_team_members',
   is_active: 'is_active',
   is_featured: 'is_featured',
@@ -1955,6 +2033,17 @@ export const ReferralTransactionScalarFieldEnum = {
 } as const
 
 export type ReferralTransactionScalarFieldEnum = (typeof ReferralTransactionScalarFieldEnum)[keyof typeof ReferralTransactionScalarFieldEnum]
+
+
+export const AllowedIPScalarFieldEnum = {
+  id: 'id',
+  ip_address: 'ip_address',
+  description: 'description',
+  created_at: 'created_at',
+  created_by: 'created_by'
+} as const
+
+export type AllowedIPScalarFieldEnum = (typeof AllowedIPScalarFieldEnum)[keyof typeof AllowedIPScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2387,6 +2476,7 @@ export type GlobalOmitConfig = {
   mailbox?: Prisma.MailboxOmit
   referral?: Prisma.ReferralOmit
   referralTransaction?: Prisma.ReferralTransactionOmit
+  allowedIP?: Prisma.AllowedIPOmit
 }
 
 /* Types for Logging */

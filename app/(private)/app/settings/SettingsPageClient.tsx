@@ -17,7 +17,6 @@ import {
   IconUser,
   IconBell,
   IconLock,
-  IconDeviceFloppy,
   IconMail,
   IconShieldLock,
 } from "@tabler/icons-react";
@@ -60,33 +59,45 @@ export function SettingsPageClient({initialSettings}: SettingsPageClientProps) {
   const [pin, setPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
 
-  const handleSave = async () => {
-    setLoading(true);
-    try {
-      const notifResult = await updateNotificationSettings(notifSettings);
-      const mailResult = await updateMailSettings(defaultForwardAddress);
+  const handleNotificationToggle = async (
+    setting: "newMail" | "referrals" | "marketing",
+    value: boolean
+  ) => {
+    // Store previous state for potential revert
+    const previousSettings = {...notifSettings};
 
-      if (notifResult.success && mailResult.success) {
+    // Optimistically update UI
+    const updatedSettings = {
+      ...notifSettings,
+      [setting]: value,
+    };
+    setNotifSettings(updatedSettings);
+
+    try {
+      const result = await updateNotificationSettings(updatedSettings);
+      if (result.success) {
         notifications.show({
           title: "Success",
-          message: "Settings saved successfully",
+          message: "Notification settings updated",
           color: "green",
         });
       } else {
+        // Revert on failure
+        setNotifSettings(previousSettings);
         notifications.show({
           title: "Error",
-          message: "Some settings failed to save",
-          color: "yellow",
+          message: result.message || "Failed to update notification settings",
+          color: "red",
         });
       }
     } catch (error) {
+      // Revert on error
+      setNotifSettings(previousSettings);
       notifications.show({
         title: "Error",
         message: "An unexpected error occurred",
         color: "red",
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -163,20 +174,17 @@ export function SettingsPageClient({initialSettings}: SettingsPageClientProps) {
                 label="First Name"
                 value={initialSettings?.firstName || ""}
                 disabled
-                description="From KYC Verification"
               />
               <TextInput
                 label="Last Name"
                 value={initialSettings?.lastName || ""}
                 disabled
-                description="From KYC Verification"
               />
             </Group>
             <TextInput
               label="Email"
               value={initialSettings?.email || ""}
               disabled
-              description="Contact support to change email"
             />
           </Stack>
         </Stack>
@@ -195,30 +203,27 @@ export function SettingsPageClient({initialSettings}: SettingsPageClientProps) {
               label="Email notifications for new mail"
               checked={notifSettings.newMail}
               onChange={(event) =>
-                setNotifSettings({
-                  ...notifSettings,
-                  newMail: event.currentTarget.checked,
-                })
+                handleNotificationToggle("newMail", event.currentTarget.checked)
               }
             />
             <Switch
               label="Email notifications for referrals"
               checked={notifSettings.referrals}
               onChange={(event) =>
-                setNotifSettings({
-                  ...notifSettings,
-                  referrals: event.currentTarget.checked,
-                })
+                handleNotificationToggle(
+                  "referrals",
+                  event.currentTarget.checked
+                )
               }
             />
             <Switch
               label="Marketing emails"
               checked={notifSettings.marketing}
               onChange={(event) =>
-                setNotifSettings({
-                  ...notifSettings,
-                  marketing: event.currentTarget.checked,
-                })
+                handleNotificationToggle(
+                  "marketing",
+                  event.currentTarget.checked
+                )
               }
             />
           </Stack>
@@ -306,17 +311,6 @@ export function SettingsPageClient({initialSettings}: SettingsPageClientProps) {
           </Link>
         </Stack>
       </Paper>
-
-      <Group justify="flex-end">
-        <Button
-          size="md"
-          leftSection={<IconDeviceFloppy size={20} />}
-          loading={loading}
-          onClick={handleSave}
-        >
-          Save Changes
-        </Button>
-      </Group>
     </Stack>
   );
 }

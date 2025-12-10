@@ -164,7 +164,10 @@ model Package {
   price_yearly        Decimal?       @db.Decimal(10, 2)
   features            String[]
   not_included        String[]
-  max_mail_items      Int?
+  max_scanned_pages   Int?
+  retention_days      Int?
+  max_storage_items   Int?
+  digital_storage_mb  Int?
   max_team_members    Int?
   is_active           Boolean        @default(true)
   is_featured         Boolean        @default(false)
@@ -370,6 +373,16 @@ model ReferralTransaction {
   referral    Referral @relation(fields: [referral_id], references: [id], onDelete: Cascade)
 
   @@map("referral_transaction")
+}
+
+model AllowedIP {
+  id          String   @id @default(uuid()) @db.Uuid
+  ip_address  String   @unique
+  description String?
+  created_at  DateTime @default(now())
+  created_by  String?  @db.Uuid // Optional reference to the admin who added it
+
+  @@map("allowed_ip")
 }
 
 enum UserType {

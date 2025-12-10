@@ -7,6 +7,7 @@ import {z} from "zod";
 import {prisma} from "@/utils/prisma";
 import {UserRole} from "@/app/generated/prisma/enums";
 import {logActivity} from "./activity-log";
+import {isIpAllowed} from "@/utils/ip-check";
 
 export type ActionResult =
   | {success: true; message: string; redirectTo?: string}
@@ -51,6 +52,15 @@ export async function adminLogin(
       success: false,
       message: "Validation failed. Please check your input.",
       errors,
+    };
+  }
+
+  // Check IP Allowlist
+  const ipAllowed = await isIpAllowed();
+  if (!ipAllowed) {
+    return {
+      success: false,
+      message: "Access denied. Your IP address is not authorized.",
     };
   }
 

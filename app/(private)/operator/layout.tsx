@@ -1,14 +1,21 @@
 import {OperatorLayoutClient} from "@/components/operator/OperatorLayoutClient";
-import {redirect} from "next/navigation";
+import {redirect, notFound} from "next/navigation";
 import {createClient} from "@/utils/supabase/server";
 import {prisma} from "@/utils/prisma";
 import {UserRole} from "@/app/generated/prisma/enums";
+import {isIpAllowed} from "@/utils/ip-check";
 
 export default async function OperatorLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Check IP Allowlist
+  const ipAllowed = await isIpAllowed();
+  if (!ipAllowed) {
+    notFound();
+  }
+
   const supabase = await createClient();
   const {
     data: {user},
