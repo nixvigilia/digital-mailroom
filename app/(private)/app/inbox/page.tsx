@@ -8,16 +8,18 @@ import {
   Card,
   Skeleton,
   ThemeIcon,
+  Button,
 } from "@mantine/core";
 import {
   IconInbox,
   IconHourglassHigh,
   IconCheck,
   IconMail,
+  IconUserCheck,
+  IconAlertCircle,
 } from "@tabler/icons-react";
 import {MailItemCard, MailItem} from "@/components/mail/MailItemCard";
 import {InboxFilters} from "@/components/inbox/InboxFilters";
-import {InboxViewToggle} from "@/components/inbox/InboxViewToggle";
 import {InboxPagination} from "@/components/inbox/InboxPagination";
 import {
   getCurrentUser,
@@ -118,29 +120,29 @@ const getMailItems = cache(
       const supabase = await createClient();
       const bucketName = process.env.SUPABASE_STORAGE_BUCKET_NAME || "keep";
 
-      const itemsWithUrls = await Promise.all(
-        mailItems.map(async (item) => {
-          let envelopeScanUrl: string | undefined = undefined;
-          if (item.envelope_scan_url) {
+      // Helper function to create signed URL (extracted to avoid source map issues)
+      const createEnvelopeSignedUrl = async (
+        path: string
+      ): Promise<string | undefined> => {
             try {
               const {data, error} = await supabase.storage
                 .from(bucketName)
-                .createSignedUrl(item.envelope_scan_url, 3600); // 1 hour expiry
+            .createSignedUrl(path, 3600);
 
               if (error) {
-                console.error("Error creating signed URL for envelope:", error);
-                console.error("Storage path:", item.envelope_scan_url);
-              } else {
-                envelopeScanUrl = data?.signedUrl || undefined;
-              }
-            } catch (error) {
-              console.error(
-                "Exception creating signed URL for envelope:",
-                error
-              );
-              console.error("Storage path:", item.envelope_scan_url);
-            }
+            return undefined;
           }
+          return data?.signedUrl || undefined;
+        } catch {
+          return undefined;
+        }
+      };
+
+      const itemsWithUrls = await Promise.all(
+        mailItems.map(async (item) => {
+          const envelopeScanUrl = item.envelope_scan_url
+            ? await createEnvelopeSignedUrl(item.envelope_scan_url)
+            : undefined;
 
           return {
             id: item.id,
@@ -217,9 +219,7 @@ async function MailItemsList({
         <Stack gap="md" align="center">
           <IconInbox size={48} color="var(--mantine-color-gray-5)" />
           <Text size="lg" c="dimmed" ta="center">
-            {filters.viewMode === "inbox"
-              ? "No mail items found. Your mail will appear here once received."
-              : "No archived items."}
+            No mail items found. Your mail will appear here once received.
           </Text>
         </Stack>
       </Card>
@@ -267,6 +267,144 @@ export default async function InboxPage({searchParams}: InboxPageProps) {
   // Redirect to KYC page only if REJECTED
   if (kycStatus === "REJECTED") {
     redirect("/app/kyc");
+  }
+
+  // Handle NOT_STARTED status - show KYC required UI
+  if (kycStatus === "NOT_STARTED") {
+    return (
+      <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
+        <Group justify="space-between" align="flex-start" wrap="wrap">
+          <Title order={1} fw={800} size="h2">
+            Inbox
+          </Title>
+        </Group>
+
+        <Card
+          shadow="sm"
+          padding="xl"
+          radius="md"
+          withBorder
+          style={{
+            minHeight: "500px",
+            justifyContent: "center",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Stack gap="xl" align="center" w="100%">
+            <ThemeIcon color="blue" size={80} radius="xl" variant="light">
+              <IconUserCheck size={40} />
+            </ThemeIcon>
+            <Stack gap="xs" align="center">
+              <Title order={2} size="h3">
+                Identity Verification Required
+              </Title>
+              <Text c="dimmed" ta="center" maw={700} size="lg">
+                To protect your privacy, you must complete a quick identity
+                check (KYC) before accessing your digital mailbox.
+              </Text>
+            </Stack>
+
+            <SimpleGrid cols={{base: 1, md: 2}} spacing="lg" w="100%" maw={900}>
+              {/* Why verification is required */}
+              <Card
+                withBorder
+                radius="md"
+                p="lg"
+                w="100%"
+                bg="var(--mantine-color-blue-0)"
+              >
+                <Stack gap="md">
+                  <Group align="flex-start" wrap="nowrap">
+                    <ThemeIcon
+                      color="blue"
+                      size="sm"
+                      radius="xl"
+                      variant="filled"
+                      mt={2}
+                    >
+                      <IconAlertCircle size={16} />
+                    </ThemeIcon>
+                    <Stack gap="xs" style={{flex: 1}}>
+                      <Text fw={600} size="sm" c="dark">
+                        Why this is required
+                      </Text>
+                    </Stack>
+                  </Group>
+                  <Stack gap="xs" pl="md">
+                    <Text size="sm" c="dimmed" lh={1.5}>
+                      • Your mail contains sensitive personal information
+                    </Text>
+                    <Text size="sm" c="dimmed" lh={1.5}>
+                      • Prevents impersonation or unauthorized access
+                    </Text>
+                    <Text size="sm" c="dimmed" lh={1.5}>
+                      • Ensures secure digital delivery
+                    </Text>
+                    <Text size="sm" c="dimmed" lh={1.5}>
+                      • Meets data-privacy standards
+                    </Text>
+                  </Stack>
+                </Stack>
+              </Card>
+
+              {/* What you can do after verification */}
+              <Card
+                withBorder
+                radius="md"
+                p="lg"
+                w="100%"
+                bg="var(--mantine-color-green-0)"
+              >
+                <Stack gap="md">
+                  <Group align="flex-start" wrap="nowrap">
+                    <ThemeIcon
+                      color="green"
+                      size="sm"
+                      radius="xl"
+                      variant="filled"
+                      mt={2}
+                    >
+                      <IconCheck size={16} />
+                    </ThemeIcon>
+                    <Stack gap="xs" style={{flex: 1}}>
+                      <Text fw={600} size="sm" c="dark">
+                        Once verified, you can:
+                      </Text>
+                    </Stack>
+                  </Group>
+                  <Stack gap="xs" pl="md">
+                    <Text size="sm" c="dimmed" lh={1.5}>
+                      • Access your digital inbox
+                    </Text>
+                    <Text size="sm" c="dimmed" lh={1.5}>
+                      • View envelopes and scans
+                    </Text>
+                    <Text size="sm" c="dimmed" lh={1.5}>
+                      • Request scans, forwarding, or shredding
+                    </Text>
+                    <Text size="sm" c="dimmed" lh={1.5}>
+                      • Archive, tag, and organize mail
+                    </Text>
+                  </Stack>
+                </Stack>
+              </Card>
+            </SimpleGrid>
+
+            <Group mt="md">
+              <Button
+                size="lg"
+                component="a"
+                href="/app/kyc"
+                leftSection={<IconUserCheck size={18} />}
+              >
+                Complete Identity Verification
+              </Button>
+            </Group>
+          </Stack>
+        </Card>
+      </Stack>
+    );
   }
 
   // Handle PENDING status - show notification and hide features
@@ -380,7 +518,6 @@ export default async function InboxPage({searchParams}: InboxPageProps) {
   const searchQuery = params.search || "";
   const statusFilter = params.status || "all";
   const tagFilter = params.tag || "";
-  const viewMode = (params.view as "inbox" | "archived") || "inbox";
   const currentPage = parseInt(params.page || "1", 10);
 
   // Get mail items count for header (streaming)
@@ -388,7 +525,7 @@ export default async function InboxPage({searchParams}: InboxPageProps) {
     searchQuery,
     statusFilter,
     tagFilter,
-    viewMode,
+    viewMode: "inbox", // Always show inbox, never archived
   });
 
   return (
@@ -398,19 +535,16 @@ export default async function InboxPage({searchParams}: InboxPageProps) {
         <Stack gap={4}>
           <Group gap="xs" align="center">
             <Title order={1} fw={800} size="h2">
-              {viewMode === "inbox" ? "Inbox" : "Archived"}
+              Inbox
             </Title>
           </Group>
           <Suspense
             fallback={<Skeleton height={20} width={150} />}
-            key={`${searchQuery}-${statusFilter}-${tagFilter}-${viewMode}`}
+            key={`${searchQuery}-${statusFilter}-${tagFilter}`}
           >
             <MailItemsCount promise={mailItemsPromise} />
           </Suspense>
         </Stack>
-        <Suspense fallback={<Skeleton height={36} width={200} />}>
-          <InboxViewToggle />
-        </Suspense>
       </Group>
 
       {/* Filters - Streaming */}
@@ -436,7 +570,7 @@ export default async function InboxPage({searchParams}: InboxPageProps) {
             ))}
           </SimpleGrid>
         }
-        key={`${searchQuery}-${statusFilter}-${tagFilter}-${viewMode}-${currentPage}`}
+        key={`${searchQuery}-${statusFilter}-${tagFilter}-${currentPage}`}
       >
         <MailItemsList
           userId={userId}
@@ -444,7 +578,7 @@ export default async function InboxPage({searchParams}: InboxPageProps) {
             searchQuery,
             statusFilter,
             tagFilter,
-            viewMode,
+            viewMode: "inbox", // Always show inbox, never archived
           }}
           currentPage={currentPage}
         />

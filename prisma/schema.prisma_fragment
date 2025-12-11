@@ -8,3 +8,5 @@ model AllowedIP {
   @@map("allowed_ip")
 }
 
+
+

@@ -21,15 +21,18 @@
     "@supabase/supabase-js": "^2.86.0",
     "@tabler/icons-react": "^3.35.0",
     "@tanstack/react-virtual": "^3.13.12",
+    "@types/pdfkit": "^0.17.4",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
     "next": "16.0.7",
     "pdfjs-dist": "^5.4.449",
+    "pdfkit": "^0.17.2",
     "pg": "^8.16.3",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "react-pdf": "^10.2.0",
     "react-webcam": "^7.2.0",
+    "resend": "^6.6.0",
     "swr": "^2.3.7"
   },
   "devDependencies": {

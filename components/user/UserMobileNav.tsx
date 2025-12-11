@@ -33,7 +33,8 @@ export function UserMobileNav({ planType, onOpenMenu }: UserMobileNavProps) {
     : [
         { icon: IconLayoutDashboard, label: "Home", href: "/app" },
         { icon: IconInbox, label: "Inbox", href: "/app/inbox" },
-        { icon: IconArchive, label: "Archive", href: "/app/archived" },
+        // Archived page hidden - not needed yet
+        // { icon: IconArchive, label: "Archive", href: "/app/archived" },
         { icon: IconTag, label: "Tags", href: "/app/tags" },
       ];
 

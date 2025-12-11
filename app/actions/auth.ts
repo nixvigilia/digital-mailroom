@@ -145,13 +145,43 @@ export async function signup(
     };
   }
 
-  // Find referrer if referral code is provided
+  // Check if user already exists
+  try {
+    const {prisma} = await import("@/utils/prisma");
+
+    // Check if profile already exists in database
+    const existingProfile = await prisma.profile.findUnique({
+      where: {email: validation.data.email},
+      select: {id: true, email: true},
+    });
+
+    if (existingProfile) {
+      return {
+        success: false,
+        message:
+          "An account with this email already exists. Please try logging in instead.",
+        errors: {
+          email: [
+            "This email is already registered. Please use the login page.",
+          ],
+        },
+      };
+    }
+
+    // Also check Supabase Auth to catch any edge cases
+    // Note: Supabase admin API would be needed for this, but we can rely on signUp error handling
+    // The signUp will fail if user exists, but we've already checked the database above
+  } catch (dbError) {
+    console.error("Error checking existing user:", dbError);
+    // Continue with signup attempt - Supabase will handle duplicate email errors
+  }
+
+  // Find referrer if referral code is provided (optional - doesn't block signup)
   let referrerId: string | null = null;
-  if (rawData.referralCode) {
+  if (rawData.referralCode && rawData.referralCode.trim() !== "") {
     try {
       const {prisma} = await import("@/utils/prisma");
-      const referralCodeUpper = rawData.referralCode.toUpperCase();
-      console.log("Looking up referrer with code:", referralCodeUpper);
+      const referralCodeUpper = rawData.referralCode.trim().toUpperCase();
 
       const referrer = await prisma.profile.findFirst({
         where: {
@@ -164,13 +194,11 @@ export async function signup(
 
       if (referrer) {
         referrerId = referrer.id;
-        console.log("Found referrer ID:", referrerId);
-      } else {
-        console.log("No referrer found with code:", referralCodeUpper);
       }
+      // Silently continue if referral code not found - it's optional
     } catch (dbError) {
       // Log error but don't block signup if referral lookup fails
-      console.error("Error looking up referrer:", dbError);
+      console.error("Error looking up referrer (non-blocking):", dbError);
       // Continue with signup without referral tracking
       referrerId = null;
     }
@@ -181,11 +209,6 @@ export async function signup(
   const metadata: Record<string, any> = {};
   if (referrerId) {
     metadata.referred_by = referrerId; // Store as UUID string
-    console.log("Storing referred_by in metadata:", referrerId);
-  } else {
-    console.log(
-      "No referrer ID to store (referral code not found or not provided)"
-    );
   }
 
   const {data, error} = await supabase.auth.signUp({
@@ -197,7 +220,50 @@ export async function signup(
   });
 
   if (error) {
-    return {success: false, message: error.message};
+    // Handle email sending errors gracefully - user account may still be created
+    // Check if error is related to email sending but user was created
+    const isEmailError =
+      error.message.includes("email") &&
+      (error.message.includes("send") ||
+        error.message.includes("confirmation") ||
+        error.message.includes("delivery"));
+
+    // If it's just an email sending error but user exists, still return success
+    if (isEmailError && data?.user) {
+      console.warn(
+        "User created but email confirmation may not have been sent:",
+        error.message
+      );
+      return {
+        success: true,
+        message:
+          "Account created! Please check your email to confirm your account. If you don't receive an email, please contact support.",
+      };
+    }
+
+    // Provide user-friendly error messages
+    let errorMessage = error.message;
+
+    // Check for common Supabase errors and provide clearer messages
+    if (
+      error.message.includes("already registered") ||
+      error.message.includes("User already registered") ||
+      error.message.includes("email address is already")
+    ) {
+      errorMessage =
+        "An account with this email already exists. Please try logging in instead.";
+      return {
+        success: false,
+        message: errorMessage,
+        errors: {
+          email: [
+            "This email is already registered. Please use the login page.",
+          ],
+        },
+      };
+    }
+
+    return {success: false, message: errorMessage};
   }
 
   // Note: User isn't logged in yet until they confirm email usually, but if auto-confirm is on, they might be.

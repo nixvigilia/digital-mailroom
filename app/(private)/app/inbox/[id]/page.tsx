@@ -64,13 +64,32 @@ const getMailItem = cache(async (mailId: string, userId: string) => {
         include: {
           action_requests: {
             where: {
-              action_type: ActionType.OPEN_AND_SCAN,
-              status: {
-                in: [ActionStatus.PENDING, ActionStatus.IN_PROGRESS],
-              },
+              OR: [
+                {
+                  action_type: ActionType.OPEN_AND_SCAN,
+                  status: {
+                    in: [ActionStatus.PENDING, ActionStatus.IN_PROGRESS],
+                  },
+                },
+                {
+                  action_type: ActionType.FORWARD,
+                  status: {
+                    in: [
+                      ActionStatus.PENDING,
+                      ActionStatus.IN_PROGRESS,
+                      ActionStatus.COMPLETED,
+                    ],
+                  },
+                },
+                {
+                  action_type: ActionType.SHRED,
+                  status: {
+                    in: [ActionStatus.PENDING, ActionStatus.IN_PROGRESS],
+                  },
+                },
+              ],
             },
             orderBy: {created_at: "desc"},
-            take: 1,
           },
         },
       }),
@@ -149,7 +168,28 @@ const getMailItem = cache(async (mailId: string, userId: string) => {
       }
     }
 
-    const pendingScanRequest = mailItem.action_requests[0] || null;
+    const pendingScanRequest = mailItem.action_requests.find(
+      (req) =>
+        req.action_type === ActionType.OPEN_AND_SCAN &&
+        (req.status === ActionStatus.PENDING ||
+          req.status === ActionStatus.IN_PROGRESS)
+    ) || null;
+
+    const pendingForwardRequest = mailItem.action_requests.find(
+      (req) =>
+        req.action_type === ActionType.FORWARD &&
+        (req.status === ActionStatus.PENDING ||
+          req.status === ActionStatus.IN_PROGRESS)
+    ) || null;
+
+    const completedForwardRequest = mailItem.action_requests.find(
+      (req) =>
+        req.action_type === ActionType.FORWARD &&
+        req.status === ActionStatus.COMPLETED
+    ) || null;
+
+    const isForwarded =
+      mailItem.status === MailStatus.FORWARDED || !!completedForwardRequest;
 
     return {
       id: mailItem.id,
@@ -171,6 +211,19 @@ const getMailItem = cache(async (mailId: string, userId: string) => {
             requestedAt: pendingScanRequest.created_at,
           }
         : null,
+      pendingForwardRequest: pendingForwardRequest
+        ? {
+            status: pendingForwardRequest.status,
+            requestedAt: pendingForwardRequest.created_at,
+          }
+        : null,
+      pendingDisposeRequest: pendingDisposeRequest
+        ? {
+            status: pendingDisposeRequest.status,
+            requestedAt: pendingDisposeRequest.created_at,
+          }
+        : null,
+      isForwarded,
     };
   } catch (error) {
     console.error("Error fetching mail item:", error);
@@ -250,98 +303,73 @@ async function MailDetailContent({
     archived: "orange",
   };
 
+  const formattedDate = new Date(mailItem.receivedAt).toLocaleDateString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  );
+
+  const statusLabels: Record<string, string> = {
+    received: "RECEIVED",
+    scanned: "SCANNED",
+    processed: "PROCESSED",
+    archived: "ARCHIVED",
+  };
+
   return (
     <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
+      {/* Back Link */}
+      <Link
+        href="/app/inbox"
+        style={{
+          textDecoration: "none",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem",
+          fontSize: "0.875rem",
+          color: "var(--mantine-color-blue-6)",
+          marginBottom: "1rem",
+        }}
+      >
+        <IconArrowLeft size={18} />
+        <Text size="sm" c="blue">
+          Back to Inbox
+        </Text>
+      </Link>
+
       {/* Header */}
-      <Stack gap="sm">
-        <Group justify="flex-start">
-          <Link href="/app/inbox" style={{textDecoration: "none"}}>
-            <Button
-              variant="subtle"
-              leftSection={<IconArrowLeft size={18} />}
-              size="md"
-              visibleFrom="sm"
-            >
-              Back to Inbox
-            </Button>
-          </Link>
-          <Link href="/app/inbox" style={{textDecoration: "none"}}>
-            <Button
-              variant="subtle"
-              leftSection={<IconArrowLeft size={18} />}
-              size="sm"
-              hiddenFrom="sm"
-            >
-              Back to Inbox
-            </Button>
-          </Link>
-        </Group>
-        <Stack gap="xs">
-          <Group gap="sm" align="flex-start" wrap="wrap">
-            <Title
-              order={1}
-              fw={800}
-              size="h2"
-              style={{
-                flex: 1,
-                minWidth: 200,
-              }}
-            >
-              {mailItem.subject || "Mail Item"}
-            </Title>
-            <Badge
-              color={statusColors[mailItem.status]}
-              variant="light"
-              size="lg"
-              visibleFrom="sm"
-            >
-              {mailItem.status}
-            </Badge>
-            <Badge
-              color={statusColors[mailItem.status]}
-              variant="light"
-              size="md"
-              hiddenFrom="sm"
-            >
-              {mailItem.status}
-            </Badge>
-          </Group>
-          <Stack gap="xs">
-            {mailItem.sender && (
-              <Group gap="xs" wrap="wrap">
-                <IconUser size={16} color="var(--mantine-color-gray-6)" />
-                <Text size="sm" c="dimmed" visibleFrom="sm">
-                  {mailItem.sender}
-                </Text>
-                <Text size="xs" c="dimmed" hiddenFrom="sm">
-                  {mailItem.sender}
-                </Text>
-              </Group>
-            )}
-            <Group gap="xs" wrap="wrap">
-              <IconCalendar size={16} color="var(--mantine-color-gray-6)" />
-              <Text size="sm" c="dimmed" visibleFrom="sm">
-                {new Date(mailItem.receivedAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </Text>
-              <Text size="xs" c="dimmed" hiddenFrom="sm">
-                {new Date(mailItem.receivedAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </Text>
-            </Group>
-          </Stack>
+      <Group justify="space-between" align="flex-start" wrap="wrap">
+        <Stack gap={4}>
+          <Title order={1} fw={700} size="h2">
+            Mail Item
+          </Title>
+          <Text size="md" c="dimmed">
+            From{" "}
+            <Text component="span" fw={500} c="dark">
+              {mailItem.sender || "Unknown"}
+            </Text>{" "}
+            - Received on {formattedDate}
+          </Text>
         </Stack>
-      </Stack>
+        <Badge
+          color={statusColors[mailItem.status]}
+          variant="light"
+          size="lg"
+          style={{
+            textTransform: "uppercase",
+            fontWeight: 600,
+            fontSize: "0.75rem",
+            padding: "0.375rem 0.75rem",
+          }}
+        >
+          {statusLabels[mailItem.status] || mailItem.status.toUpperCase()}
+        </Badge>
+      </Group>
 
       {/* Client component for interactive parts */}
       <MailDetailClient mailItem={mailItem} mailId={mailId} />

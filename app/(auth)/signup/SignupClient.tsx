@@ -135,6 +135,7 @@ export function SignupClient({referralCode}: SignupClientProps) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [referralCodeInput, setReferralCodeInput] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [signupState, signupAction, signupPending] = useActionState<
     ActionResult | null,
@@ -152,6 +153,7 @@ export function SignupClient({referralCode}: SignupClientProps) {
         // Clear form fields
         setPassword("");
         setConfirmPassword("");
+        setReferralCodeInput("");
         setShowConfirmation(true);
         notifications.show({
           title: "Success",
@@ -201,9 +203,11 @@ export function SignupClient({referralCode}: SignupClientProps) {
     // Store email for confirmation message
     setEmail(emailValue);
 
-    // Add referral code to form data if present (from URL)
+    // Add referral code to form data if present (from URL or input field)
     if (referralCode) {
       formData.append("referralCode", referralCode);
+    } else if (referralCodeInput && referralCodeInput.trim() !== "") {
+      formData.append("referralCode", referralCodeInput.trim());
     }
 
     startTransition(() => {
@@ -393,6 +397,25 @@ export function SignupClient({referralCode}: SignupClientProps) {
                           label: {fontWeight: 600, marginBottom: "0.5rem"},
                         }}
                       />
+
+                      {!referralCode && (
+                        <TextInput
+                          label="Referral Code (Optional)"
+                          placeholder="Enter referral code if you have one"
+                          name="referralCode"
+                          value={referralCodeInput}
+                          onChange={(e) =>
+                            setReferralCodeInput(e.target.value.toUpperCase())
+                          }
+                          disabled={signupPending}
+                          size="md"
+                          leftSection={<IconGift size={18} />}
+                          description="Have a referral code? Enter it here to support your referrer."
+                          styles={{
+                            label: {fontWeight: 600, marginBottom: "0.5rem"},
+                          }}
+                        />
+                      )}
 
                       <Button
                         type="submit"

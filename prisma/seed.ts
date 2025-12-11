@@ -231,21 +231,21 @@ async function createLocationsAndMailboxes() {
     }
 
     if (locationId) {
-      // Create Clusters
-      const clusters = ["Cluster A", "Cluster B", "Cluster C"];
+      // Create Mailrooms (each location can have multiple mailrooms)
+      const mailrooms = ["Mailroom A", "Mailroom B", "Mailroom C"];
 
-      for (const clusterName of clusters) {
-        const cluster = await prisma.mailboxCluster.upsert({
+      for (const mailroomName of mailrooms) {
+        const mailroom = await prisma.mailboxCluster.upsert({
           where: {
             mailing_location_id_name: {
               mailing_location_id: locationId,
-              name: clusterName,
+              name: mailroomName,
             },
           },
           create: {
             mailing_location_id: locationId,
-            name: clusterName,
-            description: `Standard CBU Cluster ${clusterName}`,
+            name: mailroomName,
+            description: `Standard mailroom ${mailroomName} at ${loc.name}`,
           },
           update: {},
         });
@@ -255,8 +255,8 @@ async function createLocationsAndMailboxes() {
         // Parcel Locker: 12" W x 15" H x 15" D
         // Ratio: 1 parcel locker per 5 mail compartments
 
-        // Extract cluster letter from cluster name (e.g., "Cluster A" -> "A")
-        const clusterLetter = clusterName.replace("Cluster ", "").trim();
+        // Extract mailroom letter from mailroom name (e.g., "Mailroom A" -> "A")
+        const mailroomLetter = mailroomName.replace("Mailroom ", "").trim();
 
         const mailboxConfigs = [
           // 15 Standard + 5 Large = 20 Mail Compartments
@@ -289,18 +289,18 @@ async function createLocationsAndMailboxes() {
 
         for (const config of mailboxConfigs) {
           for (let i = 1; i <= config.count; i++) {
-            // Box number format: [Cluster]-[Num] -> A-1, A-2, A-3 (no zero padding)
-            const boxNumber = `${clusterLetter}-${boxCounter}`;
+            // Box number format: [Mailroom]-[Num] -> A-1, A-2, A-3 (no zero padding)
+            const boxNumber = `${mailroomLetter}-${boxCounter}`;
 
             await prisma.mailbox.upsert({
               where: {
                 cluster_id_box_number: {
-                  cluster_id: cluster.id,
+                  cluster_id: mailroom.id,
                   box_number: boxNumber,
                 },
               },
               create: {
-                cluster_id: cluster.id,
+                cluster_id: mailroom.id,
                 box_number: boxNumber,
                 type: config.type as any,
                 width: config.width,
@@ -320,7 +320,7 @@ async function createLocationsAndMailboxes() {
             boxCounter++;
           }
         }
-        console.log(`Seeded mailboxes for ${loc.name} - ${clusterName}`);
+        console.log(`Seeded mailboxes for ${loc.name} - ${mailroomName}`);
       }
     }
   }

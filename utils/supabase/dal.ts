@@ -143,7 +143,7 @@ export const getCurrentUserKYCStatus = cache(async (): Promise<string> => {
 /**
  * Get the user's plan type
  * Returns the plan_type string (e.g., "FREE", "BASIC", "PREMIUM")
- * Returns "FREE" if no active subscription exists
+ * Returns "FREE" if no active subscription exists or on database connection errors
  */
 export const getUserPlanType = cache(
   async (userId: string): Promise<string> => {
@@ -162,13 +162,29 @@ export const getUserPlanType = cache(
       });
 
       return subscription?.plan_type || "FREE";
-    } catch (error) {
-      console.error("Error fetching user plan type:", error);
-      // If it's a connection error, return FREE and log it
-      if (error instanceof Error) {
-        console.error("Database connection error:", error.message);
+    } catch (error: any) {
+      // Handle Prisma connection errors gracefully
+      const isConnectionError =
+        error?.code === "P1001" || // Can't reach database server
+        error?.code === "P1000" || // Authentication failed
+        error?.code === "P1017" || // Server has closed the connection
+        error?.message?.includes("Can't reach database server") ||
+        error?.message?.includes("connection") ||
+        error?.message?.includes("ECONNREFUSED") ||
+        error?.message?.includes("ETIMEDOUT");
+
+      if (isConnectionError) {
+        console.warn(
+          `Database connection error while fetching plan type for user ${userId}. Defaulting to FREE plan.`,
+          error?.message || String(error)
+        );
+      } else {
+        console.error("Error fetching user plan type:", error);
       }
-      return "FREE"; // Default to FREE on error
+
+      // Always return "FREE" as safe default on any error
+      // This prevents the app from crashing when database is unavailable
+      return "FREE";
     }
   }
 );
@@ -244,6 +260,11 @@ export const getUserAllMailboxes = cache(async (userId: string) => {
                 mailing_location: true,
               },
             },
+            _count: {
+              select: {
+                mail_items: true,
+              },
+            },
           },
         },
         package: {
@@ -278,6 +299,7 @@ export const getUserAllMailboxes = cache(async (userId: string) => {
           name: sub.mailbox!.cluster.name,
           description: sub.mailbox!.cluster.description,
         },
+        mailItemCount: sub.mailbox!._count.mail_items,
       }));
   } catch (error) {
     console.error("Error fetching user mailboxes:", error);

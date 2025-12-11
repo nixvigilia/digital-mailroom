@@ -236,6 +236,7 @@ model MailItem {
   id                    String              @id @default(uuid()) @db.Uuid
   profile_id            String?             @db.Uuid
   business_account_id   String?             @db.Uuid
+  mailbox_id            String?             @db.Uuid
   sender                String
   subject               String?
   received_at           DateTime
@@ -257,6 +258,7 @@ model MailItem {
   action_requests       MailActionRequest[]
   business_account      BusinessAccount?    @relation(fields: [business_account_id], references: [id], onDelete: Cascade)
   profile               Profile?            @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+  mailbox               Mailbox?            @relation(fields: [mailbox_id], references: [id], onDelete: SetNull)
 
   @@map("mail_item")
 }
@@ -269,6 +271,8 @@ model MailActionRequest {
   status                  ActionStatus @default(PENDING)
   forward_address         String?
   forward_tracking_number String?
+  forward_3pl_name        String?
+  forward_tracking_url    String?
   notes                   String?
   requires_approval       Boolean      @default(true)
   approved_at             DateTime?
@@ -336,6 +340,9 @@ model Mailbox {
 
   // Inverse relation if we want to track which subscription owns this box
   subscriptions Subscription[]
+
+  // Track all mail items received in this mailbox
+  mail_items MailItem[]
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

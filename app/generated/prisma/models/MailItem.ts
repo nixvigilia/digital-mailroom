@@ -28,6 +28,7 @@ export type MailItemMinAggregateOutputType = {
   id: string | null
   profile_id: string | null
   business_account_id: string | null
+  mailbox_id: string | null
   sender: string | null
   subject: string | null
   received_at: Date | null
@@ -51,6 +52,7 @@ export type MailItemMaxAggregateOutputType = {
   id: string | null
   profile_id: string | null
   business_account_id: string | null
+  mailbox_id: string | null
   sender: string | null
   subject: string | null
   received_at: Date | null
@@ -74,6 +76,7 @@ export type MailItemCountAggregateOutputType = {
   id: number
   profile_id: number
   business_account_id: number
+  mailbox_id: number
   sender: number
   subject: number
   received_at: number
@@ -100,6 +103,7 @@ export type MailItemMinAggregateInputType = {
   id?: true
   profile_id?: true
   business_account_id?: true
+  mailbox_id?: true
   sender?: true
   subject?: true
   received_at?: true
@@ -123,6 +127,7 @@ export type MailItemMaxAggregateInputType = {
   id?: true
   profile_id?: true
   business_account_id?: true
+  mailbox_id?: true
   sender?: true
   subject?: true
   received_at?: true
@@ -146,6 +151,7 @@ export type MailItemCountAggregateInputType = {
   id?: true
   profile_id?: true
   business_account_id?: true
+  mailbox_id?: true
   sender?: true
   subject?: true
   received_at?: true
@@ -243,6 +249,7 @@ export type MailItemGroupByOutputType = {
   id: string
   profile_id: string | null
   business_account_id: string | null
+  mailbox_id: string | null
   sender: string
   subject: string | null
   received_at: Date
@@ -288,6 +295,7 @@ export type MailItemWhereInput = {
   id?: Prisma.UuidFilter<"MailItem"> | string
   profile_id?: Prisma.UuidNullableFilter<"MailItem"> | string | null
   business_account_id?: Prisma.UuidNullableFilter<"MailItem"> | string | null
+  mailbox_id?: Prisma.UuidNullableFilter<"MailItem"> | string | null
   sender?: Prisma.StringFilter<"MailItem"> | string
   subject?: Prisma.StringNullableFilter<"MailItem"> | string | null
   received_at?: Prisma.DateTimeFilter<"MailItem"> | Date | string
@@ -309,12 +317,14 @@ export type MailItemWhereInput = {
   action_requests?: Prisma.MailActionRequestListRelationFilter
   business_account?: Prisma.XOR<Prisma.BusinessAccountNullableScalarRelationFilter, Prisma.BusinessAccountWhereInput> | null
   profile?: Prisma.XOR<Prisma.ProfileNullableScalarRelationFilter, Prisma.ProfileWhereInput> | null
+  mailbox?: Prisma.XOR<Prisma.MailboxNullableScalarRelationFilter, Prisma.MailboxWhereInput> | null
 }
 
 export type MailItemOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   profile_id?: Prisma.SortOrderInput | Prisma.SortOrder
   business_account_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  mailbox_id?: Prisma.SortOrderInput | Prisma.SortOrder
   sender?: Prisma.SortOrder
   subject?: Prisma.SortOrderInput | Prisma.SortOrder
   received_at?: Prisma.SortOrder
@@ -336,6 +346,7 @@ export type MailItemOrderByWithRelationInput = {
   action_requests?: Prisma.MailActionRequestOrderByRelationAggregateInput
   business_account?: Prisma.BusinessAccountOrderByWithRelationInput
   profile?: Prisma.ProfileOrderByWithRelationInput
+  mailbox?: Prisma.MailboxOrderByWithRelationInput
 }
 
 export type MailItemWhereUniqueInput = Prisma.AtLeast<{
@@ -345,6 +356,7 @@ export type MailItemWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.MailItemWhereInput | Prisma.MailItemWhereInput[]
   profile_id?: Prisma.UuidNullableFilter<"MailItem"> | string | null
   business_account_id?: Prisma.UuidNullableFilter<"MailItem"> | string | null
+  mailbox_id?: Prisma.UuidNullableFilter<"MailItem"> | string | null
   sender?: Prisma.StringFilter<"MailItem"> | string
   subject?: Prisma.StringNullableFilter<"MailItem"> | string | null
   received_at?: Prisma.DateTimeFilter<"MailItem"> | Date | string
@@ -366,12 +378,14 @@ export type MailItemWhereUniqueInput = Prisma.AtLeast<{
   action_requests?: Prisma.MailActionRequestListRelationFilter
   business_account?: Prisma.XOR<Prisma.BusinessAccountNullableScalarRelationFilter, Prisma.BusinessAccountWhereInput> | null
   profile?: Prisma.XOR<Prisma.ProfileNullableScalarRelationFilter, Prisma.ProfileWhereInput> | null
+  mailbox?: Prisma.XOR<Prisma.MailboxNullableScalarRelationFilter, Prisma.MailboxWhereInput> | null
 }, "id">
 
 export type MailItemOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   profile_id?: Prisma.SortOrderInput | Prisma.SortOrder
   business_account_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  mailbox_id?: Prisma.SortOrderInput | Prisma.SortOrder
   sender?: Prisma.SortOrder
   subject?: Prisma.SortOrderInput | Prisma.SortOrder
   received_at?: Prisma.SortOrder
@@ -402,6 +416,7 @@ export type MailItemScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"MailItem"> | string
   profile_id?: Prisma.UuidNullableWithAggregatesFilter<"MailItem"> | string | null
   business_account_id?: Prisma.UuidNullableWithAggregatesFilter<"MailItem"> | string | null
+  mailbox_id?: Prisma.UuidNullableWithAggregatesFilter<"MailItem"> | string | null
   sender?: Prisma.StringWithAggregatesFilter<"MailItem"> | string
   subject?: Prisma.StringNullableWithAggregatesFilter<"MailItem"> | string | null
   received_at?: Prisma.DateTimeWithAggregatesFilter<"MailItem"> | Date | string
@@ -445,12 +460,14 @@ export type MailItemCreateInput = {
   action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutMail_itemInput
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutMail_itemsInput
   profile?: Prisma.ProfileCreateNestedOneWithoutMail_itemsInput
+  mailbox?: Prisma.MailboxCreateNestedOneWithoutMail_itemsInput
 }
 
 export type MailItemUncheckedCreateInput = {
   id?: string
   profile_id?: string | null
   business_account_id?: string | null
+  mailbox_id?: string | null
   sender: string
   subject?: string | null
   received_at: Date | string
@@ -495,12 +512,14 @@ export type MailItemUpdateInput = {
   action_requests?: Prisma.MailActionRequestUpdateManyWithoutMail_itemNestedInput
   business_account?: Prisma.BusinessAccountUpdateOneWithoutMail_itemsNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutMail_itemsNestedInput
+  mailbox?: Prisma.MailboxUpdateOneWithoutMail_itemsNestedInput
 }
 
 export type MailItemUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -526,6 +545,7 @@ export type MailItemCreateManyInput = {
   id?: string
   profile_id?: string | null
   business_account_id?: string | null
+  mailbox_id?: string | null
   sender: string
   subject?: string | null
   received_at: Date | string
@@ -572,6 +592,7 @@ export type MailItemUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -606,6 +627,7 @@ export type MailItemCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   profile_id?: Prisma.SortOrder
   business_account_id?: Prisma.SortOrder
+  mailbox_id?: Prisma.SortOrder
   sender?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   received_at?: Prisma.SortOrder
@@ -630,6 +652,7 @@ export type MailItemMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   profile_id?: Prisma.SortOrder
   business_account_id?: Prisma.SortOrder
+  mailbox_id?: Prisma.SortOrder
   sender?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   received_at?: Prisma.SortOrder
@@ -653,6 +676,7 @@ export type MailItemMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   profile_id?: Prisma.SortOrder
   business_account_id?: Prisma.SortOrder
+  mailbox_id?: Prisma.SortOrder
   sender?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   received_at?: Prisma.SortOrder
@@ -788,6 +812,48 @@ export type MailItemUpdateOneRequiredWithoutAction_requestsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MailItemUpdateToOneWithWhereWithoutAction_requestsInput, Prisma.MailItemUpdateWithoutAction_requestsInput>, Prisma.MailItemUncheckedUpdateWithoutAction_requestsInput>
 }
 
+export type MailItemCreateNestedManyWithoutMailboxInput = {
+  create?: Prisma.XOR<Prisma.MailItemCreateWithoutMailboxInput, Prisma.MailItemUncheckedCreateWithoutMailboxInput> | Prisma.MailItemCreateWithoutMailboxInput[] | Prisma.MailItemUncheckedCreateWithoutMailboxInput[]
+  connectOrCreate?: Prisma.MailItemCreateOrConnectWithoutMailboxInput | Prisma.MailItemCreateOrConnectWithoutMailboxInput[]
+  createMany?: Prisma.MailItemCreateManyMailboxInputEnvelope
+  connect?: Prisma.MailItemWhereUniqueInput | Prisma.MailItemWhereUniqueInput[]
+}
+
+export type MailItemUncheckedCreateNestedManyWithoutMailboxInput = {
+  create?: Prisma.XOR<Prisma.MailItemCreateWithoutMailboxInput, Prisma.MailItemUncheckedCreateWithoutMailboxInput> | Prisma.MailItemCreateWithoutMailboxInput[] | Prisma.MailItemUncheckedCreateWithoutMailboxInput[]
+  connectOrCreate?: Prisma.MailItemCreateOrConnectWithoutMailboxInput | Prisma.MailItemCreateOrConnectWithoutMailboxInput[]
+  createMany?: Prisma.MailItemCreateManyMailboxInputEnvelope
+  connect?: Prisma.MailItemWhereUniqueInput | Prisma.MailItemWhereUniqueInput[]
+}
+
+export type MailItemUpdateManyWithoutMailboxNestedInput = {
+  create?: Prisma.XOR<Prisma.MailItemCreateWithoutMailboxInput, Prisma.MailItemUncheckedCreateWithoutMailboxInput> | Prisma.MailItemCreateWithoutMailboxInput[] | Prisma.MailItemUncheckedCreateWithoutMailboxInput[]
+  connectOrCreate?: Prisma.MailItemCreateOrConnectWithoutMailboxInput | Prisma.MailItemCreateOrConnectWithoutMailboxInput[]
+  upsert?: Prisma.MailItemUpsertWithWhereUniqueWithoutMailboxInput | Prisma.MailItemUpsertWithWhereUniqueWithoutMailboxInput[]
+  createMany?: Prisma.MailItemCreateManyMailboxInputEnvelope
+  set?: Prisma.MailItemWhereUniqueInput | Prisma.MailItemWhereUniqueInput[]
+  disconnect?: Prisma.MailItemWhereUniqueInput | Prisma.MailItemWhereUniqueInput[]
+  delete?: Prisma.MailItemWhereUniqueInput | Prisma.MailItemWhereUniqueInput[]
+  connect?: Prisma.MailItemWhereUniqueInput | Prisma.MailItemWhereUniqueInput[]
+  update?: Prisma.MailItemUpdateWithWhereUniqueWithoutMailboxInput | Prisma.MailItemUpdateWithWhereUniqueWithoutMailboxInput[]
+  updateMany?: Prisma.MailItemUpdateManyWithWhereWithoutMailboxInput | Prisma.MailItemUpdateManyWithWhereWithoutMailboxInput[]
+  deleteMany?: Prisma.MailItemScalarWhereInput | Prisma.MailItemScalarWhereInput[]
+}
+
+export type MailItemUncheckedUpdateManyWithoutMailboxNestedInput = {
+  create?: Prisma.XOR<Prisma.MailItemCreateWithoutMailboxInput, Prisma.MailItemUncheckedCreateWithoutMailboxInput> | Prisma.MailItemCreateWithoutMailboxInput[] | Prisma.MailItemUncheckedCreateWithoutMailboxInput[]
+  connectOrCreate?: Prisma.MailItemCreateOrConnectWithoutMailboxInput | Prisma.MailItemCreateOrConnectWithoutMailboxInput[]
+  upsert?: Prisma.MailItemUpsertWithWhereUniqueWithoutMailboxInput | Prisma.MailItemUpsertWithWhereUniqueWithoutMailboxInput[]
+  createMany?: Prisma.MailItemCreateManyMailboxInputEnvelope
+  set?: Prisma.MailItemWhereUniqueInput | Prisma.MailItemWhereUniqueInput[]
+  disconnect?: Prisma.MailItemWhereUniqueInput | Prisma.MailItemWhereUniqueInput[]
+  delete?: Prisma.MailItemWhereUniqueInput | Prisma.MailItemWhereUniqueInput[]
+  connect?: Prisma.MailItemWhereUniqueInput | Prisma.MailItemWhereUniqueInput[]
+  update?: Prisma.MailItemUpdateWithWhereUniqueWithoutMailboxInput | Prisma.MailItemUpdateWithWhereUniqueWithoutMailboxInput[]
+  updateMany?: Prisma.MailItemUpdateManyWithWhereWithoutMailboxInput | Prisma.MailItemUpdateManyWithWhereWithoutMailboxInput[]
+  deleteMany?: Prisma.MailItemScalarWhereInput | Prisma.MailItemScalarWhereInput[]
+}
+
 export type MailItemCreateWithoutProfileInput = {
   id?: string
   sender: string
@@ -810,11 +876,13 @@ export type MailItemCreateWithoutProfileInput = {
   updated_at?: Date | string
   action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutMail_itemInput
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutMail_itemsInput
+  mailbox?: Prisma.MailboxCreateNestedOneWithoutMail_itemsInput
 }
 
 export type MailItemUncheckedCreateWithoutProfileInput = {
   id?: string
   business_account_id?: string | null
+  mailbox_id?: string | null
   sender: string
   subject?: string | null
   received_at: Date | string
@@ -869,6 +937,7 @@ export type MailItemScalarWhereInput = {
   id?: Prisma.UuidFilter<"MailItem"> | string
   profile_id?: Prisma.UuidNullableFilter<"MailItem"> | string | null
   business_account_id?: Prisma.UuidNullableFilter<"MailItem"> | string | null
+  mailbox_id?: Prisma.UuidNullableFilter<"MailItem"> | string | null
   sender?: Prisma.StringFilter<"MailItem"> | string
   subject?: Prisma.StringNullableFilter<"MailItem"> | string | null
   received_at?: Prisma.DateTimeFilter<"MailItem"> | Date | string
@@ -911,11 +980,13 @@ export type MailItemCreateWithoutBusiness_accountInput = {
   updated_at?: Date | string
   action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutMail_itemInput
   profile?: Prisma.ProfileCreateNestedOneWithoutMail_itemsInput
+  mailbox?: Prisma.MailboxCreateNestedOneWithoutMail_itemsInput
 }
 
 export type MailItemUncheckedCreateWithoutBusiness_accountInput = {
   id?: string
   profile_id?: string | null
+  mailbox_id?: string | null
   sender: string
   subject?: string | null
   received_at: Date | string
@@ -985,12 +1056,14 @@ export type MailItemCreateWithoutAction_requestsInput = {
   updated_at?: Date | string
   business_account?: Prisma.BusinessAccountCreateNestedOneWithoutMail_itemsInput
   profile?: Prisma.ProfileCreateNestedOneWithoutMail_itemsInput
+  mailbox?: Prisma.MailboxCreateNestedOneWithoutMail_itemsInput
 }
 
 export type MailItemUncheckedCreateWithoutAction_requestsInput = {
   id?: string
   profile_id?: string | null
   business_account_id?: string | null
+  mailbox_id?: string | null
   sender: string
   subject?: string | null
   received_at: Date | string
@@ -1049,12 +1122,14 @@ export type MailItemUpdateWithoutAction_requestsInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   business_account?: Prisma.BusinessAccountUpdateOneWithoutMail_itemsNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutMail_itemsNestedInput
+  mailbox?: Prisma.MailboxUpdateOneWithoutMail_itemsNestedInput
 }
 
 export type MailItemUncheckedUpdateWithoutAction_requestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1075,9 +1150,86 @@ export type MailItemUncheckedUpdateWithoutAction_requestsInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type MailItemCreateWithoutMailboxInput = {
+  id?: string
+  sender: string
+  subject?: string | null
+  received_at: Date | string
+  status?: $Enums.MailStatus
+  envelope_scan_url?: string | null
+  full_scan_url?: string | null
+  has_full_scan?: boolean
+  tags?: Prisma.MailItemCreatetagsInput | string[]
+  category?: string | null
+  notes?: string | null
+  is_archived?: boolean
+  assigned_to?: string | null
+  department?: string | null
+  requires_kyc_approval?: boolean
+  kyc_approved_at?: Date | string | null
+  kyc_approved_by?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  action_requests?: Prisma.MailActionRequestCreateNestedManyWithoutMail_itemInput
+  business_account?: Prisma.BusinessAccountCreateNestedOneWithoutMail_itemsInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutMail_itemsInput
+}
+
+export type MailItemUncheckedCreateWithoutMailboxInput = {
+  id?: string
+  profile_id?: string | null
+  business_account_id?: string | null
+  sender: string
+  subject?: string | null
+  received_at: Date | string
+  status?: $Enums.MailStatus
+  envelope_scan_url?: string | null
+  full_scan_url?: string | null
+  has_full_scan?: boolean
+  tags?: Prisma.MailItemCreatetagsInput | string[]
+  category?: string | null
+  notes?: string | null
+  is_archived?: boolean
+  assigned_to?: string | null
+  department?: string | null
+  requires_kyc_approval?: boolean
+  kyc_approved_at?: Date | string | null
+  kyc_approved_by?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  action_requests?: Prisma.MailActionRequestUncheckedCreateNestedManyWithoutMail_itemInput
+}
+
+export type MailItemCreateOrConnectWithoutMailboxInput = {
+  where: Prisma.MailItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.MailItemCreateWithoutMailboxInput, Prisma.MailItemUncheckedCreateWithoutMailboxInput>
+}
+
+export type MailItemCreateManyMailboxInputEnvelope = {
+  data: Prisma.MailItemCreateManyMailboxInput | Prisma.MailItemCreateManyMailboxInput[]
+  skipDuplicates?: boolean
+}
+
+export type MailItemUpsertWithWhereUniqueWithoutMailboxInput = {
+  where: Prisma.MailItemWhereUniqueInput
+  update: Prisma.XOR<Prisma.MailItemUpdateWithoutMailboxInput, Prisma.MailItemUncheckedUpdateWithoutMailboxInput>
+  create: Prisma.XOR<Prisma.MailItemCreateWithoutMailboxInput, Prisma.MailItemUncheckedCreateWithoutMailboxInput>
+}
+
+export type MailItemUpdateWithWhereUniqueWithoutMailboxInput = {
+  where: Prisma.MailItemWhereUniqueInput
+  data: Prisma.XOR<Prisma.MailItemUpdateWithoutMailboxInput, Prisma.MailItemUncheckedUpdateWithoutMailboxInput>
+}
+
+export type MailItemUpdateManyWithWhereWithoutMailboxInput = {
+  where: Prisma.MailItemScalarWhereInput
+  data: Prisma.XOR<Prisma.MailItemUpdateManyMutationInput, Prisma.MailItemUncheckedUpdateManyWithoutMailboxInput>
+}
+
 export type MailItemCreateManyProfileInput = {
   id?: string
   business_account_id?: string | null
+  mailbox_id?: string | null
   sender: string
   subject?: string | null
   received_at: Date | string
@@ -1120,11 +1272,13 @@ export type MailItemUpdateWithoutProfileInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   action_requests?: Prisma.MailActionRequestUpdateManyWithoutMail_itemNestedInput
   business_account?: Prisma.BusinessAccountUpdateOneWithoutMail_itemsNestedInput
+  mailbox?: Prisma.MailboxUpdateOneWithoutMail_itemsNestedInput
 }
 
 export type MailItemUncheckedUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   business_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1149,6 +1303,7 @@ export type MailItemUncheckedUpdateWithoutProfileInput = {
 export type MailItemUncheckedUpdateManyWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   business_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1172,6 +1327,7 @@ export type MailItemUncheckedUpdateManyWithoutProfileInput = {
 export type MailItemCreateManyBusiness_accountInput = {
   id?: string
   profile_id?: string | null
+  mailbox_id?: string | null
   sender: string
   subject?: string | null
   received_at: Date | string
@@ -1214,11 +1370,13 @@ export type MailItemUpdateWithoutBusiness_accountInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   action_requests?: Prisma.MailActionRequestUpdateManyWithoutMail_itemNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutMail_itemsNestedInput
+  mailbox?: Prisma.MailboxUpdateOneWithoutMail_itemsNestedInput
 }
 
 export type MailItemUncheckedUpdateWithoutBusiness_accountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1243,6 +1401,105 @@ export type MailItemUncheckedUpdateWithoutBusiness_accountInput = {
 export type MailItemUncheckedUpdateManyWithoutBusiness_accountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mailbox_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sender?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumMailStatusFieldUpdateOperationsInput | $Enums.MailStatus
+  envelope_scan_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  full_scan_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  has_full_scan?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tags?: Prisma.MailItemUpdatetagsInput | string[]
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  assigned_to?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requires_kyc_approval?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kyc_approved_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  kyc_approved_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type MailItemCreateManyMailboxInput = {
+  id?: string
+  profile_id?: string | null
+  business_account_id?: string | null
+  sender: string
+  subject?: string | null
+  received_at: Date | string
+  status?: $Enums.MailStatus
+  envelope_scan_url?: string | null
+  full_scan_url?: string | null
+  has_full_scan?: boolean
+  tags?: Prisma.MailItemCreatetagsInput | string[]
+  category?: string | null
+  notes?: string | null
+  is_archived?: boolean
+  assigned_to?: string | null
+  department?: string | null
+  requires_kyc_approval?: boolean
+  kyc_approved_at?: Date | string | null
+  kyc_approved_by?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type MailItemUpdateWithoutMailboxInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  sender?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumMailStatusFieldUpdateOperationsInput | $Enums.MailStatus
+  envelope_scan_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  full_scan_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  has_full_scan?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tags?: Prisma.MailItemUpdatetagsInput | string[]
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  assigned_to?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requires_kyc_approval?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kyc_approved_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  kyc_approved_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  action_requests?: Prisma.MailActionRequestUpdateManyWithoutMail_itemNestedInput
+  business_account?: Prisma.BusinessAccountUpdateOneWithoutMail_itemsNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutMail_itemsNestedInput
+}
+
+export type MailItemUncheckedUpdateWithoutMailboxInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sender?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumMailStatusFieldUpdateOperationsInput | $Enums.MailStatus
+  envelope_scan_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  full_scan_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  has_full_scan?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tags?: Prisma.MailItemUpdatetagsInput | string[]
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  assigned_to?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requires_kyc_approval?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kyc_approved_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  kyc_approved_by?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  action_requests?: Prisma.MailActionRequestUncheckedUpdateManyWithoutMail_itemNestedInput
+}
+
+export type MailItemUncheckedUpdateManyWithoutMailboxInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sender?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1298,6 +1555,7 @@ export type MailItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   id?: boolean
   profile_id?: boolean
   business_account_id?: boolean
+  mailbox_id?: boolean
   sender?: boolean
   subject?: boolean
   received_at?: boolean
@@ -1319,6 +1577,7 @@ export type MailItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   action_requests?: boolean | Prisma.MailItem$action_requestsArgs<ExtArgs>
   business_account?: boolean | Prisma.MailItem$business_accountArgs<ExtArgs>
   profile?: boolean | Prisma.MailItem$profileArgs<ExtArgs>
+  mailbox?: boolean | Prisma.MailItem$mailboxArgs<ExtArgs>
   _count?: boolean | Prisma.MailItemCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mailItem"]>
 
@@ -1326,6 +1585,7 @@ export type MailItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   id?: boolean
   profile_id?: boolean
   business_account_id?: boolean
+  mailbox_id?: boolean
   sender?: boolean
   subject?: boolean
   received_at?: boolean
@@ -1346,12 +1606,14 @@ export type MailItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   updated_at?: boolean
   business_account?: boolean | Prisma.MailItem$business_accountArgs<ExtArgs>
   profile?: boolean | Prisma.MailItem$profileArgs<ExtArgs>
+  mailbox?: boolean | Prisma.MailItem$mailboxArgs<ExtArgs>
 }, ExtArgs["result"]["mailItem"]>
 
 export type MailItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   profile_id?: boolean
   business_account_id?: boolean
+  mailbox_id?: boolean
   sender?: boolean
   subject?: boolean
   received_at?: boolean
@@ -1372,12 +1634,14 @@ export type MailItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   updated_at?: boolean
   business_account?: boolean | Prisma.MailItem$business_accountArgs<ExtArgs>
   profile?: boolean | Prisma.MailItem$profileArgs<ExtArgs>
+  mailbox?: boolean | Prisma.MailItem$mailboxArgs<ExtArgs>
 }, ExtArgs["result"]["mailItem"]>
 
 export type MailItemSelectScalar = {
   id?: boolean
   profile_id?: boolean
   business_account_id?: boolean
+  mailbox_id?: boolean
   sender?: boolean
   subject?: boolean
   received_at?: boolean
@@ -1398,20 +1662,23 @@ export type MailItemSelectScalar = {
   updated_at?: boolean
 }
 
-export type MailItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profile_id" | "business_account_id" | "sender" | "subject" | "received_at" | "status" | "envelope_scan_url" | "full_scan_url" | "has_full_scan" | "tags" | "category" | "notes" | "is_archived" | "assigned_to" | "department" | "requires_kyc_approval" | "kyc_approved_at" | "kyc_approved_by" | "created_at" | "updated_at", ExtArgs["result"]["mailItem"]>
+export type MailItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profile_id" | "business_account_id" | "mailbox_id" | "sender" | "subject" | "received_at" | "status" | "envelope_scan_url" | "full_scan_url" | "has_full_scan" | "tags" | "category" | "notes" | "is_archived" | "assigned_to" | "department" | "requires_kyc_approval" | "kyc_approved_at" | "kyc_approved_by" | "created_at" | "updated_at", ExtArgs["result"]["mailItem"]>
 export type MailItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   action_requests?: boolean | Prisma.MailItem$action_requestsArgs<ExtArgs>
   business_account?: boolean | Prisma.MailItem$business_accountArgs<ExtArgs>
   profile?: boolean | Prisma.MailItem$profileArgs<ExtArgs>
+  mailbox?: boolean | Prisma.MailItem$mailboxArgs<ExtArgs>
   _count?: boolean | Prisma.MailItemCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MailItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   business_account?: boolean | Prisma.MailItem$business_accountArgs<ExtArgs>
   profile?: boolean | Prisma.MailItem$profileArgs<ExtArgs>
+  mailbox?: boolean | Prisma.MailItem$mailboxArgs<ExtArgs>
 }
 export type MailItemIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   business_account?: boolean | Prisma.MailItem$business_accountArgs<ExtArgs>
   profile?: boolean | Prisma.MailItem$profileArgs<ExtArgs>
+  mailbox?: boolean | Prisma.MailItem$mailboxArgs<ExtArgs>
 }
 
 export type $MailItemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1420,11 +1687,13 @@ export type $MailItemPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     action_requests: Prisma.$MailActionRequestPayload<ExtArgs>[]
     business_account: Prisma.$BusinessAccountPayload<ExtArgs> | null
     profile: Prisma.$ProfilePayload<ExtArgs> | null
+    mailbox: Prisma.$MailboxPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     profile_id: string | null
     business_account_id: string | null
+    mailbox_id: string | null
     sender: string
     subject: string | null
     received_at: Date
@@ -1840,6 +2109,7 @@ export interface Prisma__MailItemClient<T, Null = never, ExtArgs extends runtime
   action_requests<T extends Prisma.MailItem$action_requestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailItem$action_requestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailActionRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   business_account<T extends Prisma.MailItem$business_accountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailItem$business_accountArgs<ExtArgs>>): Prisma.Prisma__BusinessAccountClient<runtime.Types.Result.GetResult<Prisma.$BusinessAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   profile<T extends Prisma.MailItem$profileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailItem$profileArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  mailbox<T extends Prisma.MailItem$mailboxArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailItem$mailboxArgs<ExtArgs>>): Prisma.Prisma__MailboxClient<runtime.Types.Result.GetResult<Prisma.$MailboxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1872,6 +2142,7 @@ export interface MailItemFieldRefs {
   readonly id: Prisma.FieldRef<"MailItem", 'String'>
   readonly profile_id: Prisma.FieldRef<"MailItem", 'String'>
   readonly business_account_id: Prisma.FieldRef<"MailItem", 'String'>
+  readonly mailbox_id: Prisma.FieldRef<"MailItem", 'String'>
   readonly sender: Prisma.FieldRef<"MailItem", 'String'>
   readonly subject: Prisma.FieldRef<"MailItem", 'String'>
   readonly received_at: Prisma.FieldRef<"MailItem", 'DateTime'>
@@ -2345,6 +2616,25 @@ export type MailItem$profileArgs<ExtArgs extends runtime.Types.Extensions.Intern
    */
   include?: Prisma.ProfileInclude<ExtArgs> | null
   where?: Prisma.ProfileWhereInput
+}
+
+/**
+ * MailItem.mailbox
+ */
+export type MailItem$mailboxArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Mailbox
+   */
+  select?: Prisma.MailboxSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Mailbox
+   */
+  omit?: Prisma.MailboxOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailboxInclude<ExtArgs> | null
+  where?: Prisma.MailboxWhereInput
 }
 
 /**

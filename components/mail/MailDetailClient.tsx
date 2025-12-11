@@ -14,6 +14,8 @@ import {
   ActionIcon,
   Card,
   Text,
+  SimpleGrid,
+  Paper,
 } from "@mantine/core";
 import {
   IconDownload,
@@ -21,6 +23,7 @@ import {
   IconMail,
   IconFileText,
   IconPhoto,
+  IconTrash,
 } from "@tabler/icons-react";
 import {MailActions} from "@/components/mail/MailActions";
 import {PDFViewer} from "@/components/mail/PDFViewer";
@@ -44,6 +47,15 @@ interface MailDetailClientProps {
       status: string;
       requestedAt: Date;
     } | null;
+    pendingForwardRequest?: {
+      status: string;
+      requestedAt: Date;
+    } | null;
+    pendingDisposeRequest?: {
+      status: string;
+      requestedAt: Date;
+    } | null;
+    isForwarded?: boolean;
   };
   mailId: string;
 }
@@ -83,160 +95,105 @@ export function MailDetailClient({mailItem, mailId}: MailDetailClientProps) {
 
   return (
     <Tabs defaultValue="details">
-      <Tabs.List style={{overflowX: "auto", flexWrap: "nowrap"}}>
+      <Tabs.List
+        style={{
+          borderBottom: "1px solid var(--mantine-color-gray-3)",
+          marginBottom: "2rem",
+        }}
+      >
         <Tabs.Tab
           value="details"
-          leftSection={<IconFileText size={16} />}
-          style={{whiteSpace: "nowrap"}}
+          leftSection={<IconFileText size={18} />}
+          style={{
+            padding: "1rem 0.5rem",
+            fontSize: "0.875rem",
+            fontWeight: 600,
+          }}
         >
           Details
         </Tabs.Tab>
         <Tabs.Tab
           value="scans"
-          leftSection={<IconPhoto size={16} />}
-          style={{whiteSpace: "nowrap"}}
+          leftSection={<IconPhoto size={18} />}
+          style={{
+            padding: "1rem 0.5rem",
+            fontSize: "0.875rem",
+            fontWeight: 500,
+          }}
         >
           Scans
         </Tabs.Tab>
         <Tabs.Tab
           value="tags"
-          leftSection={<IconTag size={16} />}
-          style={{whiteSpace: "nowrap"}}
+          leftSection={<IconTag size={18} />}
+          style={{
+            padding: "1rem 0.5rem",
+            fontSize: "0.875rem",
+            fontWeight: 500,
+          }}
         >
           Tags
         </Tabs.Tab>
       </Tabs.List>
 
       {/* Details Tab */}
-      <Tabs.Panel value="details" pt={{base: "sm", sm: "md"}}>
+      <Tabs.Panel value="details">
+        {/* Envelope Scan Section */}
         <Stack gap="md">
-          <Card shadow="sm" padding="md" radius="md" withBorder={false}>
+          <Text size="lg" fw={600}>
+            Envelope Scan
+          </Text>
+          <Paper
+            withBorder
+            p="xl"
+            radius="md"
+            style={{
+              border: "1px solid var(--mantine-color-gray-3)",
+              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
+            }}
+          >
             <Stack gap="md">
-              <Group justify="space-between">
-                <Text size="sm" fw={600} c="dimmed" tt="uppercase">
-                  Mail Information
-                </Text>
-              </Group>
-              <Divider />
-              <Stack gap="sm">
-                {mailItem.sender && (
-                  <Group justify="space-between">
-                    <Text size="sm" c="dimmed">
-                      Sender
-                    </Text>
-                    <Text size="sm" fw={500}>
-                      {mailItem.sender}
-                    </Text>
-                  </Group>
-                )}
-                {mailItem.subject && (
-                  <Group justify="space-between">
-                    <Text size="sm" c="dimmed">
-                      Subject
-                    </Text>
-                    <Text size="sm" fw={500}>
-                      {mailItem.subject}
-                    </Text>
-                  </Group>
-                )}
-                <Group justify="space-between">
-                  <Text size="sm" c="dimmed">
-                    Status
-                  </Text>
-                  <Badge color={statusColors[mailItem.status]} variant="light">
-                    {mailItem.status}
-                  </Badge>
-                </Group>
-                <Group justify="space-between">
-                  <Text size="sm" c="dimmed">
-                    Received
-                  </Text>
-                  <Text size="sm" fw={500}>
-                    {new Date(mailItem.receivedAt).toLocaleString()}
-                  </Text>
-                </Group>
-                {mailItem.category && (
-                  <Group justify="space-between">
-                    <Text size="sm" c="dimmed">
-                      Category
-                    </Text>
-                    <Badge variant="outline">{mailItem.category}</Badge>
-                  </Group>
-                )}
-              </Stack>
-              {mailItem.notes && (
-                <>
-                  <Divider />
-                  <Stack gap="xs">
-                    <Text size="sm" fw={600} c="dimmed" tt="uppercase">
-                      Notes
-                    </Text>
-                    <Text size="sm">{mailItem.notes}</Text>
-                  </Stack>
-                </>
-              )}
-            </Stack>
-          </Card>
-
-          {/* Physical Actions */}
-          <MailActions
-            mailId={mailId}
-            status={mailItem.status}
-            defaultForwardAddress={mailItem.defaultForwardAddress || ""}
-            hasShreddingPin={mailItem.hasShreddingPin || false}
-            pendingScanRequest={mailItem.pendingScanRequest}
-          />
-        </Stack>
-      </Tabs.Panel>
-
-      {/* Scans Tab */}
-      <Tabs.Panel value="scans" pt="md">
-        <Stack gap="md">
-          {/* Envelope Scan */}
-          <Card shadow="sm" padding="md" radius="md" withBorder={false}>
-            <Stack gap="md">
-              <Group justify="space-between">
-                <Text size="sm" fw={600} c="dimmed" tt="uppercase">
-                  Envelope Scan
-                </Text>
-                {mailItem.envelopeScanUrl && (
-                  <Button
-                    size="xs"
-                    variant="light"
-                    leftSection={<IconDownload size={16} />}
-                    onClick={() => handleDownload("envelope")}
-                  >
-                    Download
-                  </Button>
-                )}
-              </Group>
-              <Divider />
               {mailItem.envelopeScanUrl ? (
-                <Box
-                  style={{
-                    borderRadius: "var(--mantine-radius-md)",
-                    overflow: "hidden",
-                    backgroundColor: "var(--mantine-color-gray-1)",
-                    height: 500,
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Image
-                    src={mailItem.envelopeScanUrl}
-                    alt="Envelope scan"
-                    fit="contain"
-                    style={{maxHeight: "100%", maxWidth: "100%"}}
-                  />
-                </Box>
+                <>
+                  <Group justify="space-between">
+                    <Text size="sm" c="dimmed">
+                      Envelope preview
+                    </Text>
+                    <Button
+                      size="xs"
+                      variant="light"
+                      leftSection={<IconDownload size={16} />}
+                      onClick={() => handleDownload("envelope")}
+                    >
+                      Download
+                    </Button>
+                  </Group>
+                  <Box
+                    style={{
+                      borderRadius: "var(--mantine-radius-md)",
+                      overflow: "hidden",
+                      backgroundColor: "var(--mantine-color-gray-1)",
+                      height: 400,
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Image
+                      src={mailItem.envelopeScanUrl}
+                      alt="Envelope scan"
+                      fit="contain"
+                      style={{maxHeight: "100%", maxWidth: "100%"}}
+                    />
+                  </Box>
+                </>
               ) : (
                 <Box
                   style={{
                     borderRadius: "var(--mantine-radius-md)",
                     backgroundColor: "var(--mantine-color-gray-1)",
-                    height: 500,
+                    height: 300,
                     width: "100%",
                     display: "flex",
                     flexDirection: "column",
@@ -245,13 +202,127 @@ export function MailDetailClient({mailItem, mailId}: MailDetailClientProps) {
                     gap: "md",
                   }}
                 >
-                  <IconMail size={64} color="var(--mantine-color-gray-5)" />
+                  <IconMail size={48} color="var(--mantine-color-gray-5)" />
                   <Text c="dimmed">Envelope scan not available</Text>
                 </Box>
               )}
             </Stack>
-          </Card>
+          </Paper>
+        </Stack>
 
+        <Stack gap="xl">
+          {/* Mail Information Section */}
+          <Stack gap="md">
+            <Text size="lg" fw={600} mt="md">
+              Mail Information
+            </Text>
+            <Paper
+              withBorder
+              p={0}
+              radius="md"
+              style={{
+                border: "1px solid var(--mantine-color-gray-3)",
+                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
+              }}
+            >
+              <SimpleGrid
+                cols={{base: 1, md: 3}}
+                spacing={0}
+                style={{
+                  borderBottom: "1px solid var(--mantine-color-gray-3)",
+                }}
+              >
+                <Box
+                  p="xl"
+                  style={{borderRight: "1px solid var(--mantine-color-gray-3)"}}
+                >
+                  <Text size="sm" c="dimmed" mb={4}>
+                    Sender
+                  </Text>
+                  <Text fw={500}>{mailItem.sender || "Unknown"}</Text>
+                </Box>
+                <Box
+                  p="xl"
+                  style={{
+                    borderRight: "1px solid var(--mantine-color-gray-3)",
+                  }}
+                  visibleFrom="md"
+                >
+                  <Text size="sm" c="dimmed" mb={4}>
+                    Status
+                  </Text>
+                  <Text fw={500} c="blue">
+                    {mailItem.status.charAt(0).toUpperCase() +
+                      mailItem.status.slice(1)}
+                  </Text>
+                </Box>
+                <Box p="xl">
+                  <Text size="sm" c="dimmed" mb={4}>
+                    Received At
+                  </Text>
+                  <Text fw={500}>
+                    {new Date(mailItem.receivedAt).toLocaleString("en-US", {
+                      month: "2-digit",
+                      day: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: true,
+                    })}
+                  </Text>
+                </Box>
+              </SimpleGrid>
+              {mailItem.notes && (
+                <Box
+                  p="xl"
+                  style={{
+                    borderTop: "1px solid var(--mantine-color-gray-3)",
+                  }}
+                >
+                  <Text size="sm" c="dimmed" mb={8}>
+                    Notes
+                  </Text>
+                  <Text
+                    size="sm"
+                    style={{
+                      fontFamily: "monospace",
+                      backgroundColor: "var(--mantine-color-gray-0)",
+                      padding: "0.75rem",
+                      borderRadius: "0.375rem",
+                      color: "var(--mantine-color-gray-7)",
+                    }}
+                  >
+                    {mailItem.notes}
+                  </Text>
+                </Box>
+              )}
+            </Paper>
+          </Stack>
+
+          {/* Physical Actions Section */}
+          <Stack gap="md">
+            <Text size="lg" fw={600}>
+              Physical Actions
+            </Text>
+            <MailActions
+              mailId={mailId}
+              status={mailItem.status}
+              defaultForwardAddress={mailItem.defaultForwardAddress || ""}
+              hasShreddingPin={mailItem.hasShreddingPin || false}
+              hasFullScan={mailItem.hasFullScan}
+              isForwarded={mailItem.isForwarded || false}
+              pendingScanRequest={mailItem.pendingScanRequest}
+              pendingForwardRequest={mailItem.pendingForwardRequest}
+              pendingDisposeRequest={mailItem.pendingDisposeRequest}
+            />
+          </Stack>
+        </Stack>
+      </Tabs.Panel>
+
+      {/* Scans Tab */}
+      <Tabs.Panel value="scans" pt="md">
+        <Stack gap="md">
           {/* Full Document Scan */}
           {mailItem.hasFullScan && (
             <Card shadow="sm" padding="md" radius="md" withBorder={false}>

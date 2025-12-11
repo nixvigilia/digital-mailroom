@@ -88,6 +88,16 @@ export async function createSubscriptionInvoice(
       select: {first_name: true, last_name: true, phone_number: true},
     });
 
+    // Normalize phone number: remove leading 0 if present
+    const normalizePhoneNumber = (
+      phone: string | null | undefined
+    ): string | undefined => {
+      if (!phone || phone === "Not provided") return undefined;
+      return phone.startsWith("0") ? phone.substring(1) : phone;
+    };
+
+    const normalizedPhone = normalizePhoneNumber(kycData?.phone_number);
+
     let invoiceUrl: string;
     let paymentChannel: string;
 
@@ -102,7 +112,7 @@ export async function createSubscriptionInvoice(
         should_send_email: true,
         success_redirect_url: `${
           process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-        }/app/billing?success=true`,
+        }/app`,
         failure_redirect_url: `${
           process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
         }/app/pricing?error=true`,
@@ -114,14 +124,15 @@ export async function createSubscriptionInvoice(
             category: "Subscription",
           },
         ],
-        customer: kycData
-          ? {
-              given_names: kycData.first_name,
-              surname: kycData.last_name,
-              email: user.email,
-              mobile_number: kycData.phone_number,
-            }
-          : undefined,
+        customer:
+          kycData && normalizedPhone
+            ? {
+                given_names: kycData.first_name,
+                surname: kycData.last_name,
+                email: user.email,
+                mobile_number: normalizedPhone,
+              }
+            : undefined,
       });
       invoiceUrl = invoice.invoice_url;
       paymentChannel = "XENDIT_INVOICE";
@@ -134,7 +145,7 @@ export async function createSubscriptionInvoice(
         description: description,
         success_url: `${
           process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-        }/app/billing?success=true`,
+        }/app`,
         failure_url: `${
           process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
         }/app/pricing?error=true`,
@@ -146,15 +157,16 @@ export async function createSubscriptionInvoice(
             currency: "PHP",
           },
         ],
-        billing: kycData
-          ? {
-              name: `${kycData.first_name} ${kycData.last_name}`,
-              email: user.email,
-              phone: kycData.phone_number,
-            }
-          : {
-              email: user.email,
-            },
+        billing:
+          kycData && normalizedPhone
+            ? {
+                name: `${kycData.first_name} ${kycData.last_name}`,
+                email: user.email,
+                phone: normalizedPhone,
+              }
+            : {
+                email: user.email,
+              },
       });
       invoiceUrl = checkoutSession.attributes.checkout_url;
       paymentChannel = "PAYMONGO_CHECKOUT";

@@ -18,6 +18,7 @@ import {
   IconHistory,
   IconArrowLeft,
   IconPackage,
+  IconShield,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
@@ -107,13 +108,22 @@ export default function AdminLayoutClient({
           />
 
           {!isOperator && (
-          <NavLink
-            component={Link}
-            href="/admin/settings"
-            label="Settings"
-            leftSection={<IconSettings size={20} />}
-            active={pathname.startsWith("/admin/settings")}
-          />
+            <NavLink
+              component={Link}
+              href="/admin/ip-whitelist"
+              label="IP Whitelist"
+              leftSection={<IconShield size={20} />}
+              active={pathname.startsWith("/admin/ip-whitelist")}
+            />
+          )}
+          {!isOperator && (
+            <NavLink
+              component={Link}
+              href="/admin/settings"
+              label="Settings"
+              leftSection={<IconSettings size={20} />}
+              active={pathname.startsWith("/admin/settings")}
+            />
           )}
         </AppShell.Section>
         <AppShell.Section>

@@ -249,21 +249,21 @@ export async function saveBasicInfo(
     });
 
     // Create or update KYC verification with basic info only
-    // Using placeholder values for required fields that aren't collected yet
+    // Using blank/empty values for required fields that aren't collected yet
     await prisma.kYCVerification.upsert({
       where: {profile_id: userId},
       update: {
         first_name: firstName,
         last_name: lastName,
         phone_number: phoneNumber,
-        // Keep existing values for other fields if they exist, otherwise use placeholders
-        date_of_birth: new Date("1900-01-01"), // Placeholder date
-        address: "Not provided",
-        city: "Not provided",
-        province: "Not provided",
-        postal_code: "0000",
+        // Keep existing values for other fields if they exist, otherwise use blank values
+        date_of_birth: new Date("1900-01-01"), // Placeholder date (required field, cannot be null)
+        address: "",
+        city: "",
+        province: "",
+        postal_code: "",
         country: "Philippines",
-        id_type: "Not provided",
+        id_type: "",
         status: "NOT_STARTED", // Mark as not started since it's incomplete
       },
       create: {
@@ -271,13 +271,13 @@ export async function saveBasicInfo(
         first_name: firstName,
         last_name: lastName,
         phone_number: phoneNumber,
-        date_of_birth: new Date("1900-01-01"), // Placeholder date
-        address: "Not provided",
-        city: "Not provided",
-        province: "Not provided",
-        postal_code: "0000",
+        date_of_birth: new Date("1900-01-01"), // Placeholder date (required field, cannot be null)
+        address: "",
+        city: "",
+        province: "",
+        postal_code: "",
         country: "Philippines",
-        id_type: "Not provided",
+        id_type: "",
         status: "NOT_STARTED",
       },
     });

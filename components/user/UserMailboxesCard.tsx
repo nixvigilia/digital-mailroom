@@ -21,6 +21,7 @@ import {
   IconExternalLink,
   IconCopy,
   IconCheck,
+  IconMail,
 } from "@tabler/icons-react";
 
 interface MailboxData {
@@ -53,6 +54,7 @@ interface MailboxData {
     name: string;
     description: string | null;
   };
+  mailItemCount: number;
 }
 
 interface UserMailboxesCardProps {
@@ -242,6 +244,39 @@ export function UserMailboxesCard({mailboxes}: UserMailboxesCardProps) {
                     </Badge>
                   </Stack>
                 </Group>
+                <Paper
+                  p="sm"
+                  withBorder
+                  style={{
+                    backgroundColor: "var(--mantine-color-blue-0)",
+                    borderColor: "var(--mantine-color-blue-3)",
+                  }}
+                  mt="md"
+                >
+                  <Group justify="space-between" align="center">
+                    <Group gap="sm" align="center">
+                      <ThemeIcon
+                        size="md"
+                        radius="md"
+                        variant="light"
+                        color="blue"
+                      >
+                        <IconMail size={18} />
+                      </ThemeIcon>
+                      <Stack gap={2}>
+                        <Text size="sm" fw={600} c="blue">
+                          Mail Items Stored
+                        </Text>
+                        <Text size="xs" c="dimmed">
+                          Total items in this mailbox
+                        </Text>
+                      </Stack>
+                    </Group>
+                    <Badge size="lg" variant="filled" color="blue" radius="md">
+                      {item.mailItemCount}
+                    </Badge>
+                  </Group>
+                </Paper>
                 {item.location.map_url && (
                   <Button
                     component="a"

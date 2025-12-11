@@ -91,14 +91,6 @@ export default function ShreddingPage() {
                 Shredding Queue ({shredQueue.length})
               </Title>
             </Group>
-            <Button
-              component={Link}
-              href="/operator/queue?action=shred"
-              variant="subtle"
-              size="sm"
-            >
-              View All
-            </Button>
           </Group>
           {shredQueue.length === 0 ? (
             <Text c="dimmed" ta="center" py="xl">
@@ -134,14 +126,6 @@ export default function ShreddingPage() {
                         </Badge>
                       )}
                       <Group gap="xs">
-                        <Button
-                          component={Link}
-                          href={`/operator/queue/${item.id}`}
-                          variant="subtle"
-                          size="xs"
-                        >
-                          View Details
-                        </Button>
                         <Button
                           onClick={() => handleShred(item.id)}
                           disabled={!item.kycApproved}

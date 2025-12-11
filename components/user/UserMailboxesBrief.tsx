@@ -55,6 +55,7 @@ interface MailboxData {
     name: string;
     description: string | null;
   };
+  mailItemCount: number;
 }
 
 interface UserMailboxesBriefProps {
@@ -130,7 +131,8 @@ export function UserMailboxesBrief({mailboxes}: UserMailboxesBriefProps) {
             </Title>
           </Group>
           <Badge size="lg" variant="light" color="blue">
-            {mailboxes.length} {mailboxes.length === 1 ? "Mailbox" : "Mailboxes"}
+            {mailboxes.length}{" "}
+            {mailboxes.length === 1 ? "Mailbox" : "Mailboxes"}
           </Badge>
         </Group>
         <Divider />
@@ -146,7 +148,12 @@ export function UserMailboxesBrief({mailboxes}: UserMailboxesBriefProps) {
                   borderColor: "var(--mantine-color-gray-3)",
                 }}
               >
-                <Group justify="space-between" align="flex-start" gap="md" wrap="nowrap">
+                <Group
+                  justify="space-between"
+                  align="flex-start"
+                  gap="md"
+                  wrap="nowrap"
+                >
                   <Stack gap="xs" style={{flex: 1, minWidth: 0}}>
                     <Group gap="xs" align="center" wrap="nowrap">
                       <ThemeIcon
@@ -171,7 +178,10 @@ export function UserMailboxesBrief({mailboxes}: UserMailboxesBriefProps) {
                     </Group>
                     <Stack gap={2}>
                       <Group gap={4} align="flex-start" wrap="nowrap">
-                        <IconMapPin size={14} style={{marginTop: 2, flexShrink: 0}} />
+                        <IconMapPin
+                          size={14}
+                          style={{marginTop: 2, flexShrink: 0}}
+                        />
                         <Stack gap={2} style={{flex: 1, minWidth: 0}}>
                           <Text size="xs" fw={500}>
                             {item.location.name}
@@ -180,8 +190,25 @@ export function UserMailboxesBrief({mailboxes}: UserMailboxesBriefProps) {
                             {formatFullAddress(item)}
                           </Text>
                           <Text size="xs" c="dimmed">
-                            Cluster: {item.cluster.name}
+                            Mailroom: {item.cluster.name}
                           </Text>
+                          <Group gap="xs" align="center" mt={6}>
+                            <ThemeIcon
+                              size="sm"
+                              radius="sm"
+                              variant="light"
+                              color="blue"
+                            >
+                              <IconMail size={14} />
+                            </ThemeIcon>
+                            <Text size="sm" fw={600} c="blue">
+                              {item.mailItemCount}
+                            </Text>
+                            <Text size="xs" c="dimmed">
+                              mail item{item.mailItemCount !== 1 ? "s" : ""}{" "}
+                              stored
+                            </Text>
+                          </Group>
                         </Stack>
                       </Group>
                     </Stack>
@@ -245,4 +272,3 @@ export function UserMailboxesBrief({mailboxes}: UserMailboxesBriefProps) {
     </Card>
   );
 }
-

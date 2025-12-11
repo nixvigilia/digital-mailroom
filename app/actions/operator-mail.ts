@@ -9,6 +9,8 @@ import {
   MailStatus,
   ActionType,
   ActionStatus,
+  SubscriptionStatus,
+  KYCStatus,
 } from "@/app/generated/prisma/enums";
 
 export type UserSearchResult = {
@@ -100,6 +102,7 @@ export async function createMailItem(
     const profileId = formData.get("profileId") as string;
     const imageFile = formData.get("image") as File;
     const notes = formData.get("notes") as string | null;
+    const mailboxId = formData.get("mailboxId") as string | null;
 
     if (!sender || !profileId || !imageFile) {
       return {success: false, message: "Missing required fields"};
@@ -128,7 +131,15 @@ export async function createMailItem(
     // Get business account ID if applicable
     const profile = await prisma.profile.findUnique({
       where: {id: profileId},
-      include: {business_account: true},
+      include: {
+        business_account: true,
+        kyc_verification: {
+          select: {
+            first_name: true,
+            last_name: true,
+          },
+        },
+      },
     });
 
     const mailItem = await prisma.mailItem.create({
@@ -136,6 +147,7 @@ export async function createMailItem(
         sender,
         profile_id: profileId,
         business_account_id: profile?.business_account?.id,
+        mailbox_id: mailboxId || undefined,
         received_at: new Date(),
         status: MailStatus.RECEIVED,
         envelope_scan_url: uploadData.path,
@@ -172,6 +184,25 @@ export async function createMailItem(
       mailItem.id
     );
 
+    // Send email notification if user has notifications enabled
+    if (profile?.notify_new_mail) {
+      const userName = profile.kyc_verification
+        ? `${profile.kyc_verification.first_name} ${profile.kyc_verification.last_name}`
+        : profile.email;
+
+      // Import and call email notification function
+      const {sendMailReceivedNotification} = await import("@/utils/email");
+      await sendMailReceivedNotification(
+        profile.email,
+        userName,
+        sender,
+        mailItem.id
+      ).catch((error) => {
+        // Log error but don't fail the operation
+        console.error("Failed to send email notification:", error);
+      });
+    }
+
     revalidatePath("/operator/receive");
     return {
       success: true,
@@ -199,9 +230,24 @@ export async function processOpenScan(
       return {success: false, message: "Missing required fields"};
     }
 
-    // Get mail item to check ownership/existence
+    // Get mail item with profile to check ownership/existence and get user info
     const mailItem = await prisma.mailItem.findUnique({
       where: {id: mailId},
+      include: {
+        profile: {
+          select: {
+            id: true,
+            email: true,
+            notify_new_mail: true,
+            kyc_verification: {
+              select: {
+                first_name: true,
+                last_name: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!mailItem) {
@@ -321,9 +367,28 @@ export async function processOpenScan(
       );
     }
 
-    revalidatePath(`/operator/queue/${mailId}`);
-    // Also revalidate the user's inbox view of this item
+    // Send email notification if user has notifications enabled
+    if (mailItem.profile?.notify_new_mail && mailItem.profile.email) {
+      const userName = mailItem.profile.kyc_verification
+        ? `${mailItem.profile.kyc_verification.first_name} ${mailItem.profile.kyc_verification.last_name}`
+        : mailItem.profile.email;
+
+      // Import and call email notification function
+      const {sendScanCompletedNotification} = await import("@/utils/email");
+      await sendScanCompletedNotification(
+        mailItem.profile.email,
+        userName,
+        mailItem.sender || "Unknown",
+        mailId
+      ).catch((error) => {
+        // Log error but don't fail the operation
+        console.error("Failed to send scan completion email:", error);
+      });
+    }
+
+    // Revalidate the user's inbox view of this item
     revalidatePath(`/app/inbox/${mailId}`);
+    revalidatePath(`/operator/scanning`);
 
     return {success: true, message: "Mail item scanned successfully"};
   } catch (error) {
@@ -344,15 +409,32 @@ export async function processForward(
     const mailId = formData.get("mailId") as string;
     const forwardingAddress = formData.get("forwardingAddress") as string;
     const trackingNumber = formData.get("trackingNumber") as string;
+    const threePLName = formData.get("threePLName") as string | null;
+    const trackingUrl = formData.get("trackingUrl") as string | null;
     const notes = formData.get("notes") as string | null;
 
     if (!mailId || !forwardingAddress || !trackingNumber) {
       return {success: false, message: "Missing required fields"};
     }
 
-    // Get mail item to check ownership/existence
+    // Get mail item with profile to check ownership/existence and get user info
     const mailItem = await prisma.mailItem.findUnique({
       where: {id: mailId},
+      include: {
+        profile: {
+          select: {
+            id: true,
+            email: true,
+            notify_new_mail: true,
+            kyc_verification: {
+              select: {
+                first_name: true,
+                last_name: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!mailItem) {
@@ -399,6 +481,8 @@ export async function processForward(
           status: ActionStatus.COMPLETED,
           forward_address: forwardingAddress,
           forward_tracking_number: trackingNumber,
+          forward_3pl_name: threePLName || undefined,
+          forward_tracking_url: trackingUrl || undefined,
           notes: notes || undefined,
           processed_at: new Date(),
           processed_by: access.userId,
@@ -418,6 +502,8 @@ export async function processForward(
         actionRequestId: existingRequest.id,
         forwardingAddress: forwardingAddress,
         trackingNumber: trackingNumber,
+        threePLName: threePLName,
+        trackingUrl: trackingUrl,
       },
       "MailItem",
       mailId
@@ -434,14 +520,39 @@ export async function processForward(
           processedBy: access.userId,
           forwardingAddress: forwardingAddress,
           trackingNumber: trackingNumber,
+          threePLName: threePLName,
+          trackingUrl: trackingUrl,
         },
         "MailItem",
         mailId
       );
     }
 
-    revalidatePath(`/operator/queue/${mailId}`);
+    // Send email notification to user (always send for forwarding as it's a critical action)
+    if (mailItem.profile?.email) {
+      const userName = mailItem.profile.kyc_verification
+        ? `${mailItem.profile.kyc_verification.first_name} ${mailItem.profile.kyc_verification.last_name}`
+        : mailItem.profile.email;
+
+      // Import and call email notification function
+      const {sendForwardCompletedNotification} = await import("@/utils/email");
+      await sendForwardCompletedNotification(
+        mailItem.profile.email,
+        userName,
+        mailItem.sender || "Unknown",
+        mailId,
+        forwardingAddress,
+        trackingNumber,
+        threePLName || "N/A",
+        trackingUrl || null
+      ).catch((error: unknown) => {
+        // Log error but don't fail the operation
+        console.error("Failed to send forward completion email:", error);
+      });
+    }
+
     revalidatePath(`/app/inbox/${mailId}`);
+    revalidatePath(`/operator/forwarding`);
 
     return {success: true, message: "Mail item forwarded successfully"};
   } catch (error) {
@@ -548,8 +659,8 @@ export async function processShred(
       );
     }
 
-    revalidatePath(`/operator/queue/${mailId}`);
     revalidatePath(`/app/inbox/${mailId}`);
+    revalidatePath(`/operator/shredding`);
 
     return {success: true, message: "Mail item shredded successfully"};
   } catch (error) {
@@ -760,6 +871,531 @@ export async function getActionQueue() {
     });
   } catch (error) {
     console.error("Error fetching action queue:", error);
+    return [];
+  }
+}
+
+export async function getOperatorDashboardStats() {
+  const access = await verifyOperatorAccess();
+  if (!access.success) {
+    throw new Error(access.message);
+  }
+
+  try {
+    // Get counts by status
+    const [pending, inProgress, completed, requiresApproval, pendingKYC] =
+      await Promise.all([
+        prisma.mailActionRequest.count({
+          where: {
+            status: ActionStatus.PENDING,
+            action_type: {
+              in: [
+                ActionType.OPEN_AND_SCAN,
+                ActionType.FORWARD,
+                ActionType.SHRED,
+              ],
+            },
+          },
+        }),
+        prisma.mailActionRequest.count({
+          where: {
+            status: ActionStatus.IN_PROGRESS,
+            action_type: {
+              in: [
+                ActionType.OPEN_AND_SCAN,
+                ActionType.FORWARD,
+                ActionType.SHRED,
+              ],
+            },
+          },
+        }),
+        prisma.mailActionRequest.count({
+          where: {
+            status: ActionStatus.COMPLETED,
+            action_type: {
+              in: [
+                ActionType.OPEN_AND_SCAN,
+                ActionType.FORWARD,
+                ActionType.SHRED,
+              ],
+            },
+          },
+        }),
+        prisma.mailActionRequest.count({
+          where: {
+            status: ActionStatus.APPROVED,
+            action_type: {
+              in: [
+                ActionType.OPEN_AND_SCAN,
+                ActionType.FORWARD,
+                ActionType.SHRED,
+              ],
+            },
+          },
+        }),
+        prisma.kYCVerification.count({
+          where: {
+            status: KYCStatus.PENDING,
+          },
+        }),
+      ]);
+
+    return {
+      pending,
+      inProgress,
+      completed,
+      requiresApproval,
+      pendingKYC,
+    };
+  } catch (error) {
+    console.error("Error fetching operator dashboard stats:", error);
+    return {
+      pending: 0,
+      inProgress: 0,
+      completed: 0,
+      requiresApproval: 0,
+      pendingKYC: 0,
+    };
+  }
+}
+
+export async function getScanRequests(page: number = 1, pageSize: number = 10) {
+  const access = await verifyOperatorAccess();
+  if (!access.success) {
+    throw new Error(access.message);
+  }
+
+  try {
+    const skip = (page - 1) * pageSize;
+
+    const [scanRequests, totalCount] = await Promise.all([
+      prisma.mailActionRequest.findMany({
+        where: {
+          action_type: ActionType.OPEN_AND_SCAN,
+          status: {
+            in: [ActionStatus.PENDING, ActionStatus.IN_PROGRESS],
+          },
+        },
+        include: {
+          mail_item: {
+            select: {
+              id: true,
+              sender: true,
+              subject: true,
+              received_at: true,
+            },
+          },
+          profile: {
+            select: {
+              id: true,
+              email: true,
+              user_type: true,
+              kyc_verification: {
+                select: {
+                  status: true,
+                  first_name: true,
+                  last_name: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          created_at: "asc", // Oldest first for queue processing
+        },
+        skip,
+        take: pageSize,
+      }),
+      prisma.mailActionRequest.count({
+        where: {
+          action_type: ActionType.OPEN_AND_SCAN,
+          status: {
+            in: [ActionStatus.PENDING, ActionStatus.IN_PROGRESS],
+          },
+        },
+      }),
+    ]);
+
+    const formattedRequests = scanRequests.map((req) => {
+      const kycStatus = req.profile?.kyc_verification?.status;
+      const kycApproved = kycStatus === "APPROVED";
+      const userName = req.profile?.kyc_verification
+        ? `${req.profile.kyc_verification.first_name} ${req.profile.kyc_verification.last_name}`
+        : req.profile?.email || "Unknown User";
+
+      return {
+        id: req.id,
+        mailItemId: req.mail_item_id,
+        mailItem: {
+          id: req.mail_item?.id || "",
+          sender: req.mail_item?.sender || "Unknown",
+          subject: req.mail_item?.subject || null,
+          receivedAt: req.mail_item?.received_at
+            ? req.mail_item.received_at.toISOString()
+            : null,
+        },
+        user: {
+          id: req.profile_id,
+          name: userName,
+          email: req.profile?.email || "",
+          type: req.profile?.user_type || "INDIVIDUAL",
+        },
+        status: req.status,
+        requestedAt: req.created_at.toISOString(),
+        kycApproved,
+      };
+    });
+
+    return {
+      requests: formattedRequests,
+      totalCount,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: page,
+      pageSize,
+    };
+  } catch (error) {
+    console.error("Error fetching scan requests:", error);
+    return {
+      requests: [],
+      totalCount: 0,
+      totalPages: 0,
+      currentPage: page,
+      pageSize,
+    };
+  }
+}
+
+export async function getForwardRequests(
+  page: number = 1,
+  pageSize: number = 10
+) {
+  const access = await verifyOperatorAccess();
+  if (!access.success) {
+    throw new Error(access.message);
+  }
+
+  try {
+    const skip = (page - 1) * pageSize;
+
+    const [forwardRequests, totalCount] = await Promise.all([
+      prisma.mailActionRequest.findMany({
+        where: {
+          action_type: ActionType.FORWARD,
+          status: {
+            in: [ActionStatus.PENDING, ActionStatus.IN_PROGRESS],
+          },
+        },
+        include: {
+          mail_item: {
+            select: {
+              id: true,
+              sender: true,
+              subject: true,
+              received_at: true,
+            },
+          },
+          profile: {
+            select: {
+              id: true,
+              email: true,
+              user_type: true,
+              kyc_verification: {
+                select: {
+                  status: true,
+                  first_name: true,
+                  last_name: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          created_at: "asc", // Oldest first for queue processing
+        },
+        skip,
+        take: pageSize,
+      }),
+      prisma.mailActionRequest.count({
+        where: {
+          action_type: ActionType.FORWARD,
+          status: {
+            in: [ActionStatus.PENDING, ActionStatus.IN_PROGRESS],
+          },
+        },
+      }),
+    ]);
+
+    const formattedRequests = forwardRequests.map((req) => {
+      const kycStatus = req.profile?.kyc_verification?.status;
+      const kycApproved = kycStatus === "APPROVED";
+      const userName = req.profile?.kyc_verification
+        ? `${req.profile.kyc_verification.first_name} ${req.profile.kyc_verification.last_name}`
+        : req.profile?.email || "Unknown User";
+
+      return {
+        id: req.id,
+        mailItemId: req.mail_item_id,
+        mailItem: {
+          id: req.mail_item?.id || "",
+          sender: req.mail_item?.sender || "Unknown",
+          subject: req.mail_item?.subject || null,
+          receivedAt: req.mail_item?.received_at
+            ? req.mail_item.received_at.toISOString()
+            : null,
+        },
+        user: {
+          id: req.profile_id,
+          name: userName,
+          email: req.profile?.email || "",
+          type: req.profile?.user_type || "INDIVIDUAL",
+        },
+        status: req.status,
+        requestedAt: req.created_at.toISOString(),
+        forwardAddress: req.forward_address || "N/A",
+        kycApproved,
+      };
+    });
+
+    return {
+      requests: formattedRequests,
+      totalCount,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: page,
+      pageSize,
+    };
+  } catch (error) {
+    console.error("Error fetching forward requests:", error);
+    return {
+      requests: [],
+      totalCount: 0,
+      totalPages: 0,
+      currentPage: page,
+      pageSize,
+    };
+  }
+}
+
+export async function getRecentKYCRequests(limit: number = 5) {
+  const access = await verifyOperatorAccess();
+  if (!access.success) {
+    throw new Error(access.message);
+  }
+
+  try {
+    const kycRequests = await prisma.kYCVerification.findMany({
+      where: {
+        status: KYCStatus.PENDING,
+      },
+      include: {
+        profile: {
+          select: {
+            id: true,
+            email: true,
+            user_type: true,
+            business_account: {
+              select: {
+                business_name: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        submitted_at: "asc",
+      },
+      take: limit,
+    });
+
+    return kycRequests.map((kyc) => {
+      const userName = kyc.profile.business_account?.business_name
+        ? kyc.profile.business_account.business_name
+        : `${kyc.first_name} ${kyc.last_name}`;
+
+      return {
+        id: kyc.id,
+        profileId: kyc.profile_id,
+        userName,
+        email: kyc.profile.email,
+        userType: kyc.profile.user_type,
+        submittedAt: kyc.submitted_at ? kyc.submitted_at.toISOString() : null,
+        status: kyc.status,
+      };
+    });
+  } catch (error) {
+    console.error("Error fetching recent KYC requests:", error);
+    return [];
+  }
+}
+
+export async function getRecentActions(limit: number = 5) {
+  const access = await verifyOperatorAccess();
+  if (!access.success) {
+    throw new Error(access.message);
+  }
+
+  try {
+    const actionRequests = await prisma.mailActionRequest.findMany({
+      where: {
+        action_type: {
+          in: [ActionType.OPEN_AND_SCAN, ActionType.FORWARD, ActionType.SHRED],
+        },
+      },
+      include: {
+        mail_item: {
+          select: {
+            id: true,
+          },
+        },
+        profile: {
+          select: {
+            id: true,
+            email: true,
+            kyc_verification: {
+              select: {
+                first_name: true,
+                last_name: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+      take: limit,
+    });
+
+    // Map action type from enum to UI format
+    const actionTypeMap: Record<ActionType, "scan" | "forward" | "shred"> = {
+      OPEN_AND_SCAN: "scan",
+      FORWARD: "forward",
+      SHRED: "shred",
+      HOLD: "forward",
+      ARCHIVE: "forward",
+    };
+
+    // Map status from enum to UI format
+    const statusMap: Record<
+      ActionStatus,
+      "pending" | "in_progress" | "completed" | "requires_approval"
+    > = {
+      PENDING: "pending",
+      IN_PROGRESS: "in_progress",
+      COMPLETED: "completed",
+      APPROVED: "requires_approval",
+      REJECTED: "pending",
+      CANCELLED: "pending",
+    };
+
+    return actionRequests.map((req) => {
+      const userName = req.profile?.kyc_verification
+        ? `${req.profile.kyc_verification.first_name} ${req.profile.kyc_verification.last_name}`
+        : req.profile?.email || "Unknown User";
+
+      return {
+        id: req.id,
+        type: actionTypeMap[req.action_type] || "scan",
+        mailItemId: req.mail_item_id,
+        user: userName,
+        status: statusMap[req.status] || "pending",
+        completedAt: req.completed_at ? req.completed_at.toISOString() : null,
+        startedAt: req.processed_at ? req.processed_at.toISOString() : null,
+        requestedAt: req.created_at.toISOString(),
+      };
+    });
+  } catch (error) {
+    console.error("Error fetching recent actions:", error);
+    return [];
+  }
+}
+
+export type MailboxOption = {
+  subscriptionId: string;
+  mailboxId: string;
+  boxNumber: string;
+  mailboxType: string;
+  locationName: string;
+  locationAddress: string;
+  clusterName: string;
+  profileId: string;
+  userName: string;
+  userEmail: string;
+  planType: string;
+};
+
+export async function getActiveMailboxes(): Promise<MailboxOption[]> {
+  const access = await verifyOperatorAccess();
+  if (!access.success) {
+    throw new Error(access.message);
+  }
+
+  try {
+    const subscriptions = await prisma.subscription.findMany({
+      where: {
+        status: SubscriptionStatus.ACTIVE,
+        mailbox_id: {not: null},
+      },
+      include: {
+        mailbox: {
+          include: {
+            cluster: {
+              include: {
+                mailing_location: true,
+              },
+            },
+          },
+        },
+        profile: {
+          select: {
+            id: true,
+            email: true,
+            kyc_verification: {
+              select: {
+                first_name: true,
+                last_name: true,
+              },
+            },
+          },
+        },
+        package: {
+          select: {
+            name: true,
+            plan_type: true,
+          },
+        },
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+    });
+
+    return subscriptions
+      .filter((sub) => sub.mailbox !== null)
+      .map((sub) => {
+        const userName = sub.profile.kyc_verification
+          ? `${sub.profile.kyc_verification.first_name || ""} ${
+              sub.profile.kyc_verification.last_name || ""
+            }`.trim()
+          : sub.profile.email;
+
+        return {
+          subscriptionId: sub.id,
+          mailboxId: sub.mailbox!.id,
+          boxNumber: sub.mailbox!.box_number,
+          mailboxType: sub.mailbox!.type,
+          locationName: sub.mailbox!.cluster.mailing_location.name,
+          locationAddress: `${sub.mailbox!.cluster.mailing_location.address}, ${
+            sub.mailbox!.cluster.mailing_location.city
+          }`,
+          clusterName: sub.mailbox!.cluster.name,
+          profileId: sub.profile.id,
+          userName: userName,
+          userEmail: sub.profile.email,
+          planType: sub.plan_type,
+        };
+      });
+  } catch (error) {
+    console.error("Error fetching active mailboxes:", error);
     return [];
   }
 }

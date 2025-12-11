@@ -42,6 +42,8 @@ async function generateUniqueReferralCode(
 
 /**
  * Generate and assign a unique referral code to the current user
+ * Note: Referral codes are now automatically generated on signup via database trigger.
+ * This function is kept for backward compatibility and to handle edge cases.
  */
 export async function generateReferralCode() {
   try {
@@ -56,7 +58,7 @@ export async function generateReferralCode() {
     const userId = currentUser.userId;
     const {prisma} = await import("@/utils/prisma");
 
-    // Check if user already has a referral code
+    // Check if user already has a referral code (should always be true now)
     const profile = await prisma.profile.findUnique({
       where: {id: userId},
       select: {
@@ -65,14 +67,17 @@ export async function generateReferralCode() {
     });
 
     if (profile?.referral_code) {
+      // Create referral record if user was referred (in case it wasn't created yet)
+      await createReferralRecord(userId);
+
       return {
         success: true,
-        message: "You already have a referral code",
+        message: "Your referral code is ready!",
         referralCode: profile.referral_code,
       };
     }
 
-    // Generate unique referral code
+    // Fallback: Generate unique referral code if somehow missing (edge case)
     const uniqueReferralCode = await generateUniqueReferralCode(userId, prisma);
 
     // Update profile with referral code
@@ -106,6 +111,8 @@ export async function generateReferralCode() {
  */
 export async function createReferralRecord(userId: string) {
   try {
+    console.log(`Creating referral record for user ${userId}`);
+
     // Get user's profile
     const profile = await prisma.profile.findUnique({
       where: {id: userId},
@@ -115,8 +122,13 @@ export async function createReferralRecord(userId: string) {
     });
 
     if (!profile || !profile.referred_by) {
+      console.log(
+        `User ${userId} was not referred. No referral record to create.`
+      );
       return; // No referral to process
     }
+
+    console.log(`User ${userId} was referred by ${profile.referred_by}`);
 
     // Get referrer's profile to get their referral code
     const referrer = await prisma.profile.findUnique({
@@ -128,8 +140,15 @@ export async function createReferralRecord(userId: string) {
     });
 
     if (!referrer || !referrer.referral_code) {
+      console.log(
+        `Referrer ${profile.referred_by} not found or does not have a referral code yet.`
+      );
       return; // Referrer not found or no referral code (they haven't generated one yet)
     }
+
+    console.log(
+      `Referrer ${referrer.id} has referral code: ${referrer.referral_code}`
+    );
 
     // Check if referral record already exists
     const existingReferral = await prisma.referral.findUnique({
@@ -137,19 +156,22 @@ export async function createReferralRecord(userId: string) {
     });
 
     if (existingReferral) {
+      console.log(`Referral record already exists for user ${userId}`);
       return; // Already created
     }
 
     // Create referral record
-    await prisma.referral.create({
+    const newReferral = await prisma.referral.create({
       data: {
         referrer_id: referrer.id,
         referred_id: userId,
         referral_code: referrer.referral_code,
-        status: "pending",
-        earnings: 0,
       },
     });
+
+    console.log(
+      `Successfully created referral record: ${newReferral.id} for referrer ${referrer.id} and referred user ${userId}`
+    );
   } catch (error) {
     console.error("Error creating referral record:", error);
     // Don't throw - referral creation shouldn't block user confirmation

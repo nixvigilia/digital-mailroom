@@ -97,30 +97,30 @@ export async function POST(request: NextRequest) {
     } else if (isXendit) {
       // Handle Xendit webhook (kept for future use)
       console.log("Received request from Xendit");
-      const callbackToken = request.headers.get("x-callback-token");
+    const callbackToken = request.headers.get("x-callback-token");
 
-      // Verify webhook signature/token
-      if (XENDIT_CALLBACK_TOKEN) {
-        if (!verifyCallbackToken(callbackToken, XENDIT_CALLBACK_TOKEN)) {
-          console.error("Invalid Xendit callback token");
-          return NextResponse.json(
-            {error: "Invalid callback token"},
-            {status: 403}
-          );
-        }
-      } else {
-        console.warn(
-          "XENDIT_CALLBACK_TOKEN is not set. Skipping token verification."
+    // Verify webhook signature/token
+    if (XENDIT_CALLBACK_TOKEN) {
+      if (!verifyCallbackToken(callbackToken, XENDIT_CALLBACK_TOKEN)) {
+        console.error("Invalid Xendit callback token");
+        return NextResponse.json(
+          {error: "Invalid callback token"},
+          {status: 403}
         );
       }
+    } else {
+      console.warn(
+          "XENDIT_CALLBACK_TOKEN is not set. Skipping token verification."
+      );
+    }
 
       const event = JSON.parse(rawBody);
-      console.log("Received Xendit Webhook:", JSON.stringify(event, null, 2));
+    console.log("Received Xendit Webhook:", JSON.stringify(event, null, 2));
 
       // Handle Xendit invoice events
-      if (event.status === "PAID" || event.status === "SETTLED") {
+    if (event.status === "PAID" || event.status === "SETTLED") {
         await handleXenditInvoicePaid(event);
-      } else if (event.status === "EXPIRED") {
+    } else if (event.status === "EXPIRED") {
         await handleXenditInvoiceExpired(event);
       } else {
         console.log("Unhandled Xendit event status:", event.status);
@@ -564,11 +564,69 @@ async function handleReferralCommission(
   invoiceId: string
 ) {
   try {
-    const referral = await prisma.referral.findUnique({
+    let referral = await prisma.referral.findUnique({
       where: {referred_id: profileId},
     });
 
+    // If referral record doesn't exist, try to create it from profile.referred_by
+    if (!referral) {
+      const profile = await prisma.profile.findUnique({
+        where: {id: profileId},
+        select: {
+          referred_by: true,
+        },
+      });
+
+      if (profile?.referred_by) {
+        // Get referrer's profile to get their referral code
+        const referrer = await prisma.profile.findUnique({
+          where: {id: profile.referred_by},
+          select: {
+            id: true,
+            referral_code: true,
+          },
+        });
+
+        if (referrer?.referral_code) {
+          // Create referral record
+          try {
+            referral = await prisma.referral.create({
+              data: {
+                referrer_id: referrer.id,
+                referred_id: profileId,
+                referral_code: referrer.referral_code,
+              },
+            });
+            console.log(
+              `Created missing referral record for referred user ${profileId}`
+            );
+          } catch (createError) {
+            console.error(
+              "Error creating referral record in handleReferralCommission:",
+              createError
+            );
+            // If creation fails (e.g., duplicate), try to fetch again
+            referral = await prisma.referral.findUnique({
+              where: {referred_id: profileId},
+            });
+          }
+        } else {
+          console.log(
+            `Referrer ${profile.referred_by} does not have a referral code yet. Skipping commission.`
+          );
+          return;
+        }
+      } else {
+        console.log(`User ${profileId} was not referred. Skipping commission.`);
+        return;
+      }
+    }
+
     if (referral) {
+      console.log(
+        `Processing referral commission for referrer ${referral.referrer_id}, referred user ${profileId}, amount: ${amount}`
+      );
+
       // Default to 5% if package or cashback_percentage is missing
       const cashbackPercentage = pkg?.cashback_percentage
         ? Number(pkg.cashback_percentage)
@@ -576,6 +634,10 @@ async function handleReferralCommission(
 
       // Calculate commission
       const commission = amount * (cashbackPercentage / 100);
+
+      console.log(
+        `Calculated commission: ${commission} (${cashbackPercentage}% of ${amount})`
+      );
 
       // Check if this transaction has already been processed
       const existingTransaction = await prisma.referralTransaction.findFirst({
@@ -593,12 +655,14 @@ async function handleReferralCommission(
       }
 
       // Create Referral Transaction History
+      // Status is "pending" initially - will be marked as "paid" after a grace period
+      // or when the subscription is confirmed active (e.g., after 30 days)
       const referralTransaction = await prisma.referralTransaction.create({
         data: {
           referral_id: referral.id,
           amount: commission,
           currency: "PHP", // Or retrieve from invoice if dynamic
-          status: "paid",
+          status: "pending", // Start as pending, will be marked paid after verification period
           invoice_id: invoiceId,
           description: `Commission for ${
             pkg?.name || "Subscription"
@@ -608,12 +672,12 @@ async function handleReferralCommission(
 
       // Update subscription_plan if needed
       if (pkg?.plan_type && pkg.plan_type !== referral.subscription_plan) {
-        await prisma.referral.update({
-          where: {id: referral.id},
-          data: {
+      await prisma.referral.update({
+        where: {id: referral.id},
+        data: {
             subscription_plan: pkg.plan_type,
-          },
-        });
+        },
+      });
       }
 
       console.log(

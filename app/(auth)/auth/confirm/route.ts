@@ -2,6 +2,7 @@ import {type EmailOtpType} from "@supabase/supabase-js";
 import {type NextRequest} from "next/server";
 import {NextResponse} from "next/server";
 import {createClient} from "@/utils/supabase/server";
+import {createReferralRecord} from "@/app/actions/referrals";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +50,23 @@ export async function GET(request: NextRequest) {
           "Confirmation failed. Please try again or request a new confirmation link."
       );
       return NextResponse.redirect(errorRedirect);
+    }
+
+    // After successful email confirmation, create referral record if user was referred
+    // This ensures both the new user and referrer have referral codes (now auto-generated)
+    try {
+      const {
+        data: {user},
+      } = await supabase.auth.getUser();
+      if (user) {
+        await createReferralRecord(user.id);
+      }
+    } catch (err) {
+      // Don't block email confirmation if referral record creation fails
+      console.error(
+        "Error creating referral record after email confirmation:",
+        err
+      );
     }
 
     // Success: redirect to specified URL

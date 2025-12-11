@@ -13,6 +13,7 @@ import {
   PasswordInput,
   SegmentedControl,
   Card,
+  SimpleGrid,
 } from "@mantine/core";
 import {
   IconScan,
@@ -21,13 +22,13 @@ import {
   IconTrash,
   IconInfoCircle,
   IconShieldLock,
+  IconFileText,
 } from "@tabler/icons-react";
 import {useState, useEffect} from "react";
 import {notifications} from "@mantine/notifications";
 import {
   requestOpenScan,
   requestForward,
-  requestHold,
   requestShred,
 } from "@/app/actions/mail-actions";
 import {getSettings} from "@/app/actions/settings";
@@ -39,7 +40,17 @@ interface MailActionsProps {
   onActionComplete?: () => void;
   defaultForwardAddress?: string;
   hasShreddingPin?: boolean;
+  hasFullScan?: boolean;
+  isForwarded?: boolean;
   pendingScanRequest?: {
+    status: string;
+    requestedAt: Date;
+  } | null;
+  pendingForwardRequest?: {
+    status: string;
+    requestedAt: Date;
+  } | null;
+  pendingDisposeRequest?: {
     status: string;
     requestedAt: Date;
   } | null;
@@ -51,12 +62,15 @@ export function MailActions({
   onActionComplete,
   defaultForwardAddress = "",
   hasShreddingPin = false,
+  hasFullScan = false,
+  isForwarded = false,
   pendingScanRequest = null,
+  pendingForwardRequest = null,
+  pendingDisposeRequest = null,
 }: MailActionsProps) {
   const [openScanModal, setOpenScanModal] = useState(false);
   const [openForwardModal, setOpenForwardModal] = useState(false);
-  const [openHoldModal, setOpenHoldModal] = useState(false);
-  const [openShredModal, setOpenShredModal] = useState(false);
+  const [openDisposeModal, setOpenDisposeModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleOpenScan = async () => {
@@ -119,37 +133,7 @@ export function MailActions({
     }
   };
 
-  const handleHold = async (reason: string) => {
-    setLoading(true);
-    try {
-      const result = await requestHold(mailId, reason);
-      if (result.success) {
-        notifications.show({
-          title: "Success",
-          message: result.message,
-          color: "green",
-        });
-        setOpenHoldModal(false);
-        if (onActionComplete) onActionComplete();
-      } else {
-        notifications.show({
-          title: "Error",
-          message: result.message,
-          color: "red",
-        });
-      }
-    } catch (error) {
-      notifications.show({
-        title: "Error",
-        message: "An error occurred",
-        color: "red",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleShred = async (pin: string) => {
+  const handleDispose = async (pin: string) => {
     setLoading(true);
     try {
       const result = await requestShred(mailId, pin);
@@ -159,7 +143,7 @@ export function MailActions({
           message: result.message,
           color: "green",
         });
-        setOpenShredModal(false);
+        setOpenDisposeModal(false);
         if (onActionComplete) onActionComplete();
       } else {
         notifications.show({
@@ -197,119 +181,130 @@ export function MailActions({
             </Text>
           </Alert>
         )}
-        <Text size="sm" fw={600} c="dimmed" tt="uppercase">
-          Physical Actions
-        </Text>
-        <Group gap="sm" wrap="wrap">
+        {pendingForwardRequest && (
+          <Alert icon={<IconInfoCircle size={16} />} color="yellow">
+            <Text fw={600} size="sm" mb={4}>
+              Forward Request{" "}
+              {pendingForwardRequest.status === "PENDING"
+                ? "Pending"
+                : "In Progress"}
+            </Text>
+            <Text size="xs" c="dimmed">
+              A forward request was submitted on{" "}
+              {new Date(pendingForwardRequest.requestedAt).toLocaleString()}.
+              The operator will process your request and notify you when
+              complete.
+            </Text>
+          </Alert>
+        )}
+        {pendingDisposeRequest && (
+          <Alert icon={<IconInfoCircle size={16} />} color="yellow">
+            <Text fw={600} size="sm" mb={4}>
+              Dispose Request{" "}
+              {pendingDisposeRequest.status === "PENDING"
+                ? "Pending"
+                : "In Progress"}
+            </Text>
+            <Text size="xs" c="dimmed">
+              A dispose request was submitted on{" "}
+              {new Date(pendingDisposeRequest.requestedAt).toLocaleString()}.
+              The operator will process your request and notify you when
+              complete.
+            </Text>
+          </Alert>
+        )}
+        <SimpleGrid cols={{base: 1, sm: 2, lg: 3}} spacing="md">
           <Button
-            leftSection={<IconScan size={18} />}
+            leftSection={<IconFileText size={18} />}
             variant="light"
-            onClick={() => setOpenScanModal(true)}
-            disabled={status !== "received" || !!pendingScanRequest}
+            color={hasFullScan || status === "scanned" ? "gray" : "blue"}
             size="md"
-            style={{
-              flex: "1 1 calc(50% - 0.5rem)",
-              minWidth: "calc(50% - 0.5rem)",
-            }}
-            visibleFrom="sm"
-          >
-            Open & Scan
-          </Button>
-          <Button
-            leftSection={<IconScan size={18} />}
-            variant="light"
+            fullWidth
             onClick={() => setOpenScanModal(true)}
-            disabled={status !== "received" || !!pendingScanRequest}
-            size="sm"
+            disabled={
+              hasFullScan ||
+              status === "scanned" ||
+              status !== "received" ||
+              !!pendingScanRequest
+            }
             style={{
-              flex: "1 1 calc(50% - 0.5rem)",
-              minWidth: "calc(50% - 0.5rem)",
+              backgroundColor:
+                hasFullScan || status === "scanned"
+                  ? "var(--mantine-color-gray-1)"
+                  : "var(--mantine-color-blue-0)",
+              color:
+                hasFullScan || status === "scanned"
+                  ? "var(--mantine-color-gray-6)"
+                  : "var(--mantine-color-blue-6)",
+              fontWeight: 600,
+              fontSize: "0.875rem",
             }}
-            hiddenFrom="sm"
           >
-            Open & Scan
+            {hasFullScan || status === "scanned"
+              ? "Document scanned"
+              : "Open & Scan"}
           </Button>
           <Button
             leftSection={<IconMailForward size={18} />}
             variant="light"
-            onClick={() => setOpenForwardModal(true)}
+            color={
+              isForwarded ? "gray" : pendingForwardRequest ? "yellow" : "blue"
+            }
             size="md"
-            style={{
-              flex: "1 1 calc(50% - 0.5rem)",
-              minWidth: "calc(50% - 0.5rem)",
+            fullWidth
+            onClick={() => {
+              if (!isForwarded && !pendingForwardRequest) {
+                setOpenForwardModal(true);
+              }
             }}
-            visibleFrom="sm"
-          >
-            Forward
-          </Button>
-          <Button
-            leftSection={<IconMailForward size={18} />}
-            variant="light"
-            onClick={() => setOpenForwardModal(true)}
-            size="sm"
+            disabled={isForwarded || !!pendingForwardRequest}
             style={{
-              flex: "1 1 calc(50% - 0.5rem)",
-              minWidth: "calc(50% - 0.5rem)",
+              backgroundColor: isForwarded
+                ? "var(--mantine-color-gray-1)"
+                : pendingForwardRequest
+                ? "var(--mantine-color-yellow-0)"
+                : "var(--mantine-color-blue-0)",
+              color: isForwarded
+                ? "var(--mantine-color-gray-6)"
+                : pendingForwardRequest
+                ? "var(--mantine-color-yellow-7)"
+                : "var(--mantine-color-blue-6)",
+              fontWeight: 600,
+              fontSize: "0.875rem",
             }}
-            hiddenFrom="sm"
           >
-            Forward
-          </Button>
-          <Button
-            leftSection={<IconLock size={18} />}
-            variant="light"
-            onClick={() => setOpenHoldModal(true)}
-            size="md"
-            style={{
-              flex: "1 1 calc(50% - 0.5rem)",
-              minWidth: "calc(50% - 0.5rem)",
-            }}
-            visibleFrom="sm"
-          >
-            Hold
-          </Button>
-          <Button
-            leftSection={<IconLock size={18} />}
-            variant="light"
-            onClick={() => setOpenHoldModal(true)}
-            size="sm"
-            style={{
-              flex: "1 1 calc(50% - 0.5rem)",
-              minWidth: "calc(50% - 0.5rem)",
-            }}
-            hiddenFrom="sm"
-          >
-            Hold
+            {isForwarded
+              ? "Item sent"
+              : pendingForwardRequest
+              ? "Processing"
+              : "Forward"}
           </Button>
           <Button
             leftSection={<IconTrash size={18} />}
             variant="light"
-            color="red"
-            onClick={() => setOpenShredModal(true)}
+            color={pendingDisposeRequest ? "yellow" : "red"}
             size="md"
-            style={{
-              flex: "1 1 calc(50% - 0.5rem)",
-              minWidth: "calc(50% - 0.5rem)",
+            fullWidth
+            onClick={() => {
+              if (!pendingDisposeRequest) {
+                setOpenDisposeModal(true);
+              }
             }}
-            visibleFrom="sm"
-          >
-            Shred
-          </Button>
-          <Button
-            leftSection={<IconTrash size={18} />}
-            variant="light"
-            color="red"
-            onClick={() => setOpenShredModal(true)}
-            size="sm"
+            disabled={!!pendingDisposeRequest}
             style={{
-              flex: "1 1 calc(50% - 0.5rem)",
-              minWidth: "calc(50% - 0.5rem)",
+              backgroundColor: pendingDisposeRequest
+                ? "var(--mantine-color-yellow-0)"
+                : "var(--mantine-color-red-0)",
+              color: pendingDisposeRequest
+                ? "var(--mantine-color-yellow-7)"
+                : "var(--mantine-color-red-7)",
+              fontWeight: 600,
+              fontSize: "0.875rem",
             }}
-            hiddenFrom="sm"
           >
-            Shred
+            {pendingDisposeRequest ? "Processing" : "Dispose"}
           </Button>
-        </Group>
+        </SimpleGrid>
       </Stack>
 
       {/* Open & Scan Modal */}
@@ -333,15 +328,15 @@ export function MailActions({
             </Alert>
           ) : (
             <>
-          <Alert icon={<IconInfoCircle size={16} />} color="blue">
-            Requesting a full scan will open the mail and scan all contents.
-            This action cannot be undone.
-          </Alert>
-          <Text size="sm" c="dimmed">
-            Our mailroom operator will open this mail item and scan all
-            documents inside. You'll receive a notification when the scan is
-            complete.
-          </Text>
+              <Alert icon={<IconInfoCircle size={16} />} color="blue">
+                Requesting a full scan will open the mail and scan all contents.
+                This action cannot be undone.
+              </Alert>
+              <Text size="sm" c="dimmed">
+                Our mailroom operator will open this mail item and scan all
+                documents inside. You'll receive a notification when the scan is
+                complete.
+              </Text>
             </>
           )}
           <Group justify="flex-end" mt="md">
@@ -349,9 +344,9 @@ export function MailActions({
               {pendingScanRequest ? "Close" : "Cancel"}
             </Button>
             {!pendingScanRequest && (
-            <Button onClick={handleOpenScan} loading={loading}>
-              Request Scan
-            </Button>
+              <Button onClick={handleOpenScan} loading={loading}>
+                Request Scan
+              </Button>
             )}
           </Group>
         </Stack>
@@ -371,28 +366,15 @@ export function MailActions({
         />
       </Modal>
 
-      {/* Hold Modal */}
+      {/* Dispose Modal */}
       <Modal
-        opened={openHoldModal}
-        onClose={() => setOpenHoldModal(false)}
-        title="Hold Mail"
+        opened={openDisposeModal}
+        onClose={() => setOpenDisposeModal(false)}
+        title="Dispose Mail"
       >
-        <HoldForm
-          onSubmit={handleHold}
-          onCancel={() => setOpenHoldModal(false)}
-          loading={loading}
-        />
-      </Modal>
-
-      {/* Shred Modal */}
-      <Modal
-        opened={openShredModal}
-        onClose={() => setOpenShredModal(false)}
-        title="Shred Mail"
-      >
-        <ShredForm
-          onSubmit={handleShred}
-          onCancel={() => setOpenShredModal(false)}
+        <DisposeForm
+          onSubmit={handleDispose}
+          onCancel={() => setOpenDisposeModal(false)}
           loading={loading}
           hasPin={hasShreddingPin}
         />
@@ -490,14 +472,14 @@ function ForwardForm({
           </Stack>
         </Card>
       ) : (
-      <TextInput
-        label="Forwarding Address"
-        placeholder="123 Main St, City, State ZIP"
+        <TextInput
+          label="Forwarding Address"
+          placeholder="123 Main St, City, State ZIP"
           value={manualAddress}
           onChange={(e) => setManualAddress(e.target.value)}
-        required
+          required
           disabled={loadingSettings}
-      />
+        />
       )}
 
       <Textarea
@@ -524,44 +506,7 @@ function ForwardForm({
   );
 }
 
-function HoldForm({
-  onSubmit,
-  onCancel,
-  loading,
-}: {
-  onSubmit: (reason: string) => void;
-  onCancel: () => void;
-  loading: boolean;
-}) {
-  const [reason, setReason] = useState("");
-
-  return (
-    <Stack gap="md">
-      <Textarea
-        label="Reason for Hold"
-        placeholder="Why are you holding this mail?"
-        value={reason}
-        onChange={(e) => setReason(e.target.value)}
-        rows={4}
-        required
-      />
-      <Group justify="flex-end" mt="md">
-        <Button variant="subtle" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button
-          onClick={() => onSubmit(reason)}
-          loading={loading}
-          disabled={!reason}
-        >
-          Hold Mail
-        </Button>
-      </Group>
-    </Stack>
-  );
-}
-
-function ShredForm({
+function DisposeForm({
   onSubmit,
   onCancel,
   loading,
@@ -581,8 +526,8 @@ function ShredForm({
           You haven't set a security PIN yet.
         </Alert>
         <Text size="sm">
-          To securely shred mail, please set up a 4-digit PIN in your Settings
-          page first. This prevents accidental deletions.
+          To securely dispose of mail, please set up a 4-digit PIN in your
+          Settings page first. This prevents accidental deletions.
         </Text>
         <Group justify="flex-end" mt="md">
           <Button variant="subtle" onClick={onCancel}>
@@ -600,14 +545,14 @@ function ShredForm({
     <Stack gap="md">
       <Alert icon={<IconInfoCircle size={16} />} color="red">
         This action is permanent and cannot be undone. The physical mail will be
-        securely shredded and destroyed.
+        securely disposed and destroyed.
       </Alert>
       <Text size="sm" c="dimmed">
-        Please enter your 4-digit PIN to confirm shredding.
+        Please enter your 4-digit PIN to confirm disposal.
       </Text>
 
       <PasswordInput
-        label="Security PIN"
+        label="Security PIN *"
         placeholder="Enter 4-digit PIN"
         maxLength={4}
         value={pin}
@@ -626,7 +571,7 @@ function ShredForm({
           loading={loading}
           disabled={!pin || pin.length !== 4}
         >
-          Confirm Shred
+          Confirm Dispose
         </Button>
       </Group>
     </Stack>

@@ -118,11 +118,18 @@ export function PricingPageClient({
     setActiveStep(2); // Move to KYC Step
   };
 
+  // Normalize phone number: remove leading 0 if present
+  const normalizePhoneNumber = (phone: string): string => {
+    if (!phone) return phone;
+    // Remove leading 0 if phone starts with 0
+    return phone.startsWith("0") ? phone.substring(1) : phone;
+  };
+
   const validateBasicInfo = () => {
-    if (!firstName || !lastName || !phoneNumber) {
+    if (!firstName || !lastName) {
       notifications.show({
         title: "Validation Error",
-        message: "Please complete all required fields (name and phone)",
+        message: "Please complete all required fields (name)",
         color: "red",
       });
       return false;
@@ -138,10 +145,15 @@ export function PricingPageClient({
 
     try {
       // 1. Save Basic Information
+      // Normalize phone number: remove leading 0 if present
+      const normalizedPhone = phoneNumber
+        ? normalizePhoneNumber(phoneNumber)
+        : "";
+
       const basicInfoResult = await saveBasicInfo(
         firstName,
         lastName,
-        phoneNumber
+        normalizedPhone
       );
 
       if (!basicInfoResult.success) {
@@ -595,11 +607,11 @@ export function PricingPageClient({
                   </Group>
 
                   <TextInput
-                    label="Phone Number"
-                    placeholder="+63 912 345 6789"
-                    required
+                    label="Mobile number (optional)"
+                    placeholder="09161234567"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
+                    // description="If your number starts with 0, it will be automatically formatted"
                   />
                 </Stack>
 
@@ -693,12 +705,14 @@ export function PricingPageClient({
                       </Text>{" "}
                       {firstName} {lastName}
                     </Text>
-                    <Text size="sm">
-                      <Text span c="dimmed">
-                        Phone:
-                      </Text>{" "}
-                      {phoneNumber}
-                    </Text>
+                    {phoneNumber && (
+                      <Text size="sm">
+                        <Text span c="dimmed">
+                          Mobile:
+                        </Text>{" "}
+                        {normalizePhoneNumber(phoneNumber)}
+                      </Text>
+                    )}
                   </Stack>
                 </Card>
 

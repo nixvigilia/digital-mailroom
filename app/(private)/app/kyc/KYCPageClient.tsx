@@ -1,32 +1,61 @@
 "use client";
 
+import {useState, useEffect} from "react";
 import {
-  Stack,
-  Alert,
-  Group,
-  TextInput,
-  Select,
-  SimpleGrid,
-  Box,
+  Title,
   Text,
-  FileButton,
+  Stack,
+  Paper,
+  TextInput,
   Button,
+  Stepper,
+  Group,
+  FileButton,
+  Alert,
   Checkbox,
   Divider,
+  Box,
+  Progress,
+  Select,
   Anchor,
+  Container,
   Card,
+  SimpleGrid,
   ThemeIcon,
 } from "@mantine/core";
 import {
+  IconUser,
+  IconId,
+  IconFileText,
+  IconCheck,
   IconAlertCircle,
   IconUpload,
-  IconCheck,
 } from "@tabler/icons-react";
-import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+import {notifications} from "@mantine/notifications";
+import {useRouter} from "next/navigation";
+import {submitKYC} from "@/app/actions/kyc";
 
-export interface KYCFormData {
-  // Personal Information
+// Using API route for GET request
+async function getKYCStatus() {
+  try {
+    const response = await fetch("/api/kyc/status", {
+      method: "GET",
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return {status: "NOT_STARTED", data: null};
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching KYC status:", error);
+    return {status: "NOT_STARTED", data: null};
+  }
+}
+
+interface KYCFormData {
+  // Step 1: Personal Information
   firstName: string;
   lastName: string;
   dateOfBirth: string;
@@ -37,43 +66,424 @@ export interface KYCFormData {
   postalCode: string;
   country: string;
 
-  // ID Verification
+  // Step 2: ID Verification
   idType: string;
   idFileFront: File | null;
   idFileFrontUrl: string | null;
   idFileBack: File | null;
   idFileBackUrl: string | null;
 
-  // Consent & Agreement
+  // Step 3: Consent & Agreement
   consentMailOpening: boolean;
   consentDataProcessing: boolean;
   consentTermsOfService: boolean;
   consentPrivacyPolicy: boolean;
 }
 
-export const initialKYCState: KYCFormData = {
-  firstName: "",
-  lastName: "",
-  dateOfBirth: "",
-  phoneNumber: "",
-  address: "",
-  city: "",
-  province: "",
-  postalCode: "",
-  country: "Philippines",
-  idType: "",
-  idFileFront: null,
-  idFileFrontUrl: null,
-  idFileBack: null,
-  idFileBackUrl: null,
-  consentMailOpening: false,
-  consentDataProcessing: false,
-  consentTermsOfService: false,
-  consentPrivacyPolicy: false,
-};
+interface KYCPageClientProps {
+  initialStatus: string;
+  initialData: any;
+  rejectionReason: string | null;
+}
+
+export default function KYCPageClient({
+  initialStatus,
+  initialData,
+  rejectionReason: initialRejectionReason,
+}: KYCPageClientProps) {
+  const router = useRouter();
+  const [active, setActive] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [kycStatus, setKycStatusState] = useState<string>(initialStatus);
+  const [rejectionReason, setRejectionReason] = useState<string | null>(
+    initialRejectionReason
+  );
+  const [formData, setFormData] = useState<KYCFormData>({
+    firstName: initialData?.first_name || "",
+    lastName: initialData?.last_name || "",
+    dateOfBirth: initialData?.date_of_birth
+      ? new Date(initialData.date_of_birth).toISOString().split("T")[0]
+      : "",
+    phoneNumber: initialData?.phone_number || "",
+    address: initialData?.address || "",
+    city: initialData?.city || "",
+    province: initialData?.province || "",
+    postalCode: initialData?.postal_code || "",
+    country: initialData?.country || "Philippines",
+    idType: initialData?.id_type || "",
+    idFileFront: null,
+    idFileFrontUrl: initialData?.id_file_front_signed_url || null,
+    idFileBack: null,
+    idFileBackUrl: initialData?.id_file_back_signed_url || null,
+    consentMailOpening: initialData?.consent_mail_opening || false,
+    consentDataProcessing: initialData?.consent_data_processing || false,
+    consentTermsOfService: initialData?.consent_terms_of_service || false,
+    consentPrivacyPolicy: initialData?.consent_privacy_policy || false,
+  });
+
+  const updateFormData = (field: keyof KYCFormData, value: any) => {
+    setFormData((prev) => ({...prev, [field]: value}));
+  };
+
+  const nextStep = () => {
+    if (active === 0) {
+      // Validate Step 1
+      if (
+        !formData.firstName ||
+        !formData.lastName ||
+        !formData.dateOfBirth ||
+        !formData.phoneNumber ||
+        !formData.address ||
+        !formData.city ||
+        !formData.province ||
+        !formData.postalCode
+      ) {
+        notifications.show({
+          title: "Validation Error",
+          message: "Please fill in all required fields",
+          color: "red",
+        });
+        return;
+      }
+    } else if (active === 1) {
+      // Validate Step 2 - All three are required: ID Type, Front, and Back
+      const hasIdType = formData.idType && formData.idType.trim() !== "";
+      const hasFrontFile = formData.idFileFront || formData.idFileFrontUrl;
+      const hasBackFile = formData.idFileBack || formData.idFileBackUrl;
+
+      // Check all requirements and show specific error message
+      if (!hasIdType && !hasFrontFile && !hasBackFile) {
+        notifications.show({
+          title: "Validation Error",
+          message:
+            "Please select an ID type and upload both front and back of ID document",
+          color: "red",
+        });
+        return;
+      }
+
+      if (!hasIdType) {
+        notifications.show({
+          title: "Validation Error",
+          message: "Please select an ID type",
+          color: "red",
+        });
+        return;
+      }
+
+      if (!hasFrontFile) {
+        notifications.show({
+          title: "Validation Error",
+          message: "Please upload the front side of your ID document",
+          color: "red",
+        });
+        return;
+      }
+
+      if (!hasBackFile) {
+        notifications.show({
+          title: "Validation Error",
+          message: "Please upload the back side of your ID document",
+          color: "red",
+        });
+        return;
+      }
+    } else if (active === 2) {
+      // Validate Step 3
+      if (
+        !formData.consentMailOpening ||
+        !formData.consentDataProcessing ||
+        !formData.consentTermsOfService ||
+        !formData.consentPrivacyPolicy
+      ) {
+        notifications.show({
+          title: "Validation Error",
+          message: "Please accept all required consents",
+          color: "red",
+        });
+        return;
+      }
+    }
+    setActive((current) => (current < 3 ? current + 1 : current));
+  };
+
+  const prevStep = () =>
+    setActive((current) => (current > 0 ? current - 1 : current));
+
+  const handleStepClick = (stepIndex: number) => {
+    // Prevent clicking on future steps
+    if (stepIndex > active) {
+      // Validate current step before allowing navigation
+      if (active === 0) {
+        // Validate Step 1
+        if (
+          !formData.firstName ||
+          !formData.lastName ||
+          !formData.dateOfBirth ||
+          !formData.phoneNumber ||
+          !formData.address ||
+          !formData.city ||
+          !formData.province ||
+          !formData.postalCode
+        ) {
+          notifications.show({
+            title: "Validation Error",
+            message: "Please fill in all required fields in Step 1",
+            color: "red",
+          });
+          return;
+        }
+      } else if (active === 1) {
+        // Validate Step 2 - All three are required: ID Type, Front, and Back
+        const hasIdType = formData.idType && formData.idType.trim() !== "";
+        const hasFrontFile = formData.idFileFront || formData.idFileFrontUrl;
+        const hasBackFile = formData.idFileBack || formData.idFileBackUrl;
+
+        if (!hasIdType) {
+          notifications.show({
+            title: "Validation Error",
+            message: "Please select an ID type",
+            color: "red",
+          });
+          return;
+        }
+
+        if (!hasFrontFile) {
+          notifications.show({
+            title: "Validation Error",
+            message: "Please upload the front side of your ID document",
+            color: "red",
+          });
+          return;
+        }
+
+        if (!hasBackFile) {
+          notifications.show({
+            title: "Validation Error",
+            message: "Please upload the back side of your ID document",
+            color: "red",
+          });
+          return;
+        }
+      } else if (active === 2) {
+        // Validate Step 3
+        if (
+          !formData.consentMailOpening ||
+          !formData.consentDataProcessing ||
+          !formData.consentTermsOfService ||
+          !formData.consentPrivacyPolicy
+        ) {
+          notifications.show({
+            title: "Validation Error",
+            message: "Please accept all required consents",
+            color: "red",
+          });
+          return;
+        }
+      }
+    }
+    // Allow navigation if validation passes or going backwards
+    setActive(stepIndex);
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+
+    try {
+      // Prepare FormData to send files and data
+      const formDataToSend = new FormData();
+      formDataToSend.append("firstName", formData.firstName);
+      formDataToSend.append("lastName", formData.lastName);
+      formDataToSend.append("dateOfBirth", formData.dateOfBirth);
+      formDataToSend.append("phoneNumber", formData.phoneNumber);
+      formDataToSend.append("address", formData.address);
+      formDataToSend.append("city", formData.city);
+      formDataToSend.append("province", formData.province);
+      formDataToSend.append("postalCode", formData.postalCode);
+      formDataToSend.append("country", formData.country);
+      formDataToSend.append("idType", formData.idType);
+      formDataToSend.append(
+        "consentMailOpening",
+        String(formData.consentMailOpening)
+      );
+      formDataToSend.append(
+        "consentDataProcessing",
+        String(formData.consentDataProcessing)
+      );
+      formDataToSend.append(
+        "consentTermsOfService",
+        String(formData.consentTermsOfService)
+      );
+      formDataToSend.append(
+        "consentPrivacyPolicy",
+        String(formData.consentPrivacyPolicy)
+      );
+
+      if (formData.idFileFront) {
+        formDataToSend.append("idFileFront", formData.idFileFront);
+      }
+      if (formData.idFileBack) {
+        formDataToSend.append("idFileBack", formData.idFileBack);
+      }
+
+      const result = await submitKYC(formDataToSend);
+
+      if (result.success) {
+        notifications.show({
+          title: "KYC Submitted",
+          message: result.message,
+          color: "green",
+          icon: <IconCheck size={18} />,
+        });
+
+        setKycStatusState("PENDING");
+
+        // Redirect to inbox after submission (will be blocked until approved)
+        setTimeout(() => {
+          router.push("/app");
+        }, 2000);
+      } else {
+        notifications.show({
+          title: "Submission Failed",
+          message: result.message,
+          color: "red",
+          icon: <IconAlertCircle size={18} />,
+        });
+      }
+    } catch (error) {
+      console.error("Error submitting KYC:", error);
+      notifications.show({
+        title: "Error",
+        message: "Failed to submit KYC verification. Please try again.",
+        color: "red",
+        icon: <IconAlertCircle size={18} />,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Container size="lg" py="xl">
+      <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
+        {/* Header */}
+        <Group justify="space-between" align="flex-start" wrap="wrap">
+          <Stack gap={4}>
+            <Title order={1} fw={800} size="h2">
+              Identity Verification
+            </Title>
+            <Text c="dimmed" size="sm">
+              Complete your KYC to start using mailroom services
+            </Text>
+          </Stack>
+        </Group>
+
+        {kycStatus === "PENDING" && (
+          <Alert
+            icon={<IconAlertCircle size={16} />}
+            color="yellow"
+            variant="filled"
+            title="Verification Pending"
+          >
+            Your KYC verification is pending review. You'll be notified once
+            approved.
+          </Alert>
+        )}
+        {kycStatus === "REJECTED" && (
+          <Alert
+            icon={<IconAlertCircle size={16} />}
+            color="red"
+            variant="filled"
+            title="Verification Rejected"
+          >
+            Your KYC verification was rejected.
+            {rejectionReason && (
+              <>
+                <br />
+                <strong>Reason:</strong> {rejectionReason}
+              </>
+            )}
+            <br />
+            Please review and resubmit your information.
+          </Alert>
+        )}
+
+        {/* Stepper */}
+        <Card shadow="sm" padding="xl" radius="md" withBorder={false}>
+          <Stepper active={active} onStepClick={handleStepClick} size="sm">
+            <Stepper.Step
+              label="Personal Info"
+              description="Basic details"
+              icon={<IconUser size={18} />}
+            >
+              <Step1PersonalInfo
+                formData={formData}
+                updateFormData={updateFormData}
+              />
+            </Stepper.Step>
+
+            <Stepper.Step
+              label="ID Verification"
+              description="Upload ID"
+              icon={<IconId size={18} />}
+            >
+              <Step2IDVerification
+                formData={formData}
+                updateFormData={updateFormData}
+              />
+            </Stepper.Step>
+
+            <Stepper.Step
+              label="Agreements"
+              description="Review & consent"
+              icon={<IconFileText size={18} />}
+            >
+              <Step3Consent
+                formData={formData}
+                updateFormData={updateFormData}
+              />
+            </Stepper.Step>
+
+            <Stepper.Completed>
+              <Step4Review formData={formData} />
+            </Stepper.Completed>
+          </Stepper>
+
+          {/* Navigation Buttons */}
+          {kycStatus !== "PENDING" && (
+            <Group justify="flex-end" mt="xl">
+              <Button
+                variant="default"
+                onClick={prevStep}
+                disabled={active === 0}
+                size="sm"
+              >
+                Back
+              </Button>
+              {active < 3 ? (
+                <Button onClick={nextStep} size="sm" color="blue">
+                  Next Step
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleSubmit}
+                  loading={loading}
+                  size="sm"
+                  color="blue"
+                >
+                  Submit Verification
+                </Button>
+              )}
+            </Group>
+          )}
+        </Card>
+      </Stack>
+    </Container>
+  );
+}
 
 // Step 1: Personal Information
-export function Step1PersonalInfo({
+function Step1PersonalInfo({
   formData,
   updateFormData,
 }: {
@@ -81,7 +491,7 @@ export function Step1PersonalInfo({
   updateFormData: (field: keyof KYCFormData, value: any) => void;
 }) {
   return (
-    <Stack gap="lg">
+    <Stack gap="lg" mt="lg">
       <Alert
         variant="light"
         color="blue"
@@ -169,7 +579,7 @@ export function Step1PersonalInfo({
 }
 
 // Step 2: ID Verification
-export function Step2IDVerification({
+function Step2IDVerification({
   formData,
   updateFormData,
 }: {
@@ -242,7 +652,7 @@ export function Step2IDVerification({
   };
 
   return (
-    <Stack gap="lg">
+    <Stack gap="lg" mt="lg">
       <Alert
         variant="light"
         color="blue"
@@ -258,18 +668,54 @@ export function Step2IDVerification({
         placeholder="Select your ID type"
         required
         data={[
-          { value: "philpassport", label: "Philippine Passport (DFA)" },
-          { value: "philsys", label: "Philippine National ID / PhilSys ID (PSA)" },
-          { value: "drivers_license", label: "Driver's License (LTO)" },
-          { value: "sss", label: "Social Security System (SSS) ID" },
-          { value: "gsis_umid", label: "GSIS UMID Card" },
-          { value: "tin", label: "Tax Identification Number (TIN) ID (BIR)" },
-          { value: "voters", label: "Voter's ID / COMELEC Voter's Identification Card" },
-          { value: "postal", label: "Postal ID (Philippine Postal Corporation)" },
-          { value: "ofw", label: "OFW ID (DFA)" },
-          { value: "philhealth", label: "PhilHealth ID (Philippine Health Insurance Corporation)" },
-          { value: "seamans_book", label: "Seaman's Book (POEA)" },
-          { value: "prc", label: "PRC ID (Professional Regulation Commission)" },
+          {
+            value: "philpassport",
+            label: "Philippine Passport (DFA)",
+          },
+          {
+            value: "philsys",
+            label: "Philippine National ID / PhilSys ID (PSA)",
+          },
+          {
+            value: "drivers_license",
+            label: "Driver's License (LTO)",
+          },
+          {
+            value: "sss",
+            label: "Social Security System (SSS) ID",
+          },
+          {
+            value: "gsis_umid",
+            label: "GSIS UMID Card",
+          },
+          {
+            value: "tin",
+            label: "Tax Identification Number (TIN) ID (BIR)",
+          },
+          {
+            value: "voters",
+            label: "Voter's ID / COMELEC Voter's Identification Card",
+          },
+          {
+            value: "postal",
+            label: "Postal ID (Philippine Postal Corporation)",
+          },
+          {
+            value: "ofw",
+            label: "OFW ID (DFA)",
+          },
+          {
+            value: "philhealth",
+            label: "PhilHealth ID (Philippine Health Insurance Corporation)",
+          },
+          {
+            value: "seamans_book",
+            label: "Seaman's Book (POEA)",
+          },
+          {
+            value: "prc",
+            label: "PRC ID (Professional Regulation Commission)",
+          },
         ]}
         value={formData.idType}
         onChange={(value: string | null) =>
@@ -279,7 +725,7 @@ export function Step2IDVerification({
         description="You must select an ID type before uploading documents"
       />
 
-      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
+      <SimpleGrid cols={{base: 1, sm: 2}} spacing="lg">
         {/* Front of ID */}
         <Box>
           <Text size="sm" fw={500} mb="xs">
@@ -293,7 +739,9 @@ export function Step2IDVerification({
             <FileButton
               onChange={(file) => handleFileUpload(file, "front")}
               accept="image/png,image/jpeg,image/jpg,application/pdf"
-              disabled={uploading || !formData.idType || formData.idType.trim() === ""}
+              disabled={
+                uploading || !formData.idType || formData.idType.trim() === ""
+              }
             >
               {(props) => (
                 <Button
@@ -365,7 +813,9 @@ export function Step2IDVerification({
             <FileButton
               onChange={(file) => handleFileUpload(file, "back")}
               accept="image/png,image/jpeg,image/jpg,application/pdf"
-              disabled={uploading || !formData.idType || formData.idType.trim() === ""}
+              disabled={
+                uploading || !formData.idType || formData.idType.trim() === ""
+              }
             >
               {(props) => (
                 <Button
@@ -429,7 +879,7 @@ export function Step2IDVerification({
 }
 
 // Step 3: Consent & Agreement
-export function Step3Consent({
+function Step3Consent({
   formData,
   updateFormData,
 }: {
@@ -437,7 +887,7 @@ export function Step3Consent({
   updateFormData: (field: keyof KYCFormData, value: any) => void;
 }) {
   return (
-    <Stack gap="lg">
+    <Stack gap="lg" mt="lg">
       <Alert
         variant="light"
         color="blue"
@@ -529,14 +979,28 @@ export function Step3Consent({
         }
         size="md"
       />
+
+      <Alert color="yellow" variant="light" radius="md" mt="md">
+        <Text size="sm">
+          <strong>Important:</strong> By submitting this form, you confirm that
+          all information provided is accurate and truthful. Providing false
+          information may result in account suspension or termination.
+        </Text>
+      </Alert>
     </Stack>
   );
 }
 
-// Review Component (Read-Only)
-export function KYCReview({ formData }: { formData: KYCFormData }) {
-    return (
-        <Stack gap="md">
+// Step 4: Review
+function Step4Review({formData}: {formData: KYCFormData}) {
+  return (
+    <Stack gap="lg" mt="lg">
+      <Alert variant="light" color="gray" icon={<IconCheck size={16} />}>
+        Please review your information before submitting. You can go back to
+        make changes.
+      </Alert>
+
+      <Stack gap="md">
         <Box>
           <Text size="sm" fw={600} c="dimmed" mb="xs" tt="uppercase">
             Personal Information
@@ -553,7 +1017,7 @@ export function KYCReview({ formData }: { formData: KYCFormData }) {
                 <Text span c="dimmed">
                   Birth Date:
                 </Text>{" "}
-                {formData.dateOfBirth}
+                {new Date(formData.dateOfBirth).toLocaleDateString()}
               </Text>
               <Text size="sm">
                 <Text span c="dimmed">
@@ -652,7 +1116,7 @@ export function KYCReview({ formData }: { formData: KYCFormData }) {
           </Card>
         </Box>
       </Stack>
-    )
+    </Stack>
+  );
 }
-
 

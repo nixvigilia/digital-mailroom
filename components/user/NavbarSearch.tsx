@@ -35,7 +35,8 @@ const mainLinks = [
   {icon: IconLayoutDashboard, label: "Dashboard", href: "/app"},
   {icon: IconBox, label: "My Mailboxes", href: "/app/mailboxes"},
   {icon: IconInbox, label: "Inbox", href: "/app/inbox"},
-  {icon: IconArchive, label: "Archived", href: "/app/archived"},
+  // Archived page hidden - not needed yet
+  // {icon: IconArchive, label: "Archived", href: "/app/archived"},
   {icon: IconTag, label: "Tags & Categories", href: "/app/tags"},
   {icon: IconSettings, label: "Settings", href: "/app/settings"},
   {icon: IconCreditCard, label: "Billing", href: "/app/billing"},

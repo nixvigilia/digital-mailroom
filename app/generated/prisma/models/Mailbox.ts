@@ -274,6 +274,7 @@ export type MailboxWhereInput = {
   updated_at?: Prisma.DateTimeFilter<"Mailbox"> | Date | string
   cluster?: Prisma.XOR<Prisma.MailboxClusterScalarRelationFilter, Prisma.MailboxClusterWhereInput>
   subscriptions?: Prisma.SubscriptionListRelationFilter
+  mail_items?: Prisma.MailItemListRelationFilter
 }
 
 export type MailboxOrderByWithRelationInput = {
@@ -290,6 +291,7 @@ export type MailboxOrderByWithRelationInput = {
   updated_at?: Prisma.SortOrder
   cluster?: Prisma.MailboxClusterOrderByWithRelationInput
   subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
+  mail_items?: Prisma.MailItemOrderByRelationAggregateInput
 }
 
 export type MailboxWhereUniqueInput = Prisma.AtLeast<{
@@ -310,6 +312,7 @@ export type MailboxWhereUniqueInput = Prisma.AtLeast<{
   updated_at?: Prisma.DateTimeFilter<"Mailbox"> | Date | string
   cluster?: Prisma.XOR<Prisma.MailboxClusterScalarRelationFilter, Prisma.MailboxClusterWhereInput>
   subscriptions?: Prisma.SubscriptionListRelationFilter
+  mail_items?: Prisma.MailItemListRelationFilter
 }, "id" | "cluster_id_box_number">
 
 export type MailboxOrderByWithAggregationInput = {
@@ -361,6 +364,7 @@ export type MailboxCreateInput = {
   updated_at?: Date | string
   cluster: Prisma.MailboxClusterCreateNestedOneWithoutMailboxesInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutMailboxInput
+  mail_items?: Prisma.MailItemCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxUncheckedCreateInput = {
@@ -376,6 +380,7 @@ export type MailboxUncheckedCreateInput = {
   created_at?: Date | string
   updated_at?: Date | string
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutMailboxInput
+  mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxUpdateInput = {
@@ -391,6 +396,7 @@ export type MailboxUpdateInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cluster?: Prisma.MailboxClusterUpdateOneRequiredWithoutMailboxesNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutMailboxNestedInput
+  mail_items?: Prisma.MailItemUpdateManyWithoutMailboxNestedInput
 }
 
 export type MailboxUncheckedUpdateInput = {
@@ -406,6 +412,7 @@ export type MailboxUncheckedUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutMailboxNestedInput
+  mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutMailboxNestedInput
 }
 
 export type MailboxCreateManyInput = {
@@ -539,6 +546,22 @@ export type MailboxUpdateOneWithoutSubscriptionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MailboxUpdateToOneWithWhereWithoutSubscriptionsInput, Prisma.MailboxUpdateWithoutSubscriptionsInput>, Prisma.MailboxUncheckedUpdateWithoutSubscriptionsInput>
 }
 
+export type MailboxCreateNestedOneWithoutMail_itemsInput = {
+  create?: Prisma.XOR<Prisma.MailboxCreateWithoutMail_itemsInput, Prisma.MailboxUncheckedCreateWithoutMail_itemsInput>
+  connectOrCreate?: Prisma.MailboxCreateOrConnectWithoutMail_itemsInput
+  connect?: Prisma.MailboxWhereUniqueInput
+}
+
+export type MailboxUpdateOneWithoutMail_itemsNestedInput = {
+  create?: Prisma.XOR<Prisma.MailboxCreateWithoutMail_itemsInput, Prisma.MailboxUncheckedCreateWithoutMail_itemsInput>
+  connectOrCreate?: Prisma.MailboxCreateOrConnectWithoutMail_itemsInput
+  upsert?: Prisma.MailboxUpsertWithoutMail_itemsInput
+  disconnect?: Prisma.MailboxWhereInput | boolean
+  delete?: Prisma.MailboxWhereInput | boolean
+  connect?: Prisma.MailboxWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MailboxUpdateToOneWithWhereWithoutMail_itemsInput, Prisma.MailboxUpdateWithoutMail_itemsInput>, Prisma.MailboxUncheckedUpdateWithoutMail_itemsInput>
+}
+
 export type MailboxCreateNestedManyWithoutClusterInput = {
   create?: Prisma.XOR<Prisma.MailboxCreateWithoutClusterInput, Prisma.MailboxUncheckedCreateWithoutClusterInput> | Prisma.MailboxCreateWithoutClusterInput[] | Prisma.MailboxUncheckedCreateWithoutClusterInput[]
   connectOrCreate?: Prisma.MailboxCreateOrConnectWithoutClusterInput | Prisma.MailboxCreateOrConnectWithoutClusterInput[]
@@ -601,6 +624,7 @@ export type MailboxCreateWithoutSubscriptionsInput = {
   created_at?: Date | string
   updated_at?: Date | string
   cluster: Prisma.MailboxClusterCreateNestedOneWithoutMailboxesInput
+  mail_items?: Prisma.MailItemCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxUncheckedCreateWithoutSubscriptionsInput = {
@@ -615,6 +639,7 @@ export type MailboxUncheckedCreateWithoutSubscriptionsInput = {
   is_occupied?: boolean
   created_at?: Date | string
   updated_at?: Date | string
+  mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxCreateOrConnectWithoutSubscriptionsInput = {
@@ -645,6 +670,7 @@ export type MailboxUpdateWithoutSubscriptionsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cluster?: Prisma.MailboxClusterUpdateOneRequiredWithoutMailboxesNestedInput
+  mail_items?: Prisma.MailItemUpdateManyWithoutMailboxNestedInput
 }
 
 export type MailboxUncheckedUpdateWithoutSubscriptionsInput = {
@@ -659,6 +685,83 @@ export type MailboxUncheckedUpdateWithoutSubscriptionsInput = {
   is_occupied?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutMailboxNestedInput
+}
+
+export type MailboxCreateWithoutMail_itemsInput = {
+  id?: string
+  box_number: string
+  type?: $Enums.MailboxType
+  width: runtime.Decimal | runtime.DecimalJsLike | number | string
+  height: runtime.Decimal | runtime.DecimalJsLike | number | string
+  depth: runtime.Decimal | runtime.DecimalJsLike | number | string
+  dimension_unit?: $Enums.DimensionUnit
+  is_occupied?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  cluster: Prisma.MailboxClusterCreateNestedOneWithoutMailboxesInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutMailboxInput
+}
+
+export type MailboxUncheckedCreateWithoutMail_itemsInput = {
+  id?: string
+  cluster_id: string
+  box_number: string
+  type?: $Enums.MailboxType
+  width: runtime.Decimal | runtime.DecimalJsLike | number | string
+  height: runtime.Decimal | runtime.DecimalJsLike | number | string
+  depth: runtime.Decimal | runtime.DecimalJsLike | number | string
+  dimension_unit?: $Enums.DimensionUnit
+  is_occupied?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutMailboxInput
+}
+
+export type MailboxCreateOrConnectWithoutMail_itemsInput = {
+  where: Prisma.MailboxWhereUniqueInput
+  create: Prisma.XOR<Prisma.MailboxCreateWithoutMail_itemsInput, Prisma.MailboxUncheckedCreateWithoutMail_itemsInput>
+}
+
+export type MailboxUpsertWithoutMail_itemsInput = {
+  update: Prisma.XOR<Prisma.MailboxUpdateWithoutMail_itemsInput, Prisma.MailboxUncheckedUpdateWithoutMail_itemsInput>
+  create: Prisma.XOR<Prisma.MailboxCreateWithoutMail_itemsInput, Prisma.MailboxUncheckedCreateWithoutMail_itemsInput>
+  where?: Prisma.MailboxWhereInput
+}
+
+export type MailboxUpdateToOneWithWhereWithoutMail_itemsInput = {
+  where?: Prisma.MailboxWhereInput
+  data: Prisma.XOR<Prisma.MailboxUpdateWithoutMail_itemsInput, Prisma.MailboxUncheckedUpdateWithoutMail_itemsInput>
+}
+
+export type MailboxUpdateWithoutMail_itemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  box_number?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumMailboxTypeFieldUpdateOperationsInput | $Enums.MailboxType
+  width?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  height?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  depth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  dimension_unit?: Prisma.EnumDimensionUnitFieldUpdateOperationsInput | $Enums.DimensionUnit
+  is_occupied?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cluster?: Prisma.MailboxClusterUpdateOneRequiredWithoutMailboxesNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutMailboxNestedInput
+}
+
+export type MailboxUncheckedUpdateWithoutMail_itemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  cluster_id?: Prisma.StringFieldUpdateOperationsInput | string
+  box_number?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumMailboxTypeFieldUpdateOperationsInput | $Enums.MailboxType
+  width?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  height?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  depth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  dimension_unit?: Prisma.EnumDimensionUnitFieldUpdateOperationsInput | $Enums.DimensionUnit
+  is_occupied?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutMailboxNestedInput
 }
 
 export type MailboxCreateWithoutClusterInput = {
@@ -673,6 +776,7 @@ export type MailboxCreateWithoutClusterInput = {
   created_at?: Date | string
   updated_at?: Date | string
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutMailboxInput
+  mail_items?: Prisma.MailItemCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxUncheckedCreateWithoutClusterInput = {
@@ -687,6 +791,7 @@ export type MailboxUncheckedCreateWithoutClusterInput = {
   created_at?: Date | string
   updated_at?: Date | string
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutMailboxInput
+  mail_items?: Prisma.MailItemUncheckedCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxCreateOrConnectWithoutClusterInput = {
@@ -757,6 +862,7 @@ export type MailboxUpdateWithoutClusterInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutMailboxNestedInput
+  mail_items?: Prisma.MailItemUpdateManyWithoutMailboxNestedInput
 }
 
 export type MailboxUncheckedUpdateWithoutClusterInput = {
@@ -771,6 +877,7 @@ export type MailboxUncheckedUpdateWithoutClusterInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutMailboxNestedInput
+  mail_items?: Prisma.MailItemUncheckedUpdateManyWithoutMailboxNestedInput
 }
 
 export type MailboxUncheckedUpdateManyWithoutClusterInput = {
@@ -793,10 +900,12 @@ export type MailboxUncheckedUpdateManyWithoutClusterInput = {
 
 export type MailboxCountOutputType = {
   subscriptions: number
+  mail_items: number
 }
 
 export type MailboxCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   subscriptions?: boolean | MailboxCountOutputTypeCountSubscriptionsArgs
+  mail_items?: boolean | MailboxCountOutputTypeCountMail_itemsArgs
 }
 
 /**
@@ -816,6 +925,13 @@ export type MailboxCountOutputTypeCountSubscriptionsArgs<ExtArgs extends runtime
   where?: Prisma.SubscriptionWhereInput
 }
 
+/**
+ * MailboxCountOutputType without action
+ */
+export type MailboxCountOutputTypeCountMail_itemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MailItemWhereInput
+}
+
 
 export type MailboxSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -831,6 +947,7 @@ export type MailboxSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   updated_at?: boolean
   cluster?: boolean | Prisma.MailboxClusterDefaultArgs<ExtArgs>
   subscriptions?: boolean | Prisma.Mailbox$subscriptionsArgs<ExtArgs>
+  mail_items?: boolean | Prisma.Mailbox$mail_itemsArgs<ExtArgs>
   _count?: boolean | Prisma.MailboxCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mailbox"]>
 
@@ -882,6 +999,7 @@ export type MailboxOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type MailboxInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cluster?: boolean | Prisma.MailboxClusterDefaultArgs<ExtArgs>
   subscriptions?: boolean | Prisma.Mailbox$subscriptionsArgs<ExtArgs>
+  mail_items?: boolean | Prisma.Mailbox$mail_itemsArgs<ExtArgs>
   _count?: boolean | Prisma.MailboxCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MailboxIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -896,6 +1014,7 @@ export type $MailboxPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     cluster: Prisma.$MailboxClusterPayload<ExtArgs>
     subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
+    mail_items: Prisma.$MailItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1305,6 +1424,7 @@ export interface Prisma__MailboxClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   cluster<T extends Prisma.MailboxClusterDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailboxClusterDefaultArgs<ExtArgs>>): Prisma.Prisma__MailboxClusterClient<runtime.Types.Result.GetResult<Prisma.$MailboxClusterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   subscriptions<T extends Prisma.Mailbox$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Mailbox$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  mail_items<T extends Prisma.Mailbox$mail_itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Mailbox$mail_itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1762,6 +1882,30 @@ export type Mailbox$subscriptionsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.SubscriptionScalarFieldEnum | Prisma.SubscriptionScalarFieldEnum[]
+}
+
+/**
+ * Mailbox.mail_items
+ */
+export type Mailbox$mail_itemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailItem
+   */
+  select?: Prisma.MailItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailItem
+   */
+  omit?: Prisma.MailItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailItemInclude<ExtArgs> | null
+  where?: Prisma.MailItemWhereInput
+  orderBy?: Prisma.MailItemOrderByWithRelationInput | Prisma.MailItemOrderByWithRelationInput[]
+  cursor?: Prisma.MailItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MailItemScalarFieldEnum | Prisma.MailItemScalarFieldEnum[]
 }
 
 /**

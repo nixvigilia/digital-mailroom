@@ -35,6 +35,7 @@ interface MailboxData {
     name: string;
     description: string | null;
   };
+  mailItemCount: number;
 }
 
 interface MailboxesPageClientProps {
@@ -133,10 +134,6 @@ export function MailboxesPageClient({allMailboxes}: MailboxesPageClientProps) {
                   {location.postal_code}, {location.country}
                 </Text>
               </Stack>
-              <Badge variant="light" color="blue" size="lg">
-                {mailboxes.length}{" "}
-                {mailboxes.length === 1 ? "Mailbox" : "Mailboxes"}
-              </Badge>
             </Group>
             <Divider />
             <UserMailboxesCard mailboxes={mailboxes} />

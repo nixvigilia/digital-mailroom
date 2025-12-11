@@ -5,19 +5,58 @@ DROP FUNCTION IF EXISTS public.handle_new_user();
 DROP TRIGGER IF EXISTS on_profile_user_deleted ON public.profile;
 DROP FUNCTION IF EXISTS public.handle_user_delete();
 
+-- Helper function to generate a unique referral code
+CREATE OR REPLACE FUNCTION public.generate_unique_referral_code(p_user_id UUID)
+RETURNS TEXT AS $$
+DECLARE
+  v_base_code TEXT;
+  v_referral_code TEXT;
+  v_attempts INTEGER := 0;
+  v_max_attempts INTEGER := 10;
+  v_suffix TEXT;
+  v_exists BOOLEAN;
+BEGIN
+  -- Base code from user ID (first 8 chars, uppercase, no dashes)
+  v_base_code := UPPER(REPLACE(SUBSTRING(p_user_id::TEXT, 1, 8), '-', ''));
+  v_referral_code := v_base_code;
+  
+  -- Check for uniqueness and append suffix if needed
+  WHILE v_attempts < v_max_attempts LOOP
+    -- Check if code already exists
+    SELECT EXISTS(SELECT 1 FROM public.profile WHERE referral_code = v_referral_code) INTO v_exists;
+    
+    IF NOT v_exists THEN
+      RETURN v_referral_code; -- Unique code found
+    END IF;
+    
+    -- If conflict, append a random suffix
+    v_suffix := UPPER(SUBSTRING(MD5(RANDOM()::TEXT || p_user_id::TEXT), 1, 2));
+    v_referral_code := SUBSTRING(v_base_code, 1, 6) || v_suffix;
+    v_attempts := v_attempts + 1;
+  END LOOP;
+  
+  -- Fallback: use timestamp-based suffix to ensure uniqueness
+  v_suffix := UPPER(SUBSTRING(MD5(p_user_id::TEXT || NOW()::TEXT), 1, 4));
+  v_referral_code := SUBSTRING(v_base_code, 1, 4) || v_suffix;
+  RETURN v_referral_code;
+END;
+$$ LANGUAGE plpgsql;
+
 -- 1. Function to create profile with metadata from auth.users
--- Note: Referral code generation is done on the dashboard, not during signup
+-- Automatically generates referral code upon signup
 -- 
 -- Flow for referral tracking:
 -- 1. User visits signup?ref=09E029FE
 -- 2. Signup action looks up referrer by code "09E029FE" → gets referrer's UUID
 -- 3. Stores referrer's UUID in Supabase metadata as 'referred_by'
 -- 4. This trigger reads 'referred_by' from metadata and saves it to profile.referred_by
+-- 5. Automatically generates a unique referral code for the new user
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 DECLARE
   v_referred_by UUID;
   v_referred_by_text TEXT;
+  v_referral_code TEXT;
 BEGIN
   -- Get referred_by from Supabase metadata (set during signup)
   -- NEW.raw_user_meta_data contains the data passed in supabase.auth.signUp() options.data
@@ -41,14 +80,17 @@ BEGIN
     v_referred_by := NULL;
   END IF;
   
-  -- Insert profile with referred_by field set (if user was referred)
-  -- The referral code will be generated later when user visits dashboard
-  INSERT INTO public.profile (id, avatar_url, email, referred_by, updated_at)
+  -- Generate unique referral code automatically
+  v_referral_code := public.generate_unique_referral_code(NEW.id);
+  
+  -- Insert profile with referred_by field set (if user was referred) and referral_code
+  INSERT INTO public.profile (id, avatar_url, email, referred_by, referral_code, updated_at)
   VALUES (
     NEW.id,
     NEW.raw_user_meta_data ->> 'avatar_url',
     NEW.email,
     v_referred_by, -- This is the referrer's user ID (UUID), not the code
+    v_referral_code, -- Automatically generated unique referral code
     now()
   );
   RETURN NEW;

@@ -117,6 +117,7 @@ interface UserDashboardClientProps {
       name: string;
       description: string | null;
     };
+    mailItemCount: number;
   }>;
 }
 
@@ -238,15 +239,6 @@ export function UserDashboardClient({
               Your identity verification is currently under review. You will be
               notified once it is approved.
             </Text>
-            <Button
-              component={Link}
-              href="/app/kyc"
-              variant="white"
-              color="blue"
-              size="xs"
-            >
-              View Status
-            </Button>
           </Group>
         </Alert>
       )}
@@ -348,12 +340,17 @@ export function UserDashboardClient({
                   <Text size="xs" c="dimmed" fw={600} tt="uppercase">
                     My Mailbox
                   </Text>
-                  <ThemeIcon size="md" radius="md" variant="light" color="orange">
+                  <ThemeIcon
+                    size="md"
+                    radius="md"
+                    variant="light"
+                    color="orange"
+                  >
                     <IconBox size={16} />
                   </ThemeIcon>
                 </Group>
                 <Text size="xl" fw={700}>
-                  Box {allMailboxes[0].mailbox.box_number}
+                  {allMailboxes[0].mailbox.box_number}
                 </Text>
                 <Text size="xs" c="dimmed" lineClamp={1}>
                   {allMailboxes[0].location.name}

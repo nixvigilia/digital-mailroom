@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useRef, useCallback} from "react";
+import {useState, useRef, useCallback, useEffect} from "react";
 import {
   Title,
   Text,
@@ -32,7 +32,9 @@ import {notifications} from "@mantine/notifications";
 import {
   searchUsers,
   createMailItem,
+  getActiveMailboxes,
   type UserSearchResult,
+  type MailboxOption,
 } from "@/app/actions/operator-mail";
 import {useDebouncedValue} from "@mantine/hooks";
 import {useVirtualizer} from "@tanstack/react-virtual";
@@ -51,9 +53,14 @@ export default function ReceiveMailPage() {
     null
   );
 
+  const [mailboxes, setMailboxes] = useState<MailboxOption[]>([]);
+  const [selectedMailbox, setSelectedMailbox] = useState<MailboxOption | null>(
+    null
+  );
+  const [loadingMailboxes, setLoadingMailboxes] = useState(false);
+
   const [formData, setFormData] = useState({
     sender: "",
-    mailboxNumber: "",
     trackingNumber: "",
     barcode: "",
     postalMarks: "",
@@ -121,6 +128,27 @@ export default function ReceiveMailPage() {
     if (debouncedQuery) search();
   }); // Note: this useEffect logic is slightly wrong, fixing it below
 
+  // Load mailboxes on mount
+  useEffect(() => {
+    const loadMailboxes = async () => {
+      setLoadingMailboxes(true);
+      try {
+        const data = await getActiveMailboxes();
+        setMailboxes(data);
+      } catch (error) {
+        console.error("Error loading mailboxes:", error);
+        notifications.show({
+          title: "Error",
+          message: "Failed to load mailboxes",
+          color: "red",
+        });
+      } finally {
+        setLoadingMailboxes(false);
+      }
+    };
+    loadMailboxes();
+  }, []);
+
   // Correct Search Implementation
   const handleSearchChange = async (query: string) => {
     setSearchQuery(query);
@@ -142,6 +170,29 @@ export default function ReceiveMailPage() {
     }
   };
 
+  // Filter mailboxes based on selected user
+  const filteredMailboxes = selectedUser
+    ? mailboxes.filter((mb) => mb.profileId === selectedUser.id)
+    : [];
+
+  // Handle mailbox selection
+  const handleMailboxSelect = (mailboxId: string | null) => {
+    if (!mailboxId) {
+      setSelectedMailbox(null);
+      return;
+    }
+
+    // Only allow selection if user is selected
+    if (!selectedUser) {
+      return;
+    }
+
+    const mailbox = filteredMailboxes.find((m) => m.mailboxId === mailboxId);
+    if (mailbox) {
+      setSelectedMailbox(mailbox);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!file || !selectedUser || !formData.sender) {
       notifications.show({
@@ -159,13 +210,18 @@ export default function ReceiveMailPage() {
       submitData.append("image", file);
       submitData.append("sender", formData.sender);
       submitData.append("profileId", selectedUser.id);
+      if (selectedMailbox) {
+        submitData.append("mailboxId", selectedMailbox.mailboxId);
+      }
 
       // Add extra fields to be handled by action (stored in notes or separate fields)
       const notes = [
         formData.trackingNumber ? `Tracking: ${formData.trackingNumber}` : null,
         formData.barcode ? `Barcode: ${formData.barcode}` : null,
         formData.postalMarks ? `Marks: ${formData.postalMarks}` : null,
-        formData.mailboxNumber ? `Mailbox: ${formData.mailboxNumber}` : null,
+        selectedMailbox
+          ? `Mailbox: ${selectedMailbox.boxNumber} (${selectedMailbox.locationName})`
+          : null,
       ]
         .filter(Boolean)
         .join("\n");
@@ -190,9 +246,9 @@ export default function ReceiveMailPage() {
         setPreviewUrl(null);
         setSelectedUser(null);
         setSearchQuery("");
+        setSelectedMailbox(null);
         setFormData({
           sender: "",
-          mailboxNumber: "",
           trackingNumber: "",
           barcode: "",
           postalMarks: "",
@@ -330,23 +386,28 @@ export default function ReceiveMailPage() {
                 </Group>
 
                 {selectedUser ? (
-                  <Alert
-                    icon={<IconCheck size={16} />}
-                    color="green"
-                    title="Selected Recipient"
-                    withCloseButton
-                    onClose={() => setSelectedUser(null)}
-                  >
-                    <Text fw={700}>
-                      {selectedUser.firstName} {selectedUser.lastName}
-                    </Text>
-                    <Text size="sm">{selectedUser.email}</Text>
-                    {selectedUser.businessName && (
-                      <Text size="xs" c="dimmed">
-                        Business: {selectedUser.businessName}
+                  <Stack gap="md">
+                    <Alert
+                      icon={<IconCheck size={16} />}
+                      color="green"
+                      title="Selected Recipient"
+                      withCloseButton
+                      onClose={() => {
+                        setSelectedUser(null);
+                        setSelectedMailbox(null);
+                      }}
+                    >
+                      <Text fw={700}>
+                        {selectedUser.firstName} {selectedUser.lastName}
                       </Text>
-                    )}
-                  </Alert>
+                      <Text size="sm">{selectedUser.email}</Text>
+                      {selectedUser.businessName && (
+                        <Text size="xs" c="dimmed">
+                          Business: {selectedUser.businessName}
+                        </Text>
+                      )}
+                    </Alert>
+                  </Stack>
                 ) : (
                   <Stack>
                     <TextInput
@@ -435,14 +496,51 @@ export default function ReceiveMailPage() {
                   </Stack>
                 )}
 
-                <TextInput
-                  label="Mailbox Number (Optional)"
-                  placeholder="e.g. 1001"
-                  value={formData.mailboxNumber}
-                  onChange={(e) =>
-                    setFormData({...formData, mailboxNumber: e.target.value})
+                <Select
+                  label="Select Mailbox"
+                  placeholder={
+                    selectedUser
+                      ? "Choose a mailbox for this user"
+                      : "Select a recipient first"
+                  }
+                  searchable
+                  clearable
+                  disabled={!selectedUser || loadingMailboxes}
+                  data={filteredMailboxes.map((mb) => ({
+                    value: mb.mailboxId,
+                    label: `${mb.boxNumber} - ${mb.clusterName} (${mb.locationName})`,
+                  }))}
+                  value={selectedMailbox?.mailboxId || null}
+                  onChange={handleMailboxSelect}
+                  description={
+                    selectedUser
+                      ? "Select from this user's active subscriptions"
+                      : "You must select a recipient first"
                   }
                 />
+                {selectedMailbox && (
+                  <Alert
+                    icon={<IconCheck size={16} />}
+                    color="blue"
+                    title="Selected Mailbox"
+                    withCloseButton
+                    onClose={() => {
+                      setSelectedMailbox(null);
+                      setSelectedUser(null);
+                    }}
+                  >
+                    <Text size="sm" fw={500}>
+                      Box {selectedMailbox.boxNumber}
+                    </Text>
+                    <Text size="xs" c="dimmed">
+                      {selectedMailbox.clusterName} •{" "}
+                      {selectedMailbox.locationName}
+                    </Text>
+                    <Text size="xs" c="dimmed">
+                      {selectedMailbox.locationAddress}
+                    </Text>
+                  </Alert>
+                )}
               </Stack>
             </Paper>
           </Stack>

@@ -32,7 +32,6 @@ export interface OperatorNavbarRef {
 const mainLinks = [
   {icon: IconLayoutDashboard, label: "Dashboard", href: "/operator"},
   {icon: IconMail, label: "Receive Mail", href: "/operator/receive"},
-  {icon: IconInbox, label: "Action Queue", href: "/operator/queue"},
   {icon: IconChecklist, label: "KYC/KYB Review", href: "/operator/approvals"},
   {icon: IconScan, label: "Scanning", href: "/operator/scanning"},
   {icon: IconTruck, label: "Forwarding", href: "/operator/forwarding"},

@@ -32,6 +32,8 @@ export type MailActionRequestMinAggregateOutputType = {
   status: $Enums.ActionStatus | null
   forward_address: string | null
   forward_tracking_number: string | null
+  forward_3pl_name: string | null
+  forward_tracking_url: string | null
   notes: string | null
   requires_approval: boolean | null
   approved_at: Date | null
@@ -51,6 +53,8 @@ export type MailActionRequestMaxAggregateOutputType = {
   status: $Enums.ActionStatus | null
   forward_address: string | null
   forward_tracking_number: string | null
+  forward_3pl_name: string | null
+  forward_tracking_url: string | null
   notes: string | null
   requires_approval: boolean | null
   approved_at: Date | null
@@ -70,6 +74,8 @@ export type MailActionRequestCountAggregateOutputType = {
   status: number
   forward_address: number
   forward_tracking_number: number
+  forward_3pl_name: number
+  forward_tracking_url: number
   notes: number
   requires_approval: number
   approved_at: number
@@ -91,6 +97,8 @@ export type MailActionRequestMinAggregateInputType = {
   status?: true
   forward_address?: true
   forward_tracking_number?: true
+  forward_3pl_name?: true
+  forward_tracking_url?: true
   notes?: true
   requires_approval?: true
   approved_at?: true
@@ -110,6 +118,8 @@ export type MailActionRequestMaxAggregateInputType = {
   status?: true
   forward_address?: true
   forward_tracking_number?: true
+  forward_3pl_name?: true
+  forward_tracking_url?: true
   notes?: true
   requires_approval?: true
   approved_at?: true
@@ -129,6 +139,8 @@ export type MailActionRequestCountAggregateInputType = {
   status?: true
   forward_address?: true
   forward_tracking_number?: true
+  forward_3pl_name?: true
+  forward_tracking_url?: true
   notes?: true
   requires_approval?: true
   approved_at?: true
@@ -221,6 +233,8 @@ export type MailActionRequestGroupByOutputType = {
   status: $Enums.ActionStatus
   forward_address: string | null
   forward_tracking_number: string | null
+  forward_3pl_name: string | null
+  forward_tracking_url: string | null
   notes: string | null
   requires_approval: boolean
   approved_at: Date | null
@@ -261,6 +275,8 @@ export type MailActionRequestWhereInput = {
   status?: Prisma.EnumActionStatusFilter<"MailActionRequest"> | $Enums.ActionStatus
   forward_address?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
   forward_tracking_number?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
+  forward_3pl_name?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
+  forward_tracking_url?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
   notes?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
   requires_approval?: Prisma.BoolFilter<"MailActionRequest"> | boolean
   approved_at?: Prisma.DateTimeNullableFilter<"MailActionRequest"> | Date | string | null
@@ -282,6 +298,8 @@ export type MailActionRequestOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   forward_address?: Prisma.SortOrderInput | Prisma.SortOrder
   forward_tracking_number?: Prisma.SortOrderInput | Prisma.SortOrder
+  forward_3pl_name?: Prisma.SortOrderInput | Prisma.SortOrder
+  forward_tracking_url?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   requires_approval?: Prisma.SortOrder
   approved_at?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -306,6 +324,8 @@ export type MailActionRequestWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumActionStatusFilter<"MailActionRequest"> | $Enums.ActionStatus
   forward_address?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
   forward_tracking_number?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
+  forward_3pl_name?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
+  forward_tracking_url?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
   notes?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
   requires_approval?: Prisma.BoolFilter<"MailActionRequest"> | boolean
   approved_at?: Prisma.DateTimeNullableFilter<"MailActionRequest"> | Date | string | null
@@ -327,6 +347,8 @@ export type MailActionRequestOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   forward_address?: Prisma.SortOrderInput | Prisma.SortOrder
   forward_tracking_number?: Prisma.SortOrderInput | Prisma.SortOrder
+  forward_3pl_name?: Prisma.SortOrderInput | Prisma.SortOrder
+  forward_tracking_url?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   requires_approval?: Prisma.SortOrder
   approved_at?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -352,6 +374,8 @@ export type MailActionRequestScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumActionStatusWithAggregatesFilter<"MailActionRequest"> | $Enums.ActionStatus
   forward_address?: Prisma.StringNullableWithAggregatesFilter<"MailActionRequest"> | string | null
   forward_tracking_number?: Prisma.StringNullableWithAggregatesFilter<"MailActionRequest"> | string | null
+  forward_3pl_name?: Prisma.StringNullableWithAggregatesFilter<"MailActionRequest"> | string | null
+  forward_tracking_url?: Prisma.StringNullableWithAggregatesFilter<"MailActionRequest"> | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"MailActionRequest"> | string | null
   requires_approval?: Prisma.BoolWithAggregatesFilter<"MailActionRequest"> | boolean
   approved_at?: Prisma.DateTimeNullableWithAggregatesFilter<"MailActionRequest"> | Date | string | null
@@ -369,6 +393,8 @@ export type MailActionRequestCreateInput = {
   status?: $Enums.ActionStatus
   forward_address?: string | null
   forward_tracking_number?: string | null
+  forward_3pl_name?: string | null
+  forward_tracking_url?: string | null
   notes?: string | null
   requires_approval?: boolean
   approved_at?: Date | string | null
@@ -390,6 +416,8 @@ export type MailActionRequestUncheckedCreateInput = {
   status?: $Enums.ActionStatus
   forward_address?: string | null
   forward_tracking_number?: string | null
+  forward_3pl_name?: string | null
+  forward_tracking_url?: string | null
   notes?: string | null
   requires_approval?: boolean
   approved_at?: Date | string | null
@@ -407,6 +435,8 @@ export type MailActionRequestUpdateInput = {
   status?: Prisma.EnumActionStatusFieldUpdateOperationsInput | $Enums.ActionStatus
   forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   forward_tracking_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_3pl_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_tracking_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requires_approval?: Prisma.BoolFieldUpdateOperationsInput | boolean
   approved_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -428,6 +458,8 @@ export type MailActionRequestUncheckedUpdateInput = {
   status?: Prisma.EnumActionStatusFieldUpdateOperationsInput | $Enums.ActionStatus
   forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   forward_tracking_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_3pl_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_tracking_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requires_approval?: Prisma.BoolFieldUpdateOperationsInput | boolean
   approved_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -447,6 +479,8 @@ export type MailActionRequestCreateManyInput = {
   status?: $Enums.ActionStatus
   forward_address?: string | null
   forward_tracking_number?: string | null
+  forward_3pl_name?: string | null
+  forward_tracking_url?: string | null
   notes?: string | null
   requires_approval?: boolean
   approved_at?: Date | string | null
@@ -464,6 +498,8 @@ export type MailActionRequestUpdateManyMutationInput = {
   status?: Prisma.EnumActionStatusFieldUpdateOperationsInput | $Enums.ActionStatus
   forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   forward_tracking_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_3pl_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_tracking_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requires_approval?: Prisma.BoolFieldUpdateOperationsInput | boolean
   approved_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -483,6 +519,8 @@ export type MailActionRequestUncheckedUpdateManyInput = {
   status?: Prisma.EnumActionStatusFieldUpdateOperationsInput | $Enums.ActionStatus
   forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   forward_tracking_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_3pl_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_tracking_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requires_approval?: Prisma.BoolFieldUpdateOperationsInput | boolean
   approved_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -512,6 +550,8 @@ export type MailActionRequestCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   forward_address?: Prisma.SortOrder
   forward_tracking_number?: Prisma.SortOrder
+  forward_3pl_name?: Prisma.SortOrder
+  forward_tracking_url?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   requires_approval?: Prisma.SortOrder
   approved_at?: Prisma.SortOrder
@@ -531,6 +571,8 @@ export type MailActionRequestMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   forward_address?: Prisma.SortOrder
   forward_tracking_number?: Prisma.SortOrder
+  forward_3pl_name?: Prisma.SortOrder
+  forward_tracking_url?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   requires_approval?: Prisma.SortOrder
   approved_at?: Prisma.SortOrder
@@ -550,6 +592,8 @@ export type MailActionRequestMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   forward_address?: Prisma.SortOrder
   forward_tracking_number?: Prisma.SortOrder
+  forward_3pl_name?: Prisma.SortOrder
+  forward_tracking_url?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   requires_approval?: Prisma.SortOrder
   approved_at?: Prisma.SortOrder
@@ -659,6 +703,8 @@ export type MailActionRequestCreateWithoutProfileInput = {
   status?: $Enums.ActionStatus
   forward_address?: string | null
   forward_tracking_number?: string | null
+  forward_3pl_name?: string | null
+  forward_tracking_url?: string | null
   notes?: string | null
   requires_approval?: boolean
   approved_at?: Date | string | null
@@ -678,6 +724,8 @@ export type MailActionRequestUncheckedCreateWithoutProfileInput = {
   status?: $Enums.ActionStatus
   forward_address?: string | null
   forward_tracking_number?: string | null
+  forward_3pl_name?: string | null
+  forward_tracking_url?: string | null
   notes?: string | null
   requires_approval?: boolean
   approved_at?: Date | string | null
@@ -726,6 +774,8 @@ export type MailActionRequestScalarWhereInput = {
   status?: Prisma.EnumActionStatusFilter<"MailActionRequest"> | $Enums.ActionStatus
   forward_address?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
   forward_tracking_number?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
+  forward_3pl_name?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
+  forward_tracking_url?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
   notes?: Prisma.StringNullableFilter<"MailActionRequest"> | string | null
   requires_approval?: Prisma.BoolFilter<"MailActionRequest"> | boolean
   approved_at?: Prisma.DateTimeNullableFilter<"MailActionRequest"> | Date | string | null
@@ -743,6 +793,8 @@ export type MailActionRequestCreateWithoutMail_itemInput = {
   status?: $Enums.ActionStatus
   forward_address?: string | null
   forward_tracking_number?: string | null
+  forward_3pl_name?: string | null
+  forward_tracking_url?: string | null
   notes?: string | null
   requires_approval?: boolean
   approved_at?: Date | string | null
@@ -762,6 +814,8 @@ export type MailActionRequestUncheckedCreateWithoutMail_itemInput = {
   status?: $Enums.ActionStatus
   forward_address?: string | null
   forward_tracking_number?: string | null
+  forward_3pl_name?: string | null
+  forward_tracking_url?: string | null
   notes?: string | null
   requires_approval?: boolean
   approved_at?: Date | string | null
@@ -806,6 +860,8 @@ export type MailActionRequestCreateManyProfileInput = {
   status?: $Enums.ActionStatus
   forward_address?: string | null
   forward_tracking_number?: string | null
+  forward_3pl_name?: string | null
+  forward_tracking_url?: string | null
   notes?: string | null
   requires_approval?: boolean
   approved_at?: Date | string | null
@@ -823,6 +879,8 @@ export type MailActionRequestUpdateWithoutProfileInput = {
   status?: Prisma.EnumActionStatusFieldUpdateOperationsInput | $Enums.ActionStatus
   forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   forward_tracking_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_3pl_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_tracking_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requires_approval?: Prisma.BoolFieldUpdateOperationsInput | boolean
   approved_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -842,6 +900,8 @@ export type MailActionRequestUncheckedUpdateWithoutProfileInput = {
   status?: Prisma.EnumActionStatusFieldUpdateOperationsInput | $Enums.ActionStatus
   forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   forward_tracking_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_3pl_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_tracking_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requires_approval?: Prisma.BoolFieldUpdateOperationsInput | boolean
   approved_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -860,6 +920,8 @@ export type MailActionRequestUncheckedUpdateManyWithoutProfileInput = {
   status?: Prisma.EnumActionStatusFieldUpdateOperationsInput | $Enums.ActionStatus
   forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   forward_tracking_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_3pl_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_tracking_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requires_approval?: Prisma.BoolFieldUpdateOperationsInput | boolean
   approved_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -878,6 +940,8 @@ export type MailActionRequestCreateManyMail_itemInput = {
   status?: $Enums.ActionStatus
   forward_address?: string | null
   forward_tracking_number?: string | null
+  forward_3pl_name?: string | null
+  forward_tracking_url?: string | null
   notes?: string | null
   requires_approval?: boolean
   approved_at?: Date | string | null
@@ -895,6 +959,8 @@ export type MailActionRequestUpdateWithoutMail_itemInput = {
   status?: Prisma.EnumActionStatusFieldUpdateOperationsInput | $Enums.ActionStatus
   forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   forward_tracking_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_3pl_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_tracking_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requires_approval?: Prisma.BoolFieldUpdateOperationsInput | boolean
   approved_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -914,6 +980,8 @@ export type MailActionRequestUncheckedUpdateWithoutMail_itemInput = {
   status?: Prisma.EnumActionStatusFieldUpdateOperationsInput | $Enums.ActionStatus
   forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   forward_tracking_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_3pl_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_tracking_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requires_approval?: Prisma.BoolFieldUpdateOperationsInput | boolean
   approved_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -932,6 +1000,8 @@ export type MailActionRequestUncheckedUpdateManyWithoutMail_itemInput = {
   status?: Prisma.EnumActionStatusFieldUpdateOperationsInput | $Enums.ActionStatus
   forward_address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   forward_tracking_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_3pl_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  forward_tracking_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requires_approval?: Prisma.BoolFieldUpdateOperationsInput | boolean
   approved_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -953,6 +1023,8 @@ export type MailActionRequestSelect<ExtArgs extends runtime.Types.Extensions.Int
   status?: boolean
   forward_address?: boolean
   forward_tracking_number?: boolean
+  forward_3pl_name?: boolean
+  forward_tracking_url?: boolean
   notes?: boolean
   requires_approval?: boolean
   approved_at?: boolean
@@ -974,6 +1046,8 @@ export type MailActionRequestSelectCreateManyAndReturn<ExtArgs extends runtime.T
   status?: boolean
   forward_address?: boolean
   forward_tracking_number?: boolean
+  forward_3pl_name?: boolean
+  forward_tracking_url?: boolean
   notes?: boolean
   requires_approval?: boolean
   approved_at?: boolean
@@ -995,6 +1069,8 @@ export type MailActionRequestSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   status?: boolean
   forward_address?: boolean
   forward_tracking_number?: boolean
+  forward_3pl_name?: boolean
+  forward_tracking_url?: boolean
   notes?: boolean
   requires_approval?: boolean
   approved_at?: boolean
@@ -1016,6 +1092,8 @@ export type MailActionRequestSelectScalar = {
   status?: boolean
   forward_address?: boolean
   forward_tracking_number?: boolean
+  forward_3pl_name?: boolean
+  forward_tracking_url?: boolean
   notes?: boolean
   requires_approval?: boolean
   approved_at?: boolean
@@ -1027,7 +1105,7 @@ export type MailActionRequestSelectScalar = {
   updated_at?: boolean
 }
 
-export type MailActionRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "mail_item_id" | "profile_id" | "action_type" | "status" | "forward_address" | "forward_tracking_number" | "notes" | "requires_approval" | "approved_at" | "approved_by" | "processed_at" | "processed_by" | "completed_at" | "created_at" | "updated_at", ExtArgs["result"]["mailActionRequest"]>
+export type MailActionRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "mail_item_id" | "profile_id" | "action_type" | "status" | "forward_address" | "forward_tracking_number" | "forward_3pl_name" | "forward_tracking_url" | "notes" | "requires_approval" | "approved_at" | "approved_by" | "processed_at" | "processed_by" | "completed_at" | "created_at" | "updated_at", ExtArgs["result"]["mailActionRequest"]>
 export type MailActionRequestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   mail_item?: boolean | Prisma.MailItemDefaultArgs<ExtArgs>
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
@@ -1055,6 +1133,8 @@ export type $MailActionRequestPayload<ExtArgs extends runtime.Types.Extensions.I
     status: $Enums.ActionStatus
     forward_address: string | null
     forward_tracking_number: string | null
+    forward_3pl_name: string | null
+    forward_tracking_url: string | null
     notes: string | null
     requires_approval: boolean
     approved_at: Date | null
@@ -1496,6 +1576,8 @@ export interface MailActionRequestFieldRefs {
   readonly status: Prisma.FieldRef<"MailActionRequest", 'ActionStatus'>
   readonly forward_address: Prisma.FieldRef<"MailActionRequest", 'String'>
   readonly forward_tracking_number: Prisma.FieldRef<"MailActionRequest", 'String'>
+  readonly forward_3pl_name: Prisma.FieldRef<"MailActionRequest", 'String'>
+  readonly forward_tracking_url: Prisma.FieldRef<"MailActionRequest", 'String'>
   readonly notes: Prisma.FieldRef<"MailActionRequest", 'String'>
   readonly requires_approval: Prisma.FieldRef<"MailActionRequest", 'Boolean'>
   readonly approved_at: Prisma.FieldRef<"MailActionRequest", 'DateTime'>

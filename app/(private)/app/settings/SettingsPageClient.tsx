@@ -56,6 +56,7 @@ export function SettingsPageClient({initialSettings}: SettingsPageClientProps) {
   const [defaultForwardAddress, setDefaultForwardAddress] = useState(
     initialSettings?.defaultForwardAddress || ""
   );
+  const [savingAddress, setSavingAddress] = useState(false);
   const [pin, setPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
 
@@ -98,6 +99,34 @@ export function SettingsPageClient({initialSettings}: SettingsPageClientProps) {
         message: "An unexpected error occurred",
         color: "red",
       });
+    }
+  };
+
+  const handleSaveForwardingAddress = async () => {
+    setSavingAddress(true);
+    try {
+      const result = await updateMailSettings(defaultForwardAddress);
+      if (result.success) {
+        notifications.show({
+          title: "Success",
+          message: "Default forwarding address saved",
+          color: "green",
+        });
+      } else {
+        notifications.show({
+          title: "Error",
+          message: result.message || "Failed to save forwarding address",
+          color: "red",
+        });
+      }
+    } catch (error) {
+      notifications.show({
+        title: "Error",
+        message: "An unexpected error occurred",
+        color: "red",
+      });
+    } finally {
+      setSavingAddress(false);
     }
   };
 
@@ -246,6 +275,15 @@ export function SettingsPageClient({initialSettings}: SettingsPageClientProps) {
               onChange={(e) => setDefaultForwardAddress(e.target.value)}
               description="This address will be pre-filled when you forward mail."
             />
+            <Group justify="flex-end">
+              <Button
+                onClick={handleSaveForwardingAddress}
+                loading={savingAddress}
+                disabled={defaultForwardAddress === (initialSettings?.defaultForwardAddress || "")}
+              >
+                Save Address
+              </Button>
+            </Group>
           </Stack>
         </Stack>
       </Paper>

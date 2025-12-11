@@ -49,9 +49,6 @@ export function ReferralLinkCard({
               <Text size="lg" fw={700}>
                 Referral Credentials
               </Text>
-              <Text size="xs" c="dimmed" fw={500}>
-                SECURE ID: {referralCode}
-              </Text>
             </Stack>
           </Group>
           <Badge variant="dot" color="green" size="lg" tt="uppercase" fw={700}>
@@ -70,7 +67,7 @@ export function ReferralLinkCard({
             <Stack gap="xs">
               <Group justify="space-between">
                 <Text size="xs" fw={600} c="dimmed" tt="uppercase">
-                  Unique Referral Code
+                  Your Referral Code
                 </Text>
                 <IconFingerprint
                   size={16}
@@ -114,7 +111,7 @@ export function ReferralLinkCard({
           {/* Link Display */}
           <Stack gap="xs">
             <Text size="xs" fw={600} c="dimmed" tt="uppercase">
-              Secure Link
+              Your Referral Link
             </Text>
             <Group gap="xs">
               <Code

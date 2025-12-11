@@ -1,6 +1,7 @@
 "use client";
 
-import {useState} from "react";
+import {useState, useEffect} from "react";
+import {useSearchParams, useRouter} from "next/navigation";
 import {
   Title,
   Text,
@@ -14,63 +15,86 @@ import {
   Alert,
   Modal,
   TextInput,
+  ThemeIcon,
+  Card,
 } from "@mantine/core";
 import {
   IconCreditCard,
   IconCalendar,
   IconDownload,
   IconPlus,
+  IconAlertCircle,
+  IconCheck,
+  IconX,
+  IconArrowLeft,
 } from "@tabler/icons-react";
-import {UserMailboxesCard} from "@/components/user/UserMailboxesCard";
+import Link from "next/link";
 
-interface MailboxData {
-  subscriptionId: string;
-  planType: string;
-  planName: string;
+interface BillingHistoryItem {
+  id: string;
+  date: string; // ISO string
+  amount: number;
+  status: string;
+  description: string | null;
+  external_id: string;
+  invoice_url: string | null;
+  payment_method: string | null;
+  payment_channel: string | null;
+  paid_at: string | null; // ISO string
+}
+
+interface SubscriptionData {
+  plan: string;
+  status: string;
   billingCycle: string;
-  mailbox: {
-    id: string;
-    box_number: string;
-    type: string;
-    width: number;
-    height: number;
-    depth: number;
-    dimension_unit: string;
-    is_occupied: boolean;
-  };
-  location: {
-    id: string;
-    name: string;
-    address: string;
-    city: string;
-    province: string;
-    postal_code: string;
-    country: string;
-    map_url: string | null;
-  };
-  cluster: {
-    id: string;
-    name: string;
-    description: string | null;
-  };
+  amount: number;
+  nextBillingDate: string | null; // ISO string
+  startDate: string | null; // ISO string
 }
 
 interface BillingPageClientProps {
-  allMailboxes: MailboxData[];
+  hasError?: boolean;
+  hasSuccess?: boolean;
+  billingHistory: BillingHistoryItem[];
+  subscription: SubscriptionData;
 }
 
-export function BillingPageClient({allMailboxes}: BillingPageClientProps) {
+export function BillingPageClient({
+  hasError = false,
+  hasSuccess = false,
+  billingHistory = [],
+  subscription,
+}: BillingPageClientProps) {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Mock data - will be replaced with backend integration
-  const [subscription] = useState({
-    plan: "Individual",
-    status: "active",
-    billingCycle: "monthly",
-    amount: 299,
-    nextBillingDate: new Date("2025-02-15"),
-    startDate: new Date("2024-01-15"),
-  });
+  // Redirect to /app if error is present
+  useEffect(() => {
+    if (hasError) {
+      const timeout = setTimeout(() => {
+        router.push("/app");
+      }, 5000); // Redirect after 5 seconds
+
+      return () => clearTimeout(timeout);
+    }
+  }, [hasError, router]);
+
+  // Clear success params from URL after displaying
+  useEffect(() => {
+    if (hasSuccess) {
+      const timeout = setTimeout(() => {
+        const newSearchParams = new URLSearchParams(searchParams.toString());
+        newSearchParams.delete("success");
+        const newUrl = newSearchParams.toString()
+          ? `?${newSearchParams.toString()}`
+          : "";
+        router.replace(`/app/billing${newUrl}`, {scroll: false});
+      }, 5000); // Clear after 5 seconds
+
+      return () => clearTimeout(timeout);
+    }
+  }, [hasSuccess, router, searchParams]);
 
   const [paymentMethods] = useState([
     {
@@ -84,38 +108,101 @@ export function BillingPageClient({allMailboxes}: BillingPageClientProps) {
     },
   ]);
 
-  const [billingHistory] = useState([
-    {
-      id: "1",
-      date: new Date("2025-01-15"),
-      amount: 299,
-      status: "paid",
-      invoiceUrl: "#",
-    },
-    {
-      id: "2",
-      date: new Date("2024-12-15"),
-      amount: 299,
-      status: "paid",
-      invoiceUrl: "#",
-    },
-    {
-      id: "3",
-      date: new Date("2024-11-15"),
-      amount: 299,
-      status: "paid",
-      invoiceUrl: "#",
-    },
-  ]);
-
   const handleAddPaymentMethod = () => {
     setPaymentModalOpen(true);
   };
 
-  const handleDownloadInvoice = (invoiceId: string) => {
-    // TODO: Implement invoice download
-    console.log("Downloading invoice:", invoiceId);
+  const handleDownloadInvoice = (transactionId: string) => {
+    // Open PDF download in new window
+    window.open(`/api/invoices/${transactionId}`, "_blank");
   };
+
+  // If error, show only error message and redirect
+  if (hasError) {
+    return (
+      <Stack
+        gap="xl"
+        align="center"
+        justify="center"
+        style={{
+          width: "100%",
+          minHeight: "80vh",
+          padding: "2rem",
+        }}
+      >
+        <Card
+          shadow="lg"
+          padding="xl"
+          radius="md"
+          withBorder
+          style={{
+            width: "100%",
+            borderColor: "var(--mantine-color-red-4)",
+            backgroundColor: "var(--mantine-color-red-0)",
+          }}
+        >
+          <Stack gap="md" align="center">
+            <ThemeIcon size={80} radius="xl" variant="light" color="red">
+              <IconX size={40} />
+            </ThemeIcon>
+            <Stack gap="xs" align="center">
+              <Title order={2} size="h3" fw={700}>
+                Payment Failed
+              </Title>
+              <Text c="dimmed" size="sm" ta="center" maw={500}>
+                We encountered an issue processing your payment. Please check
+                your payment method and try again.
+              </Text>
+            </Stack>
+            <Group gap="md" mt="md">
+              <Button
+                component={Link}
+                href="/app/pricing"
+                variant="filled"
+                color="red"
+                leftSection={<IconArrowLeft size={18} />}
+              >
+                Try Again
+              </Button>
+              <Button variant="subtle" onClick={() => router.push("/app")}>
+                Go to Dashboard
+              </Button>
+            </Group>
+            <Alert
+              icon={<IconAlertCircle size={18} />}
+              title="What went wrong?"
+              color="red"
+              variant="light"
+              style={{width: "100%"}}
+            >
+              <Stack gap="xs">
+                <Text size="sm">Common reasons for payment failures:</Text>
+                <ul style={{margin: 0, paddingLeft: 20}}>
+                  <li>
+                    <Text size="sm">Insufficient funds in your account</Text>
+                  </li>
+                  <li>
+                    <Text size="sm">Payment method declined by your bank</Text>
+                  </li>
+                  <li>
+                    <Text size="sm">Expired or invalid payment method</Text>
+                  </li>
+                  <li>
+                    <Text size="sm">
+                      Network or connection issues during payment
+                    </Text>
+                  </li>
+                </ul>
+              </Stack>
+            </Alert>
+            <Text size="xs" c="dimmed" ta="center" mt="md">
+              Redirecting to dashboard in 5 seconds...
+            </Text>
+          </Stack>
+        </Card>
+      </Stack>
+    );
+  }
 
   return (
     <Stack gap="xl" style={{width: "100%", maxWidth: "100%", minWidth: 0}}>
@@ -135,9 +222,28 @@ export function BillingPageClient({allMailboxes}: BillingPageClientProps) {
         </Text>
       </Stack>
 
-      {/* My Mailboxes Section */}
-      {allMailboxes.length > 0 && (
-        <UserMailboxesCard mailboxes={allMailboxes} />
+      {/* Success Alert */}
+      {hasSuccess && (
+        <Alert
+          icon={<IconCheck size={18} />}
+          title="Payment Successful!"
+          color="green"
+          variant="light"
+          onClose={() => {
+            const newSearchParams = new URLSearchParams(
+              searchParams.toString()
+            );
+            newSearchParams.delete("success");
+            const newUrl = newSearchParams.toString()
+              ? `?${newSearchParams.toString()}`
+              : "";
+            router.replace(`/app/billing${newUrl}`, {scroll: false});
+          }}
+          withCloseButton
+        >
+          Your payment has been processed successfully. Your subscription is now
+          active.
+        </Alert>
       )}
 
       {/* Current Subscription */}
@@ -161,31 +267,41 @@ export function BillingPageClient({allMailboxes}: BillingPageClientProps) {
               <Text size="lg" fw={600}>
                 {subscription.plan} Plan
               </Text>
-              <Text size="sm" c="dimmed">
-                ₱{subscription.amount.toLocaleString()} per{" "}
-                {subscription.billingCycle}
-              </Text>
+              {subscription.amount > 0 && (
+                <Text size="sm" c="dimmed">
+                  ₱{subscription.amount.toLocaleString()} per{" "}
+                  {subscription.billingCycle}
+                </Text>
+              )}
             </Stack>
-            <Button variant="outline">Change Plan</Button>
+            {subscription.status !== "inactive" && (
+              <Button variant="outline" component={Link} href="/app/pricing">
+                Change Plan
+              </Button>
+            )}
           </Group>
           <Divider />
           <Group gap="xl">
-            <Stack gap={4}>
-              <Text size="sm" c="dimmed">
-                Started
-              </Text>
-              <Text size="sm" fw={500}>
-                {subscription.startDate.toLocaleDateString()}
-              </Text>
-            </Stack>
-            <Stack gap={4}>
-              <Text size="sm" c="dimmed">
-                Next Billing Date
-              </Text>
-              <Text size="sm" fw={500}>
-                {subscription.nextBillingDate.toLocaleDateString()}
-              </Text>
-            </Stack>
+            {subscription.startDate && (
+              <Stack gap={4}>
+                <Text size="sm" c="dimmed">
+                  Started
+                </Text>
+                <Text size="sm" fw={500}>
+                  {new Date(subscription.startDate).toLocaleDateString()}
+                </Text>
+              </Stack>
+            )}
+            {subscription.nextBillingDate && (
+              <Stack gap={4}>
+                <Text size="sm" c="dimmed">
+                  Next Billing Date
+                </Text>
+                <Text size="sm" fw={500}>
+                  {new Date(subscription.nextBillingDate).toLocaleDateString()}
+                </Text>
+              </Stack>
+            )}
             <Stack gap={4}>
               <Text size="sm" c="dimmed">
                 Billing Cycle
@@ -304,11 +420,21 @@ export function BillingPageClient({allMailboxes}: BillingPageClientProps) {
               <Table.Tbody>
                 {billingHistory.map((invoice) => (
                   <Table.Tr key={invoice.id}>
-                    <Table.Td>{invoice.date.toLocaleDateString()}</Table.Td>
+                    <Table.Td>
+                      {new Date(invoice.date).toLocaleDateString()}
+                    </Table.Td>
                     <Table.Td>₱{invoice.amount.toLocaleString()}</Table.Td>
                     <Table.Td>
                       <Badge
-                        color={invoice.status === "paid" ? "green" : "red"}
+                        color={
+                          invoice.status === "PAID"
+                            ? "green"
+                            : invoice.status === "PENDING"
+                            ? "yellow"
+                            : invoice.status === "FAILED"
+                            ? "red"
+                            : "gray"
+                        }
                         variant="light"
                       >
                         {invoice.status}
@@ -320,8 +446,9 @@ export function BillingPageClient({allMailboxes}: BillingPageClientProps) {
                         size="xs"
                         leftSection={<IconDownload size={14} />}
                         onClick={() => handleDownloadInvoice(invoice.id)}
+                        disabled={invoice.status !== "PAID"}
                       >
-                        Download
+                        Download PDF
                       </Button>
                     </Table.Td>
                   </Table.Tr>
@@ -364,4 +491,3 @@ export function BillingPageClient({allMailboxes}: BillingPageClientProps) {
     </Stack>
   );
 }
-

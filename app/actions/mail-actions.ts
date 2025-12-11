@@ -211,7 +211,7 @@ export async function requestShred(mailId: string, pin: string) {
 
     await logActivity(session.userId, "REQUEST_SHRED", {mailId});
     revalidatePath(`/app/inbox/${mailId}`);
-    return {success: true, message: "Shredding requested successfully"};
+    return {success: true, message: "Disposal requested successfully"};
   } catch (error) {
     console.error("Error requesting shred:", error);
     return {success: false, message: "Failed to request shred"};
