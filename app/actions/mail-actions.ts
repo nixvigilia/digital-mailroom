@@ -18,12 +18,6 @@ export async function checkShreddingPin(userId: string) {
 
 // Verify PIN (simple check against stored hash - in real app use bcrypt)
 // For this demo/MVP we'll store it simply or use a basic hash if needed.
-// Since user asked for "4 digit code", we can store it directly if we assume app-level security or use bcrypt.
-// Given constraints, let's use bcrypt if available or simple comparison if not.
-// We should probably use bcryptjs or similar.
-// Let's assume we'll handle hashing in the setting/verification action.
-// For now, I'll import bcrypt.
-
 export async function verifyShreddingPin(userId: string, pin: string) {
   const profile = await prisma.profile.findUnique({
     where: {id: userId},
