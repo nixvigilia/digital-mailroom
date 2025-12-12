@@ -7,7 +7,7 @@ import {logActivity} from "./activity-log";
 import {ActionType, ActionStatus} from "@/app/generated/prisma/enums";
 import bcrypt from "bcryptjs";
 
-// Helper to check if user has shredding PIN
+// Helper to check if user has security PIN
 export async function checkShreddingPin(userId: string) {
   const profile = await prisma.profile.findUnique({
     where: {id: userId},
@@ -204,12 +204,12 @@ export async function requestShred(mailId: string, pin: string) {
       data: {
         mail_item_id: mailId,
         profile_id: session.userId,
-        action_type: ActionType.SHRED,
+        action_type: ActionType.DISPOSE,
         status: "PENDING",
       },
     });
 
-    await logActivity(session.userId, "REQUEST_SHRED", {mailId});
+    await logActivity(session.userId, "REQUEST_DISPOSE", {mailId});
     revalidatePath(`/app/inbox/${mailId}`);
     return {success: true, message: "Disposal requested successfully"};
   } catch (error) {

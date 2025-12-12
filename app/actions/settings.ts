@@ -138,7 +138,7 @@ export async function setShreddingPin(pin: string) {
     revalidatePath("/app/settings");
     return {success: true, message: "Security PIN set successfully"};
   } catch (error) {
-    console.error("Error setting shredding PIN:", error);
+    console.error("Error setting security PIN:", error);
     return {success: false, message: "Failed to set Security PIN"};
   }
 }

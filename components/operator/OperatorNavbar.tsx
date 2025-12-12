@@ -33,9 +33,10 @@ const mainLinks = [
   {icon: IconLayoutDashboard, label: "Dashboard", href: "/operator"},
   {icon: IconMail, label: "Receive Mail", href: "/operator/receive"},
   {icon: IconChecklist, label: "KYC/KYB Review", href: "/operator/approvals"},
+  {icon: IconInbox, label: "Action Queue", href: "/operator/queue"},
   {icon: IconScan, label: "Scanning", href: "/operator/scanning"},
   {icon: IconTruck, label: "Forwarding", href: "/operator/forwarding"},
-  {icon: IconTrash, label: "Shredding", href: "/operator/shredding"},
+  {icon: IconTrash, label: "Dispose", href: "/operator/dispose"},
   {icon: IconRuler, label: "Parcel Check", href: "/operator/parcel-check"},
   {icon: IconMapPin, label: "Lockers", href: "/operator/lockers"},
 ];

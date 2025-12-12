@@ -44,8 +44,8 @@ export function Footer() {
               </Title>
               <Group gap="sm" c="gray.4">
                 <IconEmail size={20} />
-                <Anchor href="mailto:admin@digitalmailroom.com" c="gray.4">
-                  admin@digitalmailroom.com
+                <Anchor href="mailto:admin@keep.ph" c="gray.4">
+                  admin@keep.ph
                 </Anchor>
               </Group>
               <Group gap="sm" c="gray.4">

@@ -217,23 +217,49 @@ export function MailActions({
           <Button
             leftSection={<IconFileText size={18} />}
             variant="light"
-            color={hasFullScan || status === "scanned" ? "gray" : "blue"}
+            color={
+              hasFullScan || status === "scanned"
+                ? "gray"
+                : pendingScanRequest
+                ? "yellow"
+                : pendingDisposeRequest
+                ? "gray"
+                : "blue"
+            }
             size="md"
             fullWidth
-            onClick={() => setOpenScanModal(true)}
+            onClick={() => {
+              if (
+                !hasFullScan &&
+                status !== "scanned" &&
+                !pendingScanRequest &&
+                !pendingDisposeRequest
+              ) {
+                setOpenScanModal(true);
+              }
+            }}
             disabled={
               hasFullScan ||
               status === "scanned" ||
               status !== "received" ||
-              !!pendingScanRequest
+              !!pendingScanRequest ||
+              !!pendingDisposeRequest
             }
             style={{
               backgroundColor:
                 hasFullScan || status === "scanned"
                   ? "var(--mantine-color-gray-1)"
+                  : pendingScanRequest
+                  ? "var(--mantine-color-yellow-0)"
+                  : pendingDisposeRequest
+                  ? "var(--mantine-color-gray-1)"
                   : "var(--mantine-color-blue-0)",
               color:
                 hasFullScan || status === "scanned"
+                  ? "var(--mantine-color-gray-6)"
+                  : pendingScanRequest
+                  ? "var(--mantine-color-yellow-7)"
+                  : pendingDisposeRequest
                   ? "var(--mantine-color-gray-6)"
                   : "var(--mantine-color-blue-6)",
               fontWeight: 600,
@@ -242,32 +268,46 @@ export function MailActions({
           >
             {hasFullScan || status === "scanned"
               ? "Document scanned"
+              : pendingScanRequest
+              ? "Processing"
+              : pendingDisposeRequest
+              ? "Unavailable"
               : "Open & Scan"}
           </Button>
           <Button
             leftSection={<IconMailForward size={18} />}
             variant="light"
             color={
-              isForwarded ? "gray" : pendingForwardRequest ? "yellow" : "blue"
+              isForwarded
+                ? "gray"
+                : pendingForwardRequest || pendingDisposeRequest
+                ? "gray"
+                : "blue"
             }
             size="md"
             fullWidth
             onClick={() => {
-              if (!isForwarded && !pendingForwardRequest) {
+              if (
+                !isForwarded &&
+                !pendingForwardRequest &&
+                !pendingDisposeRequest
+              ) {
                 setOpenForwardModal(true);
               }
             }}
-            disabled={isForwarded || !!pendingForwardRequest}
+            disabled={
+              isForwarded || !!pendingForwardRequest || !!pendingDisposeRequest
+            }
             style={{
               backgroundColor: isForwarded
                 ? "var(--mantine-color-gray-1)"
-                : pendingForwardRequest
-                ? "var(--mantine-color-yellow-0)"
+                : pendingForwardRequest || pendingDisposeRequest
+                ? "var(--mantine-color-gray-1)"
                 : "var(--mantine-color-blue-0)",
               color: isForwarded
                 ? "var(--mantine-color-gray-6)"
-                : pendingForwardRequest
-                ? "var(--mantine-color-yellow-7)"
+                : pendingForwardRequest || pendingDisposeRequest
+                ? "var(--mantine-color-gray-6)"
                 : "var(--mantine-color-blue-6)",
               fontWeight: 600,
               fontSize: "0.875rem",
@@ -277,32 +317,52 @@ export function MailActions({
               ? "Item sent"
               : pendingForwardRequest
               ? "Processing"
+              : pendingDisposeRequest
+              ? "Unavailable"
               : "Forward"}
           </Button>
           <Button
             leftSection={<IconTrash size={18} />}
             variant="light"
-            color={pendingDisposeRequest ? "yellow" : "red"}
+            color={
+              pendingDisposeRequest || isForwarded || pendingForwardRequest
+                ? "gray"
+                : "red"
+            }
             size="md"
             fullWidth
             onClick={() => {
-              if (!pendingDisposeRequest) {
+              if (
+                !pendingDisposeRequest &&
+                !isForwarded &&
+                !pendingForwardRequest
+              ) {
                 setOpenDisposeModal(true);
               }
             }}
-            disabled={!!pendingDisposeRequest}
+            disabled={
+              !!pendingDisposeRequest ||
+              isForwarded ||
+              !!pendingForwardRequest
+            }
             style={{
-              backgroundColor: pendingDisposeRequest
-                ? "var(--mantine-color-yellow-0)"
-                : "var(--mantine-color-red-0)",
-              color: pendingDisposeRequest
-                ? "var(--mantine-color-yellow-7)"
-                : "var(--mantine-color-red-7)",
+              backgroundColor:
+                pendingDisposeRequest || isForwarded || pendingForwardRequest
+                  ? "var(--mantine-color-gray-1)"
+                  : "var(--mantine-color-red-0)",
+              color:
+                pendingDisposeRequest || isForwarded || pendingForwardRequest
+                  ? "var(--mantine-color-gray-6)"
+                  : "var(--mantine-color-red-7)",
               fontWeight: 600,
               fontSize: "0.875rem",
             }}
           >
-            {pendingDisposeRequest ? "Processing" : "Dispose"}
+            {pendingDisposeRequest
+              ? "Processing"
+              : isForwarded || pendingForwardRequest
+              ? "Unavailable"
+              : "Dispose"}
           </Button>
         </SimpleGrid>
       </Stack>
@@ -526,8 +586,10 @@ function DisposeForm({
           You haven't set a security PIN yet.
         </Alert>
         <Text size="sm">
-          To securely dispose of mail, please set up a 4-digit PIN in your
-          Settings page first. This prevents accidental deletions.
+          This action is permanent and cannot be undone. The physical mail will
+          be securely disposed and destroyed. To securely dispose of mail,
+          please set up a 4-digit PIN in your Settings page first. This prevents
+          accidental deletions.
         </Text>
         <Group justify="flex-end" mt="md">
           <Button variant="subtle" onClick={onCancel}>

@@ -279,7 +279,10 @@ export function SettingsPageClient({initialSettings}: SettingsPageClientProps) {
               <Button
                 onClick={handleSaveForwardingAddress}
                 loading={savingAddress}
-                disabled={defaultForwardAddress === (initialSettings?.defaultForwardAddress || "")}
+                disabled={
+                  defaultForwardAddress ===
+                  (initialSettings?.defaultForwardAddress || "")
+                }
               >
                 Save Address
               </Button>
@@ -297,10 +300,10 @@ export function SettingsPageClient({initialSettings}: SettingsPageClientProps) {
           <Divider />
 
           <Stack gap="md">
-            <Text fw={500}>Shredding PIN</Text>
+            <Text fw={500}>Security PIN</Text>
             <Text size="sm" c="dimmed">
-              Set a 4-digit PIN to confirm shredding requests. This adds an
-              extra layer of security to prevent accidental deletion.
+              Set a 4-digit PIN to confirm disposal requests. This adds an extra
+              layer of security to prevent accidental deletion.
             </Text>
             {initialSettings?.hasShreddingPin && (
               <Text size="sm" c="green">

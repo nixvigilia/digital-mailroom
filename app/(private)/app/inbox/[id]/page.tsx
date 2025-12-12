@@ -46,6 +46,7 @@ function mapStatusToComponentStatus(
     case MailStatus.PROCESSED:
     case MailStatus.FORWARDED:
     case MailStatus.SHREDDED:
+    case MailStatus.DISPOSED:
       return "processed";
     default:
       return "received";
@@ -82,7 +83,7 @@ const getMailItem = cache(async (mailId: string, userId: string) => {
                   },
                 },
                 {
-                  action_type: ActionType.SHRED,
+                  action_type: ActionType.DISPOSE,
                   status: {
                     in: [ActionStatus.PENDING, ActionStatus.IN_PROGRESS],
                   },
@@ -168,25 +169,36 @@ const getMailItem = cache(async (mailId: string, userId: string) => {
       }
     }
 
-    const pendingScanRequest = mailItem.action_requests.find(
-      (req) =>
-        req.action_type === ActionType.OPEN_AND_SCAN &&
-        (req.status === ActionStatus.PENDING ||
-          req.status === ActionStatus.IN_PROGRESS)
-    ) || null;
+    const pendingScanRequest =
+      mailItem.action_requests.find(
+        (req) =>
+          req.action_type === ActionType.OPEN_AND_SCAN &&
+          (req.status === ActionStatus.PENDING ||
+            req.status === ActionStatus.IN_PROGRESS)
+      ) || null;
 
-    const pendingForwardRequest = mailItem.action_requests.find(
-      (req) =>
-        req.action_type === ActionType.FORWARD &&
-        (req.status === ActionStatus.PENDING ||
-          req.status === ActionStatus.IN_PROGRESS)
-    ) || null;
+    const pendingForwardRequest =
+      mailItem.action_requests.find(
+        (req) =>
+          req.action_type === ActionType.FORWARD &&
+          (req.status === ActionStatus.PENDING ||
+            req.status === ActionStatus.IN_PROGRESS)
+      ) || null;
 
-    const completedForwardRequest = mailItem.action_requests.find(
-      (req) =>
-        req.action_type === ActionType.FORWARD &&
-        req.status === ActionStatus.COMPLETED
-    ) || null;
+    const completedForwardRequest =
+      mailItem.action_requests.find(
+        (req) =>
+          req.action_type === ActionType.FORWARD &&
+          req.status === ActionStatus.COMPLETED
+      ) || null;
+
+    const pendingDisposeRequest =
+      mailItem.action_requests.find(
+        (req) =>
+          req.action_type === ActionType.DISPOSE &&
+          (req.status === ActionStatus.PENDING ||
+            req.status === ActionStatus.IN_PROGRESS)
+      ) || null;
 
     const isForwarded =
       mailItem.status === MailStatus.FORWARDED || !!completedForwardRequest;

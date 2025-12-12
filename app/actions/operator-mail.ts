@@ -553,6 +553,8 @@ export async function processForward(
 
     revalidatePath(`/app/inbox/${mailId}`);
     revalidatePath(`/operator/forwarding`);
+    revalidatePath(`/operator/queue`);
+    revalidatePath(`/operator/queue/${mailId}`);
 
     return {success: true, message: "Mail item forwarded successfully"};
   } catch (error) {
@@ -585,11 +587,11 @@ export async function processShred(
       return {success: false, message: "Mail item not found"};
     }
 
-    // Check for existing pending or in-progress shred requests
+    // Check for existing pending or in-progress dispose requests
     const existingRequest = await prisma.mailActionRequest.findFirst({
       where: {
         mail_item_id: mailId,
-        action_type: ActionType.SHRED,
+        action_type: ActionType.DISPOSE,
         status: {
           in: [
             ActionStatus.PENDING,
@@ -603,22 +605,22 @@ export async function processShred(
     if (!existingRequest) {
       return {
         success: false,
-        message: "No pending shred request found for this mail item",
+        message: "No pending dispose request found for this mail item",
       };
     }
 
-    // Update Mail Item and shred request
+    // Update Mail Item and dispose request
     await prisma.$transaction(async (tx) => {
       // Update Mail Item
       await tx.mailItem.update({
         where: {id: mailId},
         data: {
-          status: MailStatus.SHREDDED,
+          status: MailStatus.DISPOSED,
           updated_at: new Date(),
         },
       });
 
-      // Update the shred request
+      // Update the dispose request
       await tx.mailActionRequest.update({
         where: {id: existingRequest.id},
         data: {
@@ -635,7 +637,7 @@ export async function processShred(
       access.userId,
       "MAIL_ACTION",
       {
-        action: "PROCESS_SHRED",
+        action: "PROCESS_DISPOSE",
         mailItemId: mailId,
         userId: mailItem.profile_id,
         actionRequestId: existingRequest.id,
@@ -650,7 +652,7 @@ export async function processShred(
         mailItem.profile_id,
         "MAIL_ACTION",
         {
-          action: "SHRED_COMPLETED",
+          action: "DISPOSE_COMPLETED",
           mailItemId: mailId,
           processedBy: access.userId,
         },
@@ -659,10 +661,49 @@ export async function processShred(
       );
     }
 
-    revalidatePath(`/app/inbox/${mailId}`);
-    revalidatePath(`/operator/shredding`);
+    // Send email notification to user (always send for dispose as it's a critical action)
+    if (mailItem.profile_id) {
+      const profile = await prisma.profile.findUnique({
+        where: {id: mailItem.profile_id},
+        select: {
+          email: true,
+          notify_new_mail: true,
+          kyc_verification: {
+            select: {
+              first_name: true,
+              last_name: true,
+            },
+          },
+        },
+      });
 
-    return {success: true, message: "Mail item shredded successfully"};
+      if (profile?.email) {
+        const userName = profile.kyc_verification
+          ? `${profile.kyc_verification.first_name} ${profile.kyc_verification.last_name}`
+          : profile.email;
+
+        // Import and call email notification function
+        const {sendDisposeCompletedNotification} = await import(
+          "@/utils/email"
+        );
+        await sendDisposeCompletedNotification(
+          profile.email,
+          userName,
+          mailItem.sender || "Unknown",
+          mailId
+        ).catch((error: unknown) => {
+          // Log error but don't fail the operation
+          console.error("Failed to send dispose completion email:", error);
+        });
+      }
+    }
+
+    revalidatePath(`/app/inbox/${mailId}`);
+    revalidatePath(`/operator/dispose`);
+    revalidatePath(`/operator/queue`);
+    revalidatePath(`/operator/queue/${mailId}`);
+
+    return {success: true, message: "Mail item disposed successfully"};
   } catch (error) {
     console.error("Error processing shred:", error);
     return {success: false, message: "Failed to process shred"};
@@ -754,6 +795,12 @@ export async function getMailItemDetails(mailId: string) {
             type: latestRequest.action_type,
             status: latestRequest.status,
             priority: "standard", // Default for now
+            forwardAddress: latestRequest.forward_address || null,
+            forwardTrackingNumber:
+              latestRequest.forward_tracking_number || null,
+            forward3PLName: latestRequest.forward_3pl_name || null,
+            forwardTrackingUrl: latestRequest.forward_tracking_url || null,
+            notes: latestRequest.notes || null,
           }
         : null,
     };
@@ -780,7 +827,11 @@ export async function getActionQueue() {
           ],
         },
         action_type: {
-          in: [ActionType.OPEN_AND_SCAN, ActionType.FORWARD, ActionType.SHRED],
+          in: [
+            ActionType.OPEN_AND_SCAN,
+            ActionType.FORWARD,
+            ActionType.DISPOSE,
+          ],
         },
       },
       include: {
@@ -835,7 +886,8 @@ export async function getActionQueue() {
       const actionTypeMap: Record<ActionType, "scan" | "forward" | "shred"> = {
         OPEN_AND_SCAN: "scan",
         FORWARD: "forward",
-        SHRED: "shred",
+        DISPOSE: "shred",
+        SHRED: "shred", // Keep for backward compatibility
         HOLD: "forward", // fallback
         ARCHIVE: "forward", // fallback
       };
@@ -1175,6 +1227,115 @@ export async function getForwardRequests(
   }
 }
 
+export async function getDisposeRequests(
+  page: number = 1,
+  pageSize: number = 10
+) {
+  const access = await verifyOperatorAccess();
+  if (!access.success) {
+    throw new Error(access.message);
+  }
+
+  try {
+    const skip = (page - 1) * pageSize;
+
+    const [disposeRequests, totalCount] = await Promise.all([
+      prisma.mailActionRequest.findMany({
+        where: {
+          action_type: ActionType.DISPOSE,
+          status: {
+            in: [ActionStatus.PENDING, ActionStatus.IN_PROGRESS],
+          },
+        },
+        include: {
+          mail_item: {
+            select: {
+              id: true,
+              sender: true,
+              subject: true,
+              received_at: true,
+            },
+          },
+          profile: {
+            select: {
+              id: true,
+              email: true,
+              user_type: true,
+              kyc_verification: {
+                select: {
+                  status: true,
+                  first_name: true,
+                  last_name: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          created_at: "asc", // Oldest first for queue processing
+        },
+        skip,
+        take: pageSize,
+      }),
+      prisma.mailActionRequest.count({
+        where: {
+          action_type: ActionType.DISPOSE,
+          status: {
+            in: [ActionStatus.PENDING, ActionStatus.IN_PROGRESS],
+          },
+        },
+      }),
+    ]);
+
+    const formattedRequests = disposeRequests.map((req) => {
+      const kycStatus = req.profile?.kyc_verification?.status;
+      const kycApproved = kycStatus === "APPROVED";
+      const userName = req.profile?.kyc_verification
+        ? `${req.profile.kyc_verification.first_name} ${req.profile.kyc_verification.last_name}`
+        : req.profile?.email || "Unknown User";
+
+      return {
+        id: req.id,
+        mailItemId: req.mail_item_id,
+        mailItem: {
+          id: req.mail_item?.id || "",
+          sender: req.mail_item?.sender || "Unknown",
+          subject: req.mail_item?.subject || null,
+          receivedAt: req.mail_item?.received_at
+            ? req.mail_item.received_at.toISOString()
+            : null,
+        },
+        user: {
+          id: req.profile_id,
+          name: userName,
+          email: req.profile?.email || "",
+          type: req.profile?.user_type || "INDIVIDUAL",
+        },
+        status: req.status,
+        requestedAt: req.created_at.toISOString(),
+        kycApproved,
+      };
+    });
+
+    return {
+      requests: formattedRequests,
+      totalCount,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: page,
+      pageSize,
+    };
+  } catch (error) {
+    console.error("Error fetching dispose requests:", error);
+    return {
+      requests: [],
+      totalCount: 0,
+      totalPages: 0,
+      currentPage: page,
+      pageSize,
+    };
+  }
+}
+
 export async function getRecentKYCRequests(limit: number = 5) {
   const access = await verifyOperatorAccess();
   if (!access.success) {
@@ -1237,7 +1398,11 @@ export async function getRecentActions(limit: number = 5) {
     const actionRequests = await prisma.mailActionRequest.findMany({
       where: {
         action_type: {
-          in: [ActionType.OPEN_AND_SCAN, ActionType.FORWARD, ActionType.SHRED],
+          in: [
+            ActionType.OPEN_AND_SCAN,
+            ActionType.FORWARD,
+            ActionType.DISPOSE,
+          ],
         },
       },
       include: {
@@ -1269,7 +1434,8 @@ export async function getRecentActions(limit: number = 5) {
     const actionTypeMap: Record<ActionType, "scan" | "forward" | "shred"> = {
       OPEN_AND_SCAN: "scan",
       FORWARD: "forward",
-      SHRED: "shred",
+      DISPOSE: "shred",
+      SHRED: "shred", // Keep for backward compatibility
       HOLD: "forward",
       ARCHIVE: "forward",
     };

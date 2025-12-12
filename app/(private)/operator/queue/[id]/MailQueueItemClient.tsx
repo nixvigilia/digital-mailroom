@@ -16,6 +16,7 @@ import {
   Textarea,
   FileButton,
   Tabs,
+  Select,
 } from "@mantine/core";
 import {
   IconArrowLeft,
@@ -26,6 +27,7 @@ import {
   IconAlertCircle,
   IconUpload,
   IconFileText,
+  IconExternalLink,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
@@ -54,6 +56,11 @@ interface MailQueueItemClientProps {
       type: string;
       status: string;
       priority: string;
+      forwardAddress?: string | null;
+      forwardTrackingNumber?: string | null;
+      forward3PLName?: string | null;
+      forwardTrackingUrl?: string | null;
+      notes?: string | null;
     } | null;
   };
 }
@@ -63,8 +70,25 @@ export function MailQueueItemClient({mailItem}: MailQueueItemClientProps) {
   const [scanFile, setScanFile] = useState<File | null>(null);
   const [forwardingAddress, setForwardingAddress] = useState("");
   const [trackingNumber, setTrackingNumber] = useState("");
+  const [threePLName, setThreePLName] = useState<string | null>(null);
+  const [trackingUrl, setTrackingUrl] = useState("");
+  const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<string | null>("details");
+
+  const common3PLProviders = [
+    {value: "LBC Express", label: "LBC Express"},
+    {value: "J&T Express", label: "J&T Express"},
+    {value: "2GO Express", label: "2GO Express"},
+    {value: "Flash Express", label: "Flash Express"},
+    {value: "Ninja Van", label: "Ninja Van"},
+    {value: "Grab Express", label: "Grab Express"},
+    {value: "Lalamove", label: "Lalamove"},
+    {value: "GoGo Express", label: "GoGo Express"},
+    {value: "XDE Logistics", label: "XDE Logistics"},
+    {value: "Entrego", label: "Entrego"},
+    {value: "Other", label: "Other"},
+  ];
 
   // Determine initial tab based on action request
   useEffect(() => {
@@ -72,10 +96,17 @@ export function MailQueueItemClient({mailItem}: MailQueueItemClientProps) {
       setActiveTab("scan");
     } else if (mailItem.actionRequest?.type === "FORWARD") {
       setActiveTab("forward");
-    } else if (mailItem.actionRequest?.type === "SHRED") {
+      // Set forwarding address from request if available
+      if (mailItem.actionRequest.forwardAddress) {
+        setForwardingAddress(mailItem.actionRequest.forwardAddress);
+      }
+    } else if (
+      mailItem.actionRequest?.type === "SHRED" ||
+      mailItem.actionRequest?.type === "DISPOSE"
+    ) {
       setActiveTab("shred");
     }
-  }, [mailItem.actionRequest?.type]);
+  }, [mailItem.actionRequest?.type, mailItem.actionRequest?.forwardAddress]);
 
   const handleScan = async () => {
     if (!scanFile) {
@@ -131,12 +162,28 @@ export function MailQueueItemClient({mailItem}: MailQueueItemClientProps) {
       return;
     }
 
+    if (!threePLName) {
+      notifications.show({
+        title: "Error",
+        message: "Please select a 3PL provider",
+        color: "red",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const formData = new FormData();
       formData.append("mailId", mailItem.id);
       formData.append("forwardingAddress", forwardingAddress);
       formData.append("trackingNumber", trackingNumber);
+      formData.append("threePLName", threePLName);
+      if (trackingUrl) {
+        formData.append("trackingUrl", trackingUrl);
+      }
+      if (notes) {
+        formData.append("notes", notes);
+      }
 
       const result = await processForward(formData);
 
@@ -275,9 +322,12 @@ export function MailQueueItemClient({mailItem}: MailQueueItemClientProps) {
             <Tabs.Tab
               value="shred"
               leftSection={<IconTrash size={16} />}
-              disabled={mailItem.actionRequest?.type !== "SHRED"}
+              disabled={
+                mailItem.actionRequest?.type !== "SHRED" &&
+                mailItem.actionRequest?.type !== "DISPOSE"
+              }
             >
-              Shred Mail
+              Dispose Mail
             </Tabs.Tab>
           </Tabs.List>
 
@@ -407,36 +457,76 @@ export function MailQueueItemClient({mailItem}: MailQueueItemClientProps) {
 
           <Tabs.Panel value="forward" pt="xl">
             <Stack gap="md">
-              <Alert icon={<IconTruck size={16} />} color="blue">
-                Enter the forwarding address and tracking information for the
-                shipment.
+              <Alert icon={<IconAlertCircle size={16} />} color="blue">
+                <Text size="sm" fw={600} mb={4}>
+                  Mail Item: {mailItem.id}
+                </Text>
+                <Text size="xs" c="dimmed">
+                  User: {mailItem.userName || "Unknown User"}
+                </Text>
+                <Text size="xs" c="dimmed">
+                  Sender: {mailItem.sender}
+                </Text>
               </Alert>
+
               <Textarea
                 label="Forwarding Address"
-                placeholder="Enter complete forwarding address"
-                required
-                minRows={3}
                 value={forwardingAddress}
-                onChange={(e) => setForwardingAddress(e.target.value)}
+                disabled
+                minRows={2}
               />
+
+              <Select
+                label="3PL Provider"
+                placeholder="Select shipping provider"
+                required
+                data={common3PLProviders}
+                value={threePLName}
+                onChange={(value) => setThreePLName(value)}
+                searchable
+                description="Select the third-party logistics provider used for shipping"
+              />
+
               <TextInput
                 label="Tracking Number"
                 placeholder="Enter tracking number"
                 required
                 value={trackingNumber}
                 onChange={(e) => setTrackingNumber(e.target.value)}
+                description="Tracking number provided by the 3PL"
               />
+
+              <TextInput
+                label="Tracking URL"
+                placeholder="https://www.lbcexpress.com/ or https://www.jtexpress.ph/track-and-trace"
+                value={trackingUrl}
+                onChange={(e) => setTrackingUrl(e.target.value)}
+                description="Link to the 3PL's tracking page (e.g., https://www.lbcexpress.com/, https://www.jtexpress.ph/track-and-trace)"
+                leftSection={<IconExternalLink size={16} />}
+              />
+
+              <Textarea
+                label="Notes (Optional)"
+                placeholder="Any additional notes..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                minRows={3}
+              />
+
               <Button
                 onClick={handleForward}
                 loading={loading}
                 disabled={
-                  !forwardingAddress || !trackingNumber || !mailItem.kycApproved
+                  !forwardingAddress ||
+                  !trackingNumber ||
+                  !threePLName ||
+                  !mailItem.kycApproved
                 }
                 leftSection={<IconCheck size={18} />}
                 fullWidth
                 size="lg"
               >
-                Complete Forward & Update Status
+                Complete Forward
               </Button>
             </Stack>
           </Tabs.Panel>
@@ -447,9 +537,8 @@ export function MailQueueItemClient({mailItem}: MailQueueItemClientProps) {
                 <Text fw={600} mb="xs">
                   Warning: This action cannot be undone
                 </Text>
-                Once shredded, this mail item will be permanently destroyed.
-                Please ensure you have verified the user's consent and KYC/KYB
-                approval.
+                This action is permanent and cannot be undone. The physical mail
+                will be securely disposed and destroyed.
               </Alert>
               <Group>
                 <Badge
@@ -468,7 +557,7 @@ export function MailQueueItemClient({mailItem}: MailQueueItemClientProps) {
                 fullWidth
                 size="lg"
               >
-                Confirm Shred & Update Status
+                Confirm Dispose
               </Button>
             </Stack>
           </Tabs.Panel>

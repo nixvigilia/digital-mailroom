@@ -464,6 +464,7 @@ enum MailStatus {
   ARCHIVED
   FORWARDED
   SHREDDED
+  DISPOSED
   HELD
 }
 
@@ -472,6 +473,7 @@ enum ActionType {
   FORWARD
   SHRED
   HOLD
+  DISPOSE
   ARCHIVE
 }
 

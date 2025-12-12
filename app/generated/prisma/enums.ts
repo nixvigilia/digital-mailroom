@@ -108,6 +108,7 @@ export const MailStatus = {
   ARCHIVED: 'ARCHIVED',
   FORWARDED: 'FORWARDED',
   SHREDDED: 'SHREDDED',
+  DISPOSED: 'DISPOSED',
   HELD: 'HELD'
 } as const
 
@@ -119,6 +120,7 @@ export const ActionType = {
   FORWARD: 'FORWARD',
   SHRED: 'SHRED',
   HOLD: 'HOLD',
+  DISPOSE: 'DISPOSE',
   ARCHIVE: 'ARCHIVE'
 } as const
 

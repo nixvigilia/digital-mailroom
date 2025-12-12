@@ -233,7 +233,7 @@ export function ActionQueueClient({initialRequests}: ActionQueueClientProps) {
                   <Table.Th>User</Table.Th>
                   <Table.Th>Action</Table.Th>
                   <Table.Th>Status</Table.Th>
-                  <Table.Th>Priority</Table.Th>
+                  {/* <Table.Th>Priority</Table.Th> */}
                   <Table.Th>KYC Status</Table.Th>
                   <Table.Th>Requested</Table.Th>
                   <Table.Th>Actions</Table.Th>
@@ -281,7 +281,7 @@ export function ActionQueueClient({initialRequests}: ActionQueueClientProps) {
                           {request.status.replace("_", " ")}
                         </Badge>
                       </Table.Td>
-                      <Table.Td>
+                      {/* <Table.Td>
                         <Badge
                           color={priorityColors[request.priority]}
                           variant="light"
@@ -289,7 +289,7 @@ export function ActionQueueClient({initialRequests}: ActionQueueClientProps) {
                         >
                           {request.priority}
                         </Badge>
-                      </Table.Td>
+                      </Table.Td> */}
                       <Table.Td>
                         {request.kycApproved ? (
                           <Badge color="green" variant="light" size="sm">
@@ -330,10 +330,4 @@ export function ActionQueueClient({initialRequests}: ActionQueueClientProps) {
     </Stack>
   );
 }
-
-
-
-
-
-
 
